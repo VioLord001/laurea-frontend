@@ -1,1 +1,8 @@
+node_modules
+.next
+.env.local
+.env
 .vercel
+*.log
+npm-debug.log*
+.DS_Store
