@@ -64,16 +64,16 @@ export default function HomePage() {
         <h2 style={{fontSize:'22px',fontWeight:'300',color:'#f5ede0',marginBottom:'1.5rem'}}>Join the Laurea community</h2>
         <div style={{display:'flex',gap:'10px',justifyContent:'center',flexWrap:'wrap'}}>
           {[
-            {n:'Instagram',i:'📸',f:'142K'},
-            {n:'TikTok',i:'🎵',f:'89K'},
-            {n:'Facebook',i:'📘',f:'56K'},
-            {n:'Twitter',i:'🐦',f:'31K'},
-            {n:'YouTube',i:'▶️',f:'24K'},
+            {n:'Instagram',i:'📸',h:'@laureafashion'},
+            {n:'TikTok',i:'🎵',h:'@laureafashion'},
+            {n:'Facebook',i:'📘',h:'Laurea Fashion House'},
+            {n:'Twitter',i:'🐦',h:'@laureafashion'},
+            {n:'YouTube',i:'▶️',h:'Laurea Fashion House'},
           ].map((s) => (
             <div key={s.n} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'12px',padding:'16px',textAlign:'center',minWidth:'90px'}}>
               <div style={{fontSize:'24px',marginBottom:'6px'}}>{s.i}</div>
               <div style={{fontSize:'9px',color:'#f5ede0',letterSpacing:'1px',textTransform:'uppercase'}}>{s.n}</div>
-              <div style={{fontSize:'11px',color:'#b8966a',fontWeight:'600',marginTop:'4px'}}>{s.f}</div>
+              <div style={{fontSize:'10px',color:'rgba(245,237,224,0.5)',marginTop:'4px'}}>{s.h}</div>
             </div>
           ))}
         </div>
