@@ -24,7 +24,7 @@ const FLASH = [
 const ARRIVALS = [
   { href:'/women', photo:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80', label:'Women', pos:'center top' },
   { href:'/men', photo:'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600&q=80', label:'Men', pos:'center top' },
-  { href:'/kids', photo:'https://images.unsplash.com/photo-1471286174890-9c112ac6fd09?w=600&q=80', label:'Kids', pos:'center top' },
+  { href:'/kids', photo:'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=600&q=80', label:'Kids', pos:'center top' },
 ];
 
 const SOCIAL = [
@@ -101,7 +101,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* New arrivals — 3 equal columns, fixed height, text always visible */}
+      {/* New arrivals */}
       <section style={{padding:'3rem 2rem',background:'#fff'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto'}}>
           <p style={{fontSize:'11px',fontWeight:'600',letterSpacing:'3px',textTransform:'uppercase',color:'#2a1e10',marginBottom:'1.5rem',textAlign:'center'}}>New arrivals</p>
