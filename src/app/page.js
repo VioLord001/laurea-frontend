@@ -31,8 +31,8 @@ const SOCIAL = [
   {n:'Instagram',i:'📸',h:'@laureafashion'},
   {n:'TikTok',i:'🎵',h:'@laureafashion'},
   {n:'Facebook',i:'📘',h:'Laurea Fashion'},
+  {n:'WhatsApp',i:'💬',h:'+55 00 00000-0000'},
   {n:'Twitter',i:'🐦',h:'@laureafashion'},
-  {n:'YouTube',i:'▶️',h:'Laurea Fashion'},
 ];
 
 export default function HomePage() {
