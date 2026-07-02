@@ -21,6 +21,12 @@ const FLASH = [
   { photo:'https://images.unsplash.com/photo-1470309864661-68328b2cd0a5?w=200&q=80', n:'Oud candle', p:'$7.99', o:'$22.99' },
 ];
 
+const ARRIVALS = [
+  { href:'/women', photo:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80', label:'Women', pos:'center top' },
+  { href:'/men', photo:'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600&q=80', label:'Men', pos:'center top' },
+  { href:'/kids', photo:'https://images.unsplash.com/photo-1471286174890-9c112ac6fd09?w=600&q=80', label:'Kids', pos:'center top' },
+];
+
 const SOCIAL = [
   {n:'Instagram',i:'📸',h:'@laureafashion'},
   {n:'TikTok',i:'🎵',h:'@laureafashion'},
@@ -33,6 +39,7 @@ export default function HomePage() {
   return (
     <div style={{minHeight:'100vh'}}>
 
+      {/* Hero */}
       <section style={{position:'relative',height:'90vh',minHeight:'500px',overflow:'hidden'}}>
         <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1400&q=80" alt="hero" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}} />
         <div style={{position:'absolute',inset:0,background:'linear-gradient(to right,rgba(28,18,8,0.85) 40%,rgba(28,18,8,0.2))'}} />
@@ -51,12 +58,13 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Departments */}
       <section style={{padding:'3rem 2rem',background:'#faf8f5'}}>
         <p style={{fontSize:'11px',fontWeight:'600',letterSpacing:'3px',textTransform:'uppercase',color:'#2a1e10',marginBottom:'1.5rem',textAlign:'center'}}>Shop by department</p>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px',maxWidth:'1200px',margin:'0 auto'}}>
           {DEPARTMENTS.map((d) => (
-            <Link key={d.name} href={d.href} style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block',height:'280px'}}>
-              <img src={d.photo} alt={d.name} style={{width:'100%',height:'100%',objectFit:'cover',transition:'transform 0.5s'}}
+            <Link key={d.name} href={d.href} style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block',height:'260px'}}>
+              <img src={d.photo} alt={d.name} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',transition:'transform 0.5s'}}
                 onMouseEnter={e=>e.target.style.transform='scale(1.05)'}
                 onMouseLeave={e=>e.target.style.transform='scale(1)'} />
               <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(28,18,8,0.85) 0%,rgba(28,18,8,0.1) 60%)'}} />
@@ -69,6 +77,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Flash sale */}
       <section style={{background:'#1c1208',padding:'2.5rem 2rem'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto'}}>
           <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'1.5rem'}}>
@@ -92,40 +101,27 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* New arrivals — 3 equal columns, fixed height, text always visible */}
       <section style={{padding:'3rem 2rem',background:'#fff'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto'}}>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px',height:'400px'}}>
-            <Link href="/women" style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block'}}>
-              <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?w=800&q=80" alt="Women" style={{width:'100%',height:'100%',objectFit:'cover'}} />
-              <div style={{position:'absolute',inset:0,background:'rgba(28,18,8,0.35)'}} />
-              <div style={{position:'absolute',bottom:'1.5rem',left:'1.5rem'}}>
-                <p style={{color:'rgba(245,237,224,0.7)',fontSize:'10px',letterSpacing:'3px',textTransform:'uppercase',marginBottom:'4px'}}>New arrivals</p>
-                <p style={{color:'#f5ede0',fontSize:'20px',fontWeight:'300'}}>Women's Collection</p>
-                <p style={{color:'#b8966a',fontSize:'11px',letterSpacing:'2px',textTransform:'uppercase',marginTop:'8px'}}>Shop now →</p>
-              </div>
-            </Link>
-            <div style={{display:'grid',gridTemplateRows:'1fr 1fr',gap:'16px'}}>
-              <Link href="/men" style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block'}}>
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80" alt="Men" style={{width:'100%',height:'100%',objectFit:'cover'}} />
-                <div style={{position:'absolute',inset:0,background:'rgba(28,18,8,0.35)'}} />
-                <div style={{position:'absolute',bottom:'1rem',left:'1rem'}}>
-                  <p style={{color:'#f5ede0',fontSize:'16px',fontWeight:'300'}}>Men's Collection</p>
-                  <p style={{color:'#b8966a',fontSize:'10px',letterSpacing:'2px',textTransform:'uppercase',marginTop:'4px'}}>Shop now →</p>
+          <p style={{fontSize:'11px',fontWeight:'600',letterSpacing:'3px',textTransform:'uppercase',color:'#2a1e10',marginBottom:'1.5rem',textAlign:'center'}}>New arrivals</p>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'16px'}}>
+            {ARRIVALS.map((a) => (
+              <Link key={a.label} href={a.href} style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block',height:'300px'}}>
+                <img src={a.photo} alt={a.label} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:a.pos}} />
+                <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(28,18,8,0.8) 0%,rgba(28,18,8,0.05) 50%)'}} />
+                <div style={{position:'absolute',bottom:'1.25rem',left:'1.25rem',right:'1.25rem'}}>
+                  <p style={{color:'rgba(245,237,224,0.6)',fontSize:'9px',letterSpacing:'3px',textTransform:'uppercase',marginBottom:'4px'}}>New arrivals</p>
+                  <p style={{color:'#f5ede0',fontSize:'18px',fontWeight:'300'}}>{a.label}</p>
+                  <p style={{color:'#b8966a',fontSize:'10px',letterSpacing:'2px',textTransform:'uppercase',marginTop:'6px'}}>Shop now →</p>
                 </div>
               </Link>
-              <Link href="/kids" style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block'}}>
-                <img src="https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=800&q=80" alt="Kids" style={{width:'100%',height:'100%',objectFit:'cover'}} />
-                <div style={{position:'absolute',inset:0,background:'rgba(28,18,8,0.35)'}} />
-                <div style={{position:'absolute',bottom:'1rem',left:'1rem'}}>
-                  <p style={{color:'#f5ede0',fontSize:'16px',fontWeight:'300'}}>Kids' Collection</p>
-                  <p style={{color:'#b8966a',fontSize:'10px',letterSpacing:'2px',textTransform:'uppercase',marginTop:'4px'}}>Shop now →</p>
-                </div>
-              </Link>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
+      {/* Social */}
       <section style={{background:'#1c1208',padding:'3rem 2rem',textAlign:'center'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto'}}>
           <p style={{fontSize:'9px',letterSpacing:'5px',textTransform:'uppercase',color:'#b8966a',marginBottom:'8px'}}>Follow us</p>
@@ -143,6 +139,7 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Promo */}
       <section style={{background:'#f5ede0',padding:'1.5rem 2rem'}}>
         <div style={{maxWidth:'1200px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem'}}>
           <div>
