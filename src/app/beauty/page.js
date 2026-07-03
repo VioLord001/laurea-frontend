@@ -6,7 +6,7 @@ const CATS = [
   { name:'Makeup', photo:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&q=80', styles:['Foundation','Lipstick','Eyeshadow'] },
   { name:'Hair Care', photo:'https://images.unsplash.com/photo-1559599101-f09722fb4948?w=400&q=80', styles:['Shampoo','Conditioner','Hair oils'] },
   { name:'Fragrance', photo:'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=400&q=80', styles:['Perfumes','Body sprays','Eau de toilette'] },
-  { name:'Body Care', photo:'https://images.unsplash.com/photo-1609609816133-a1e46b6a21cc?w=400&q=80', styles:['Body lotions','Scrubs','Bath oils'] },
+  { name:'Body Care', photo:'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&q=80', styles:['Body lotions','Scrubs','Bath oils'] },
   { name:'Nail Care', photo:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80', styles:['Nail polish','Nail kits','Gel nails'] },
 ];
 
