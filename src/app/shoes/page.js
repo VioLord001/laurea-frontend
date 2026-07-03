@@ -3,12 +3,12 @@ import Link from 'next/link';
 
 const CATS = [
   { name:'Sneakers', photo:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80', styles:['White sneakers','Running shoes','Platform sneakers'] },
-  { name:'Heels', photo:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80', styles:['Stilettos','Block heels','Kitten heels','Wedges'] },
+  { name:'Heels', photo:'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=80', styles:['Stilettos','Block heels','Kitten heels'] },
   { name:'Boots', photo:'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?w=400&q=80', styles:['Ankle boots','Knee-high boots','Chelsea boots'] },
-  { name:'Sandals', photo:'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400&q=80', styles:['Flat sandals','Heeled sandals','Slides','Flip flops'] },
-  { name:'Flats', photo:'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&q=80', styles:['Ballet flats','Loafers','Mules','Espadrilles'] },
-  { name:'Men\'s Shoes', photo:'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=400&q=80', styles:['Oxford shoes','Derby shoes','Loafers','Brogues'] },
-  { name:'Kids Shoes', photo:'https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=400&q=80', styles:['School shoes','Sneakers','Sandals','Boots'] },
+  { name:'Sandals', photo:'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=400&q=80', styles:['Flat sandals','Heeled sandals','Slides'] },
+  { name:'Flats', photo:'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=400&q=80', styles:['Ballet flats','Loafers','Mules'] },
+  { name:"Men's Shoes", photo:'https://images.unsplash.com/photo-1533867617858-e7b97e060509?w=400&q=80', styles:['Oxford shoes','Derby shoes','Loafers'] },
+  { name:'Kids Shoes', photo:'https://images.unsplash.com/photo-1514989940723-e8e51635b782?w=400&q=80', styles:['School shoes','Sneakers','Sandals'] },
   { name:'Sports Shoes', photo:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=80', styles:['Running shoes','Training shoes','Football boots'] },
 ];
 
@@ -33,7 +33,7 @@ export default function ShoesPage() {
       <div style={{maxWidth:'1200px',margin:'0 auto',padding:'3rem 2rem'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
           {CATS.map((cat) => (
-            <div key={cat.name} style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s'}}
+            <Link key={cat.name} href={`/products?department=shoes&category=${cat.name.toLowerCase()}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s',display:'block'}}
               onMouseEnter={e=>e.currentTarget.style.transform='translateY(-4px)'}
               onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
               <div style={{height:'200px',overflow:'hidden'}}>
@@ -47,7 +47,7 @@ export default function ShoesPage() {
                   ))}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

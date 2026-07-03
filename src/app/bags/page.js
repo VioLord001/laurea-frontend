@@ -33,7 +33,7 @@ export default function BagsPage() {
       <div style={{maxWidth:'1200px',margin:'0 auto',padding:'3rem 2rem'}}>
         <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
           {CATS.map((cat) => (
-            <div key={cat.name} style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s'}}
+            <Link key={cat.name} href={`/products?department=bags&category=${cat.name.toLowerCase()}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s',display:'block'}}
               onMouseEnter={e=>e.currentTarget.style.transform='translateY(-4px)'}
               onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
               <div style={{height:'200px',overflow:'hidden'}}>
@@ -47,7 +47,7 @@ export default function BagsPage() {
                   ))}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
