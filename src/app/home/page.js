@@ -2,15 +2,15 @@
 import Link from 'next/link';
 
 const CATS = [
-  { name:'Bedding', photo:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&q=80', styles:['Duvet sets','Pillows','Bed sheets','Throws'] },
-  { name:'Candles', photo:'https://images.unsplash.com/photo-1470309864661-68328b2cd0a5?w=400&q=80', styles:['Scented candles','Pillar candles','Tealights','Diffusers'] },
+  { name:'Bedding', photo:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&q=80', styles:['Duvet sets','Pillows','Bed sheets'] },
+  { name:'Candles', photo:'https://images.unsplash.com/photo-1470309864661-68328b2cd0a5?w=400&q=80', styles:['Scented candles','Pillar candles','Diffusers'] },
   { name:'Cushions', photo:'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400&q=80', styles:['Throw cushions','Floor cushions','Outdoor cushions'] },
   { name:'Kitchen', photo:'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80', styles:['Mugs','Plates','Cutlery','Cookware'] },
-  { name:'Storage', photo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', styles:['Baskets','Boxes','Organisers','Shelving'] },
-  { name:'Wall Art', photo:'https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400&q=80', styles:['Prints','Frames','Mirrors','Wall hangings'] },
+  { name:'Storage', photo:'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80', styles:['Baskets','Boxes','Organisers'] },
+  { name:'Wall Art', photo:'https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=400&q=80', styles:['Prints','Frames','Mirrors','Wall hangings'] },
 ];
 
-export default function HomePage2() {
+export default function HomeLivingPage() {
   return (
     <div style={{minHeight:'100vh',background:'#faf8f5'}}>
       <div style={{position:'relative',height:'300px',overflow:'hidden'}}>

@@ -2,12 +2,12 @@
 import Link from 'next/link';
 
 const CATS = [
-  { name:'Skincare', photo:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80', styles:['Moisturisers','Serums','Cleansers','Sunscreen'] },
-  { name:'Makeup', photo:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&q=80', styles:['Foundation','Lipstick','Eyeshadow','Mascara'] },
-  { name:'Hair Care', photo:'https://images.unsplash.com/photo-1559599101-f09722fb4948?w=400&q=80', styles:['Shampoo','Conditioner','Hair oils','Hair masks'] },
-  { name:'Fragrance', photo:'https://images.unsplash.com/photo-1541643600914-78b084683702?w=400&q=80', styles:['Perfumes','Body sprays','Eau de toilette'] },
-  { name:'Body Care', photo:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80', styles:['Body lotions','Scrubs','Bath oils','Soaps'] },
-  { name:'Nail Care', photo:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80', styles:['Nail polish','Nail kits','Gel nails','Nail art'] },
+  { name:'Skincare', photo:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80', styles:['Moisturisers','Serums','Cleansers'] },
+  { name:'Makeup', photo:'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=400&q=80', styles:['Foundation','Lipstick','Eyeshadow'] },
+  { name:'Hair Care', photo:'https://images.unsplash.com/photo-1559599101-f09722fb4948?w=400&q=80', styles:['Shampoo','Conditioner','Hair oils'] },
+  { name:'Fragrance', photo:'https://images.unsplash.com/photo-1588405748880-12d1d2a59f75?w=400&q=80', styles:['Perfumes','Body sprays','Eau de toilette'] },
+  { name:'Body Care', photo:'https://images.unsplash.com/photo-1609609816133-a1e46b6a21cc?w=400&q=80', styles:['Body lotions','Scrubs','Bath oils'] },
+  { name:'Nail Care', photo:'https://images.unsplash.com/photo-1604654894610-df63bc536371?w=400&q=80', styles:['Nail polish','Nail kits','Gel nails'] },
 ];
 
 export default function BeautyPage() {

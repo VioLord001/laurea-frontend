@@ -2,12 +2,12 @@
 import Link from 'next/link';
 
 const CATS = [
-  { name:'Tops', photo:'https://images.unsplash.com/photo-1562572159-4efd90898929?w=400&q=80', styles:['T-shirts','Crop tops','Blouses','Bodysuits','Tank tops'] },
-  { name:'Bottoms', photo:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80', styles:['Trousers','Wide-leg','Mini skirts','Midi skirts','Leggings'] },
-  { name:'Denim', photo:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&q=80', styles:['Skinny jeans','Wide-leg jeans','Mom jeans','Denim jackets'] },
-  { name:'Dresses', photo:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80', styles:['Mini dresses','Midi dresses','Maxi dresses','Wrap dresses'] },
-  { name:'Outerwear', photo:'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=400&q=80', styles:['Coats','Puffer jackets','Trench coats','Blazers'] },
-  { name:'Sleepwear', photo:'https://images.unsplash.com/photo-1631947430066-48c30d57b943?w=400&q=80', styles:['Pyjama sets','Robes','Loungewear sets'] },
+  { name:'Tops', photo:'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=400&q=80', styles:['T-shirts','Crop tops','Blouses','Bodysuits'] },
+  { name:'Bottoms', photo:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80', styles:['Trousers','Wide-leg','Mini skirts','Leggings'] },
+  { name:'Denim', photo:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&q=80', styles:['Skinny jeans','Wide-leg jeans','Mom jeans'] },
+  { name:'Dresses', photo:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80', styles:['Mini dresses','Midi dresses','Maxi dresses'] },
+  { name:'Outerwear', photo:'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=400&q=80', styles:['Coats','Puffer jackets','Trench coats'] },
+  { name:'Sleepwear', photo:'https://images.unsplash.com/photo-1631947430066-48c30d57b943?w=400&q=80', styles:['Pyjama sets','Robes','Loungewear'] },
   { name:'Activewear', photo:'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=400&q=80', styles:['Sports bras','Leggings','Gym sets'] },
   { name:'Swimwear', photo:'https://images.unsplash.com/photo-1570976447640-ac859083963f?w=400&q=80', styles:['Bikinis','One-pieces','Coverups'] },
   { name:'Lingerie', photo:'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&q=80', styles:['Bra sets','Shapewear','Bodysuits'] },

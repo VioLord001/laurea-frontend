@@ -8,8 +8,8 @@ const CATS = [
   { name:'Backpacks', photo:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80', styles:['Mini backpacks','Fashion backpacks','Travel backpacks'] },
   { name:'Tote Bags', photo:'https://images.unsplash.com/photo-1515823064-d6e0c04616a7?w=400&q=80', styles:['Canvas totes','Leather totes','Printed totes'] },
   { name:'Wallets', photo:'https://images.unsplash.com/photo-1627123424574-724758594e93?w=400&q=80', styles:['Card holders','Zip wallets','Purses'] },
-  { name:'Travel Bags', photo:'https://images.unsplash.com/photo-1581553680321-4fffae59c4c8?w=400&q=80', styles:['Weekender bags','Duffle bags','Travel sets'] },
-  { name:'Men\'s Bags', photo:'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400&q=80', styles:['Briefcases','Messenger bags','Laptop bags'] },
+  { name:'Travel Bags', photo:'https://images.unsplash.com/photo-1473188588951-666fce8e7c68?w=400&q=80', styles:['Weekender bags','Duffle bags','Travel sets'] },
+  { name:"Men's Bags", photo:'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400&q=80', styles:['Briefcases','Messenger bags','Laptop bags'] },
 ];
 
 export default function BagsPage() {

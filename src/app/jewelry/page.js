@@ -2,10 +2,10 @@
 import Link from 'next/link';
 
 const CATS = [
-  { name:'Necklaces', photo:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80', styles:['Chains','Pendants','Chokers','Layered necklaces'] },
+  { name:'Necklaces', photo:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80', styles:['Chains','Pendants','Chokers'] },
   { name:'Rings', photo:'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=80', styles:['Statement rings','Stacking rings','Engagement rings'] },
-  { name:'Earrings', photo:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80', styles:['Studs','Hoops','Drop earrings','Ear cuffs'] },
-  { name:'Bracelets', photo:'https://images.unsplash.com/photo-1573408301185-9519f94f9b4f?w=400&q=80', styles:['Bangles','Charm bracelets','Tennis bracelets'] },
+  { name:'Earrings', photo:'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80', styles:['Studs','Hoops','Drop earrings'] },
+  { name:'Bracelets', photo:'https://images.unsplash.com/photo-1586495777744-4e6232bf2f9b?w=400&q=80', styles:['Bangles','Charm bracelets','Tennis bracelets'] },
   { name:'Anklets', photo:'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=400&q=80', styles:['Chain anklets','Beaded anklets','Charm anklets'] },
   { name:'Sets', photo:'https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?w=400&q=80', styles:['Necklace sets','Matching sets','Gift sets'] },
   { name:'Fine Jewellery', photo:'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&q=80', styles:['Gold jewellery','Silver jewellery','Diamond pieces'] },

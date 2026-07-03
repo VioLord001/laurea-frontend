@@ -2,13 +2,13 @@
 import Link from 'next/link';
 
 const CATS = [
-  { name:'T-Shirts', photo:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80', styles:['Plain tees','Graphic tees','Polo shirts','Longline tees'] },
-  { name:'Shirts', photo:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80', styles:['Casual shirts','Formal shirts','Linen shirts','Flannel shirts'] },
-  { name:'Trousers', photo:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80', styles:['Chinos','Cargo pants','Formal trousers','Joggers'] },
-  { name:'Denim', photo:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80', styles:['Skinny jeans','Straight jeans','Relaxed fit','Denim jackets'] },
-  { name:'Outerwear', photo:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80', styles:['Puffer jackets','Coats','Windbreakers','Hoodies'] },
-  { name:'Suits', photo:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80', styles:['2-piece suits','3-piece suits','Blazers','Waistcoats'] },
-  { name:'Activewear', photo:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80', styles:['Gym shorts','Training tops','Tracksuits','Compression wear'] },
+  { name:'T-Shirts', photo:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80', styles:['Plain tees','Graphic tees','Polo shirts'] },
+  { name:'Shirts', photo:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80', styles:['Casual shirts','Formal shirts','Linen shirts'] },
+  { name:'Trousers', photo:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80', styles:['Chinos','Cargo pants','Formal trousers'] },
+  { name:'Denim', photo:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80', styles:['Skinny jeans','Straight jeans','Relaxed fit'] },
+  { name:'Outerwear', photo:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80', styles:['Puffer jackets','Coats','Windbreakers'] },
+  { name:'Suits', photo:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80', styles:['2-piece suits','3-piece suits','Blazers'] },
+  { name:'Activewear', photo:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80', styles:['Gym shorts','Training tops','Tracksuits'] },
   { name:'Swimwear', photo:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80', styles:['Swim shorts','Board shorts','Swim trunks'] },
   { name:'Sleepwear', photo:'https://images.unsplash.com/photo-1631947430066-48c30d57b943?w=400&q=80', styles:['Pyjama sets','Robes','Loungewear'] },
   { name:'Knitwear', photo:'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=80', styles:['Jumpers','Cardigans','Turtlenecks'] },
