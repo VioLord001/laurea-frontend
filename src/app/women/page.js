@@ -14,7 +14,7 @@ const CATS = [
   { name:'Co-ords', photo:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80', styles:['Trouser sets','Skirt sets','Linen sets'] },
   { name:'Knitwear', photo:'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=80', styles:['Jumpers','Cardigans','Knit dresses'] },
   { name:'Shirts', photo:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80', styles:['Oversized shirts','Linen shirts','Satin shirts'] },
-  { name:'Jumpsuits', photo:'https://images.unsplash.com/photo-1533399710673-63c31d504bd5?w=400&q=80', styles:['Playsuits','Casual jumpsuits','Party jumpsuits'] },
+  { name:'Jumpsuits', photo:'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400&q=80', styles:['Playsuits','Casual jumpsuits','Party jumpsuits'] },
   { name:'Blazers', photo:'https://images.unsplash.com/photo-1548372290-8d01b6c8e78c?w=400&q=80', styles:['Power blazers','Oversized blazers'] },
   { name:'Cardigans', photo:'https://images.unsplash.com/photo-1608234808654-2a8875faa7fd?w=400&q=80', styles:['Long cardigans','Cropped cardigans'] },
 ];
