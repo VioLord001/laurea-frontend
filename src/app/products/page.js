@@ -1,9 +1,9 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams();
   const department = searchParams.get('department');
   const category = searchParams.get('category');
@@ -30,7 +30,12 @@ export default function ProductsPage() {
         <nav style={{fontSize:'11px',color:'rgba(245,237,224,0.5)',marginBottom:'8px'}}>
           <Link href="/" style={{color:'rgba(245,237,224,0.5)',textDecoration:'none'}}>Home</Link>
           <span style={{margin:'0 8px'}}>›</span>
-          {department && <><Link href={`/${department}`} style={{color:'rgba(245,237,224,0.5)',textDecoration:'none',textTransform:'capitalize'}}>{department}</Link><span style={{margin:'0 8px'}}>›</span></>}
+          {department && (
+            <>
+              <Link href={`/${department}`} style={{color:'rgba(245,237,224,0.5)',textDecoration:'none',textTransform:'capitalize'}}>{department}</Link>
+              <span style={{margin:'0 8px'}}>›</span>
+            </>
+          )}
           <span style={{color:'#b8966a',textTransform:'capitalize'}}>{title}</span>
         </nav>
         <h1 style={{fontSize:'28px',fontWeight:'300',color:'#f5ede0',textTransform:'capitalize'}}>{title}</h1>
@@ -42,7 +47,7 @@ export default function ProductsPage() {
           <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
             {Array.from({length:8}).map((_,i) => (
               <div key={i} style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden'}}>
-                <div style={{height:'260px',background:'linear-gradient(90deg,#f0ece8 25%,#e8e0d8 50%,#f0ece8 75%)',backgroundSize:'200% 100%'}} />
+                <div style={{height:'260px',background:'#f0ece8'}} />
                 <div style={{padding:'12px'}}>
                   <div style={{height:'12px',background:'#f0ece8',borderRadius:'4px',marginBottom:'8px'}} />
                   <div style={{height:'10px',background:'#f0ece8',borderRadius:'4px',width:'60%'}} />
@@ -94,5 +99,20 @@ export default function ProductsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={
+      <div style={{minHeight:'100vh',background:'#faf8f5',display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <div style={{textAlign:'center'}}>
+          <div style={{fontSize:'48px',marginBottom:'1rem'}}>🛍️</div>
+          <p style={{fontSize:'13px',color:'#8a7a6a'}}>Loading products...</p>
+        </div>
+      </div>
+    }>
+      <ProductsContent />
+    </Suspense>
   );
 }
