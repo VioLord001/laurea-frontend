@@ -15,7 +15,7 @@ const CATEGORIES = {
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'' });
+  const [form, setForm] = useState({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'', isFeatured:false });
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState('');
   const [saving, setSaving] = useState(false);
@@ -56,7 +56,8 @@ export default function AdminProducts() {
       department: product.department,
       category: product.category_name || CATEGORIES[product.department]?.[0] || '',
       description: product.description || '',
-      badge: product.badge || ''
+      badge: product.badge || '',
+      isFeatured: product.is_featured || false
     });
     setPhotoPreview(product.primary_image || '');
     setShowForm(true);
@@ -103,7 +104,7 @@ export default function AdminProducts() {
       }
       setShowForm(false);
       setEditProduct(null);
-      setForm({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'' });
+      setForm({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'', isFeatured:false });
       setPhoto(null);
       setPhotoPreview('');
       fetchProducts();
@@ -127,7 +128,7 @@ export default function AdminProducts() {
           <h1 style={{fontSize:'24px',fontWeight:'600',color:'#1c1208'}}>Products</h1>
           <p style={{fontSize:'13px',color:'#8a7a6a',marginTop:'2px'}}>{products.length} products total</p>
         </div>
-        <button onClick={()=>{setShowForm(!showForm);setEditProduct(null);setForm({name:'',price:'',compare_price:'',department:'women',category:'Tops',description:'',badge:''});setPhotoPreview('');}}
+        <button onClick={()=>{setShowForm(!showForm);setEditProduct(null);setForm({name:'',price:'',compare_price:'',department:'women',category:'Tops',description:'',badge:'',isFeatured:false});setPhotoPreview('');}}
           style={{background:'#1c1208',color:'#f5ede0',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px'}}>
           {showForm ? '✕ Cancel' : '+ Add Product'}
         </button>
@@ -182,6 +183,11 @@ export default function AdminProducts() {
                   <option value="excl">Exclusive</option>
                 </select>
 
+                <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'12px',background:'#faf8f5',padding:'10px 12px',border:'1px solid #e0d8cc',borderRadius:'4px'}}>
+                  <input type="checkbox" id="featured" checked={form.isFeatured} onChange={e=>setForm({...form,isFeatured:e.target.checked})} style={{width:'16px',height:'16px',cursor:'pointer'}} />
+                  <label htmlFor="featured" style={{fontSize:'13px',color:'#1c1208',cursor:'pointer',fontWeight:'500'}}>⭐ Show on homepage as Featured Product</label>
+                </div>
+
                 <label style={lbl}>Description</label>
                 <textarea style={{...inp,height:'80px',resize:'vertical'}} value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder="Describe the product..." />
               </div>
@@ -208,11 +214,12 @@ export default function AdminProducts() {
                 )}
 
                 <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'1rem',marginTop:'8px'}}>
-                  <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',marginBottom:'8px'}}>Selected</div>
+                  <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',marginBottom:'8px'}}>Currently selected</div>
                   <div style={{fontSize:'12px',color:'#1c1208',lineHeight:'1.8'}}>
                     <strong>Department:</strong> {form.department}<br/>
                     <strong>Category:</strong> {form.category}<br/>
-                    <strong>Badge:</strong> {form.badge || 'None'}
+                    <strong>Badge:</strong> {form.badge || 'None'}<br/>
+                    <strong>Featured:</strong> {form.isFeatured ? '⭐ Yes — shows on homepage' : 'No'}
                   </div>
                 </div>
               </div>
@@ -257,6 +264,11 @@ export default function AdminProducts() {
                 {product.badge && (
                   <span style={{position:'absolute',top:'8px',left:'8px',background:product.badge==='sale'?'#b8966a':product.badge==='new'?'#1c1208':'#8c3a1a',color:'#fff',fontSize:'9px',fontWeight:'600',padding:'3px 8px',textTransform:'uppercase',letterSpacing:'1px',borderRadius:'2px'}}>
                     {product.badge}
+                  </span>
+                )}
+                {product.is_featured && (
+                  <span style={{position:'absolute',top:'8px',right:'8px',background:'#f0c040',color:'#1c1208',fontSize:'9px',fontWeight:'600',padding:'3px 8px',borderRadius:'2px'}}>
+                    ⭐ Featured
                   </span>
                 )}
               </div>
