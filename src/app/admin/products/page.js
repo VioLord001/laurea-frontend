@@ -12,10 +12,27 @@ const CATEGORIES = {
   home: ['Bedding','Candles','Cushions','Kitchen','Storage','Wall Art'],
 };
 
+const SIZES = {
+  women: ['XXS','XS','S','M','L','XL','XXL','3XL','4XL','One Size'],
+  men: ['XS','S','M','L','XL','XXL','3XL','4XL','One Size'],
+  kids: ['0-3M','3-6M','6-12M','1-2Y','2-3Y','3-4Y','4-5Y','5-6Y','6-7Y','7-8Y','8-9Y','9-10Y','10-11Y','11-12Y','12-13Y','13-14Y'],
+  bags: ['One Size'],
+  jewelry: ['One Size','XS','S','M','L','XL'],
+  shoes: ['UK 3','UK 4','UK 5','UK 6','UK 7','UK 8','UK 9','UK 10','UK 11','UK 12','EU 36','EU 37','EU 38','EU 39','EU 40','EU 41','EU 42','EU 43','EU 44','EU 45'],
+  beauty: ['One Size','30ml','50ml','100ml','150ml','200ml'],
+  home: ['One Size','Small','Medium','Large','XL'],
+};
+
+const COLORS = ['Black','White','Red','Blue','Green','Yellow','Pink','Purple','Orange','Brown','Grey','Beige','Navy','Cream','Gold','Silver','Multicolor'];
+
 export default function AdminProducts() {
   const [products, setProducts] = useState([]);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'', isFeatured:false });
+  const [form, setForm] = useState({
+    name:'', price:'', compare_price:'', department:'women',
+    category:'Tops', description:'', badge:'', isFeatured:false,
+    sizes:[], colors:[], stock:''
+  });
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState('');
   const [saving, setSaving] = useState(false);
@@ -37,7 +54,21 @@ export default function AdminProducts() {
   useState(() => { fetchProducts(); }, []);
 
   const handleDepartmentChange = (dept) => {
-    setForm(f => ({ ...f, department: dept, category: CATEGORIES[dept][0] }));
+    setForm(f => ({ ...f, department: dept, category: CATEGORIES[dept][0], sizes: [], colors: [] }));
+  };
+
+  const toggleSize = (size) => {
+    setForm(f => ({
+      ...f,
+      sizes: f.sizes.includes(size) ? f.sizes.filter(s => s !== size) : [...f.sizes, size]
+    }));
+  };
+
+  const toggleColor = (color) => {
+    setForm(f => ({
+      ...f,
+      colors: f.colors.includes(color) ? f.colors.filter(c => c !== color) : [...f.colors, color]
+    }));
   };
 
   const handlePhoto = (e) => {
@@ -57,7 +88,10 @@ export default function AdminProducts() {
       category: product.category_name || CATEGORIES[product.department]?.[0] || '',
       description: product.description || '',
       badge: product.badge || '',
-      isFeatured: product.is_featured || false
+      isFeatured: product.is_featured || false,
+      sizes: product.sizes || [],
+      colors: product.colors || [],
+      stock: product.stock || ''
     });
     setPhotoPreview(product.primary_image || '');
     setShowForm(true);
@@ -86,7 +120,7 @@ export default function AdminProducts() {
     const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
     try {
       let productId = editProduct?.id;
-      const payload = { ...form };
+      const payload = { ...form, tags: form.sizes };
       if (editProduct) {
         await fetch(`${api}/products/${productId}`, { method: 'PUT', headers, body: JSON.stringify(payload) });
         setMessage('✅ Product updated successfully!');
@@ -104,7 +138,7 @@ export default function AdminProducts() {
       }
       setShowForm(false);
       setEditProduct(null);
-      setForm({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'', isFeatured:false });
+      setForm({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'', isFeatured:false, sizes:[], colors:[], stock:'' });
       setPhoto(null);
       setPhotoPreview('');
       fetchProducts();
@@ -128,7 +162,7 @@ export default function AdminProducts() {
           <h1 style={{fontSize:'24px',fontWeight:'600',color:'#1c1208'}}>Products</h1>
           <p style={{fontSize:'13px',color:'#8a7a6a',marginTop:'2px'}}>{products.length} products total</p>
         </div>
-        <button onClick={()=>{setShowForm(!showForm);setEditProduct(null);setForm({name:'',price:'',compare_price:'',department:'women',category:'Tops',description:'',badge:'',isFeatured:false});setPhotoPreview('');}}
+        <button onClick={()=>{setShowForm(!showForm);setEditProduct(null);setForm({name:'',price:'',compare_price:'',department:'women',category:'Tops',description:'',badge:'',isFeatured:false,sizes:[],colors:[],stock:''});setPhotoPreview('');}}
           style={{background:'#1c1208',color:'#f5ede0',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px'}}>
           {showForm ? '✕ Cancel' : '+ Add Product'}
         </button>
@@ -159,6 +193,9 @@ export default function AdminProducts() {
                     <input style={inp} type="number" step="0.01" value={form.compare_price} onChange={e=>setForm({...form,compare_price:e.target.value})} placeholder="59.99" />
                   </div>
                 </div>
+
+                <label style={lbl}>Stock Quantity</label>
+                <input style={inp} type="number" value={form.stock} onChange={e=>setForm({...form,stock:e.target.value})} placeholder="e.g. 50" />
 
                 <label style={lbl}>Department *</label>
                 <select style={inp} value={form.department} onChange={e=>handleDepartmentChange(e.target.value)}>
@@ -196,10 +233,10 @@ export default function AdminProducts() {
                 <label style={lbl}>Product Photo</label>
                 <div style={{border:'2px dashed #e0d8cc',borderRadius:'8px',padding:'1rem',textAlign:'center',cursor:'pointer',background:'#faf8f5',marginBottom:'12px'}} onClick={()=>fileRef.current.click()}>
                   {photoPreview ? (
-                    <img src={photoPreview} alt="preview" style={{width:'100%',height:'220px',objectFit:'cover',borderRadius:'6px'}} />
+                    <img src={photoPreview} alt="preview" style={{width:'100%',height:'180px',objectFit:'cover',borderRadius:'6px'}} />
                   ) : (
-                    <div style={{padding:'2rem'}}>
-                      <div style={{fontSize:'40px',marginBottom:'8px'}}>📷</div>
+                    <div style={{padding:'1.5rem'}}>
+                      <div style={{fontSize:'36px',marginBottom:'8px'}}>📷</div>
                       <div style={{fontSize:'13px',color:'#8a7a6a'}}>Click to upload product photo</div>
                       <div style={{fontSize:'11px',color:'#b8966a',marginTop:'4px'}}>JPG, PNG up to 5MB</div>
                     </div>
@@ -213,13 +250,34 @@ export default function AdminProducts() {
                   </button>
                 )}
 
-                <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'1rem',marginTop:'8px'}}>
-                  <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',marginBottom:'8px'}}>Currently selected</div>
-                  <div style={{fontSize:'12px',color:'#1c1208',lineHeight:'1.8'}}>
+                <label style={lbl}>Available Sizes — click to select multiple</label>
+                <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginBottom:'12px',background:'#faf8f5',padding:'10px',borderRadius:'4px',border:'1px solid #e0d8cc'}}>
+                  {(SIZES[form.department] || []).map(size => (
+                    <button key={size} type="button" onClick={()=>toggleSize(size)}
+                      style={{padding:'5px 10px',fontSize:'11px',fontWeight:'500',border:`1px solid ${form.sizes.includes(size)?'#1c1208':'#e0d8cc'}`,background:form.sizes.includes(size)?'#1c1208':'#fff',color:form.sizes.includes(size)?'#f5ede0':'#8a7a6a',borderRadius:'4px',cursor:'pointer',transition:'all 0.15s'}}>
+                      {size}
+                    </button>
+                  ))}
+                </div>
+
+                <label style={lbl}>Available Colors — click to select multiple</label>
+                <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginBottom:'12px',background:'#faf8f5',padding:'10px',borderRadius:'4px',border:'1px solid #e0d8cc'}}>
+                  {COLORS.map(color => (
+                    <button key={color} type="button" onClick={()=>toggleColor(color)}
+                      style={{padding:'5px 10px',fontSize:'11px',fontWeight:'500',border:`1px solid ${form.colors.includes(color)?'#b8966a':'#e0d8cc'}`,background:form.colors.includes(color)?'#b8966a':'#fff',color:form.colors.includes(color)?'#1c1208':'#8a7a6a',borderRadius:'4px',cursor:'pointer',transition:'all 0.15s'}}>
+                      {color}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'1rem'}}>
+                  <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',marginBottom:'8px'}}>Summary</div>
+                  <div style={{fontSize:'12px',color:'#1c1208',lineHeight:'1.9'}}>
                     <strong>Department:</strong> {form.department}<br/>
                     <strong>Category:</strong> {form.category}<br/>
-                    <strong>Badge:</strong> {form.badge || 'None'}<br/>
-                    <strong>Featured:</strong> {form.isFeatured ? '⭐ Yes — shows on homepage' : 'No'}
+                    <strong>Sizes:</strong> {form.sizes.length > 0 ? form.sizes.join(', ') : 'None selected'}<br/>
+                    <strong>Colors:</strong> {form.colors.length > 0 ? form.colors.join(', ') : 'None selected'}<br/>
+                    <strong>Featured:</strong> {form.isFeatured ? '⭐ Yes' : 'No'}
                   </div>
                 </div>
               </div>
@@ -277,7 +335,14 @@ export default function AdminProducts() {
                   <span style={{fontSize:'9px',background:'#f5ede0',color:'#b8966a',padding:'2px 8px',borderRadius:'3px',textTransform:'uppercase',letterSpacing:'0.5px'}}>{product.department}</span>
                   {product.category_name && <span style={{fontSize:'9px',background:'#f0ece8',color:'#8a7a6a',padding:'2px 8px',borderRadius:'3px'}}>{product.category_name}</span>}
                 </div>
-                <div style={{fontSize:'13px',fontWeight:'500',color:'#1c1208',marginBottom:'6px',lineHeight:'1.3'}}>{product.name}</div>
+                <div style={{fontSize:'13px',fontWeight:'500',color:'#1c1208',marginBottom:'4px',lineHeight:'1.3'}}>{product.name}</div>
+                {product.tags && product.tags.length > 0 && (
+                  <div style={{display:'flex',flexWrap:'wrap',gap:'4px',marginBottom:'6px'}}>
+                    {product.tags.slice(0,4).map(tag => (
+                      <span key={tag} style={{fontSize:'9px',background:'#f5ede0',color:'#8a7a6a',padding:'2px 6px',borderRadius:'3px',border:'1px solid #e0d8cc'}}>{tag}</span>
+                    ))}
+                  </div>
+                )}
                 <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'12px'}}>
                   <span style={{fontSize:'16px',fontWeight:'600',color:'#1c1208'}}>${parseFloat(product.price).toFixed(2)}</span>
                   {product.compare_price && <span style={{fontSize:'12px',color:'#8a7a6a',textDecoration:'line-through'}}>${parseFloat(product.compare_price).toFixed(2)}</span>}
