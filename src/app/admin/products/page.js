@@ -33,11 +33,12 @@ export default function AdminProducts() {
     category:'Tops', description:'', badge:'', isFeatured:false,
     sizes:[], colors:[], stock:''
   });
-  const [photo, setPhoto] = useState(null);
-  const [photoPreview, setPhotoPreview] = useState('');
+  const [photos, setPhotos] = useState([]);
+  const [photoPreviews, setPhotoPreviews] = useState([]);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [editProduct, setEditProduct] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState('');
   const fileRef = useRef();
   const api = process.env.NEXT_PUBLIC_API_URL;
 
@@ -71,11 +72,20 @@ export default function AdminProducts() {
     }));
   };
 
-  const handlePhoto = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    setPhoto(file);
-    setPhotoPreview(URL.createObjectURL(file));
+  const handlePhotos = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length + photos.length > 8) {
+      alert('Maximum 8 photos allowed per product');
+      return;
+    }
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    setPhotos(prev => [...prev, ...files]);
+    setPhotoPreviews(prev => [...prev, ...newPreviews]);
+  };
+
+  const removePhoto = (index) => {
+    setPhotos(prev => prev.filter((_,i) => i !== index));
+    setPhotoPreviews(prev => prev.filter((_,i) => i !== index));
   };
 
   const handleEdit = (product) => {
@@ -89,11 +99,12 @@ export default function AdminProducts() {
       description: product.description || '',
       badge: product.badge || '',
       isFeatured: product.is_featured || false,
-      sizes: product.sizes || [],
+      sizes: product.tags || [],
       colors: product.colors || [],
       stock: product.stock || ''
     });
-    setPhotoPreview(product.primary_image || '');
+    setPhotos([]);
+    setPhotoPreviews([]);
     setShowForm(true);
     window.scrollTo(0, 0);
   };
@@ -116,6 +127,7 @@ export default function AdminProducts() {
     e.preventDefault();
     setSaving(true);
     setMessage('');
+    setUploadProgress('');
     const token = getToken();
     const headers = { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' };
     try {
@@ -123,24 +135,33 @@ export default function AdminProducts() {
       const payload = { ...form, tags: form.sizes };
       if (editProduct) {
         await fetch(`${api}/products/${productId}`, { method: 'PUT', headers, body: JSON.stringify(payload) });
-        setMessage('✅ Product updated successfully!');
+        setMessage('✅ Product updated!');
       } else {
         const res = await fetch(`${api}/products`, { method: 'POST', headers, body: JSON.stringify(payload) });
         const data = await res.json();
         productId = data.product?.id;
-        setMessage('✅ Product created successfully!');
+        setMessage('✅ Product created!');
       }
-      if (photo && productId) {
-        const formData = new FormData();
-        formData.append('images', photo);
-        await fetch(`${api}/products/${productId}/images`, { method: 'POST', headers: { Authorization: `Bearer ${token}` }, body: formData });
-        setMessage('✅ Product saved with photo!');
+      if (photos.length > 0 && productId) {
+        setUploadProgress(`Uploading photos 0/${photos.length}...`);
+        for (let i = 0; i < photos.length; i++) {
+          const formData = new FormData();
+          formData.append('images', photos[i]);
+          await fetch(`${api}/products/${productId}/images`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData
+          });
+          setUploadProgress(`Uploading photos ${i+1}/${photos.length}...`);
+        }
+        setMessage(`✅ Product saved with ${photos.length} photo${photos.length>1?'s':''}!`);
+        setUploadProgress('');
       }
       setShowForm(false);
       setEditProduct(null);
       setForm({ name:'', price:'', compare_price:'', department:'women', category:'Tops', description:'', badge:'', isFeatured:false, sizes:[], colors:[], stock:'' });
-      setPhoto(null);
-      setPhotoPreview('');
+      setPhotos([]);
+      setPhotoPreviews([]);
       fetchProducts();
     } catch { setMessage('❌ Error saving product. Please try again.'); }
     setSaving(false);
@@ -162,7 +183,7 @@ export default function AdminProducts() {
           <h1 style={{fontSize:'24px',fontWeight:'600',color:'#1c1208'}}>Products</h1>
           <p style={{fontSize:'13px',color:'#8a7a6a',marginTop:'2px'}}>{products.length} products total</p>
         </div>
-        <button onClick={()=>{setShowForm(!showForm);setEditProduct(null);setForm({name:'',price:'',compare_price:'',department:'women',category:'Tops',description:'',badge:'',isFeatured:false,sizes:[],colors:[],stock:''});setPhotoPreview('');}}
+        <button onClick={()=>{setShowForm(!showForm);setEditProduct(null);setForm({name:'',price:'',compare_price:'',department:'women',category:'Tops',description:'',badge:'',isFeatured:false,sizes:[],colors:[],stock:''});setPhotos([]);setPhotoPreviews([]);}}
           style={{background:'#1c1208',color:'#f5ede0',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px'}}>
           {showForm ? '✕ Cancel' : '+ Add Product'}
         </button>
@@ -171,6 +192,12 @@ export default function AdminProducts() {
       {message && (
         <div style={{background:message.includes('❌')?'#fff0f0':'#f0fff4',border:`1px solid ${message.includes('❌')?'#ffcccc':'#ccffcc'}`,padding:'12px 16px',borderRadius:'8px',marginBottom:'1rem',fontSize:'13px'}}>
           {message}
+        </div>
+      )}
+
+      {uploadProgress && (
+        <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',padding:'12px 16px',borderRadius:'8px',marginBottom:'1rem',fontSize:'13px',color:'#b8966a',fontWeight:'500'}}>
+          📤 {uploadProgress}
         </div>
       )}
 
@@ -225,58 +252,87 @@ export default function AdminProducts() {
                   <label htmlFor="featured" style={{fontSize:'13px',color:'#1c1208',cursor:'pointer',fontWeight:'500'}}>⭐ Show on homepage as Featured Product</label>
                 </div>
 
-                <label style={lbl}>Description</label>
-                <textarea style={{...inp,height:'80px',resize:'vertical'}} value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder="Describe the product..." />
-              </div>
-
-              <div>
-                <label style={lbl}>Product Photo</label>
-                <div style={{border:'2px dashed #e0d8cc',borderRadius:'8px',padding:'1rem',textAlign:'center',cursor:'pointer',background:'#faf8f5',marginBottom:'12px'}} onClick={()=>fileRef.current.click()}>
-                  {photoPreview ? (
-                    <img src={photoPreview} alt="preview" style={{width:'100%',height:'180px',objectFit:'cover',borderRadius:'6px'}} />
-                  ) : (
-                    <div style={{padding:'1.5rem'}}>
-                      <div style={{fontSize:'36px',marginBottom:'8px'}}>📷</div>
-                      <div style={{fontSize:'13px',color:'#8a7a6a'}}>Click to upload product photo</div>
-                      <div style={{fontSize:'11px',color:'#b8966a',marginTop:'4px'}}>JPG, PNG up to 5MB</div>
-                    </div>
-                  )}
-                </div>
-                <input ref={fileRef} type="file" accept="image/*" onChange={handlePhoto} style={{display:'none'}} />
-                {photoPreview && (
-                  <button type="button" onClick={()=>{setPhoto(null);setPhotoPreview('');}}
-                    style={{background:'none',border:'1px solid #e0d8cc',padding:'6px 12px',fontSize:'11px',cursor:'pointer',borderRadius:'4px',marginBottom:'12px'}}>
-                    Remove photo
-                  </button>
-                )}
-
-                <label style={lbl}>Available Sizes — click to select multiple</label>
+                <label style={lbl}>Available Sizes</label>
                 <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginBottom:'12px',background:'#faf8f5',padding:'10px',borderRadius:'4px',border:'1px solid #e0d8cc'}}>
                   {(SIZES[form.department] || []).map(size => (
                     <button key={size} type="button" onClick={()=>toggleSize(size)}
-                      style={{padding:'5px 10px',fontSize:'11px',fontWeight:'500',border:`1px solid ${form.sizes.includes(size)?'#1c1208':'#e0d8cc'}`,background:form.sizes.includes(size)?'#1c1208':'#fff',color:form.sizes.includes(size)?'#f5ede0':'#8a7a6a',borderRadius:'4px',cursor:'pointer',transition:'all 0.15s'}}>
+                      style={{padding:'5px 10px',fontSize:'11px',fontWeight:'500',border:`1px solid ${form.sizes.includes(size)?'#1c1208':'#e0d8cc'}`,background:form.sizes.includes(size)?'#1c1208':'#fff',color:form.sizes.includes(size)?'#f5ede0':'#8a7a6a',borderRadius:'4px',cursor:'pointer'}}>
                       {size}
                     </button>
                   ))}
                 </div>
 
-                <label style={lbl}>Available Colors — click to select multiple</label>
+                <label style={lbl}>Available Colors</label>
                 <div style={{display:'flex',flexWrap:'wrap',gap:'6px',marginBottom:'12px',background:'#faf8f5',padding:'10px',borderRadius:'4px',border:'1px solid #e0d8cc'}}>
                   {COLORS.map(color => (
                     <button key={color} type="button" onClick={()=>toggleColor(color)}
-                      style={{padding:'5px 10px',fontSize:'11px',fontWeight:'500',border:`1px solid ${form.colors.includes(color)?'#b8966a':'#e0d8cc'}`,background:form.colors.includes(color)?'#b8966a':'#fff',color:form.colors.includes(color)?'#1c1208':'#8a7a6a',borderRadius:'4px',cursor:'pointer',transition:'all 0.15s'}}>
+                      style={{padding:'5px 10px',fontSize:'11px',fontWeight:'500',border:`1px solid ${form.colors.includes(color)?'#b8966a':'#e0d8cc'}`,background:form.colors.includes(color)?'#b8966a':'#fff',color:form.colors.includes(color)?'#1c1208':'#8a7a6a',borderRadius:'4px',cursor:'pointer'}}>
                       {color}
                     </button>
                   ))}
                 </div>
 
-                <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'1rem'}}>
+                <label style={lbl}>Description</label>
+                <textarea style={{...inp,height:'80px',resize:'vertical'}} value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder="Describe the product..." />
+              </div>
+
+              <div>
+                <label style={lbl}>Product Photos (up to 8 photos)</label>
+
+                <div style={{border:'2px dashed #e0d8cc',borderRadius:'8px',padding:'1rem',textAlign:'center',cursor:'pointer',background:'#faf8f5',marginBottom:'12px'}} onClick={()=>fileRef.current.click()}>
+                  <div style={{fontSize:'32px',marginBottom:'6px'}}>📷</div>
+                  <div style={{fontSize:'13px',color:'#8a7a6a'}}>Click to upload photos</div>
+                  <div style={{fontSize:'11px',color:'#b8966a',marginTop:'4px'}}>Up to 8 photos · JPG PNG · Max 5MB each</div>
+                  <div style={{fontSize:'11px',color:'#8a7a6a',marginTop:'4px'}}>{photoPreviews.length}/8 photos selected</div>
+                </div>
+                <input ref={fileRef} type="file" accept="image/*" multiple onChange={handlePhotos} style={{display:'none'}} />
+
+                {photoPreviews.length > 0 && (
+                  <div style={{marginBottom:'12px'}}>
+                    <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',letterSpacing:'0.5px',marginBottom:'8px'}}>
+                      {photoPreviews.length} photo{photoPreviews.length>1?'s':''} selected — first photo is the main photo
+                    </div>
+                    <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'8px'}}>
+                      {photoPreviews.map((preview, index) => (
+                        <div key={index} style={{position:'relative',aspectRatio:'1',borderRadius:'6px',overflow:'hidden',border:index===0?'2px solid #b8966a':'1px solid #e0d8cc'}}>
+                          <img src={preview} alt={`Photo ${index+1}`} style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                          {index === 0 && (
+                            <span style={{position:'absolute',top:'4px',left:'4px',background:'#b8966a',color:'#1c1208',fontSize:'8px',fontWeight:'600',padding:'2px 5px',borderRadius:'2px'}}>MAIN</span>
+                          )}
+                          <button type="button" onClick={()=>removePhoto(index)}
+                            style={{position:'absolute',top:'4px',right:'4px',background:'rgba(0,0,0,0.6)',color:'#fff',border:'none',width:'18px',height:'18px',borderRadius:'50%',cursor:'pointer',fontSize:'10px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      {photoPreviews.length < 8 && (
+                        <div onClick={()=>fileRef.current.click()} style={{aspectRatio:'1',borderRadius:'6px',border:'2px dashed #e0d8cc',display:'flex',alignItems:'center',justifyContent:'center',cursor:'pointer',background:'#faf8f5'}}>
+                          <span style={{fontSize:'20px',color:'#e0d8cc'}}>+</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'1rem',marginTop:'8px'}}>
+                  <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',marginBottom:'8px'}}>Photo Tips</div>
+                  <div style={{fontSize:'12px',color:'#8a7a6a',lineHeight:'1.8'}}>
+                    📌 First photo is the main product photo<br/>
+                    📌 Add front, back, side and detail shots<br/>
+                    📌 White background looks most professional<br/>
+                    📌 Minimum 800x800 pixels recommended<br/>
+                    📌 You can add up to 8 photos per product
+                  </div>
+                </div>
+
+                <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'1rem',marginTop:'10px'}}>
                   <div style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',marginBottom:'8px'}}>Summary</div>
                   <div style={{fontSize:'12px',color:'#1c1208',lineHeight:'1.9'}}>
                     <strong>Department:</strong> {form.department}<br/>
                     <strong>Category:</strong> {form.category}<br/>
                     <strong>Sizes:</strong> {form.sizes.length > 0 ? form.sizes.join(', ') : 'None selected'}<br/>
                     <strong>Colors:</strong> {form.colors.length > 0 ? form.colors.join(', ') : 'None selected'}<br/>
+                    <strong>Photos:</strong> {photoPreviews.length} selected<br/>
                     <strong>Featured:</strong> {form.isFeatured ? '⭐ Yes' : 'No'}
                   </div>
                 </div>
@@ -286,7 +342,7 @@ export default function AdminProducts() {
             <div style={{display:'flex',gap:'10px',marginTop:'1.5rem'}}>
               <button type="submit" disabled={saving}
                 style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'12px 28px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px',opacity:saving?0.7:1}}>
-                {saving ? 'Saving...' : editProduct ? 'Update Product' : 'Save Product'}
+                {saving ? (uploadProgress || 'Saving...') : editProduct ? 'Update Product' : 'Save Product'}
               </button>
               <button type="button" onClick={()=>{setShowForm(false);setEditProduct(null);}}
                 style={{background:'none',border:'1px solid #e0d8cc',padding:'12px 20px',fontSize:'12px',cursor:'pointer',borderRadius:'6px'}}>
