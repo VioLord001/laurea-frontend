@@ -59,16 +59,18 @@ export default function Navbar() {
 
       {/* Main navbar */}
       <nav style={{background:'#1c1208',position:'sticky',top:0,zIndex:1000,borderBottom:'1px solid rgba(245,237,224,0.1)'}}>
-        <div style={{maxWidth:'1300px',margin:'0 auto',padding:'0 2rem',display:'flex',alignItems:'center',justifyContent:'space-between',height:'60px'}}>
+        <div style={{maxWidth:'1400px',margin:'0 auto',padding:'0 2rem',display:'flex',alignItems:'center',justifyContent:'space-between',height:'60px'}}>
 
-          {/* Logo */}
-          <Link href="/" style={{textDecoration:'none',flexShrink:0,marginRight:'2rem'}}>
+          {/* Logo — left side only */}
+          <Link href="/" style={{textDecoration:'none',flexShrink:0}}>
             <div style={{color:'#f5ede0',fontSize:'15px',fontWeight:'600',letterSpacing:'4px',textTransform:'uppercase',lineHeight:'1'}}>Laurea</div>
             <div style={{color:'#b8966a',fontSize:'7px',letterSpacing:'4px',textTransform:'uppercase',marginTop:'2px'}}>Fashion House</div>
           </Link>
 
-          {/* Department links */}
-          <div style={{display:'flex',gap:'1.5rem',alignItems:'center',flex:1}}>
+          {/* Everything on the right */}
+          <div style={{display:'flex',alignItems:'center',gap:'20px'}}>
+
+            {/* Department links */}
             {departments.map(dept => (
               <Link key={dept.name} href={dept.href}
                 style={{textDecoration:'none',fontSize:'11px',fontWeight:'500',color:'rgba(245,237,224,0.7)',letterSpacing:'1px',textTransform:'uppercase',transition:'color 0.15s',whiteSpace:'nowrap'}}
@@ -77,10 +79,9 @@ export default function Navbar() {
                 {dept.name}
               </Link>
             ))}
-          </div>
 
-          {/* Right side icons */}
-          <div style={{display:'flex',alignItems:'center',gap:'20px'}}>
+            {/* Divider */}
+            <div style={{width:'1px',height:'20px',background:'rgba(245,237,224,0.15)'}} />
 
             {/* Search */}
             <button onClick={()=>setSearchOpen(!searchOpen)}
@@ -94,7 +95,7 @@ export default function Navbar() {
             {user ? (
               <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
                 <Link href={user.role==='admin'?'/admin/dashboard':'/account'}
-                  style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',letterSpacing:'0.5px',transition:'color 0.15s'}}
+                  style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',transition:'color 0.15s'}}
                   onMouseEnter={e=>e.target.style.color='#b8966a'}
                   onMouseLeave={e=>e.target.style.color='rgba(245,237,224,0.7)'}>
                   👤 {user.first_name}
