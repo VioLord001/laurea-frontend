@@ -22,6 +22,23 @@ function ProductsContent() {
       .catch(() => setLoading(false));
   }, [department, category]);
 
+  const addToBag = (e, product) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const cart = JSON.parse(localStorage.getItem('laurea_cart') || '[]');
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.primary_image,
+      department: product.department,
+      slug: product.slug
+    });
+    localStorage.setItem('laurea_cart', JSON.stringify(cart));
+    window.dispatchEvent(new Event('cartUpdated'));
+    alert('Added to bag!');
+  };
+
   const title = category || department || 'All Products';
 
   return (
@@ -65,7 +82,7 @@ function ProductsContent() {
         ) : (
           <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
             {products.map((product) => (
-              <div key={product.id} style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s'}}
+              <Link key={product.id} href={`/products/${product.slug}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s',display:'block'}}
                 onMouseEnter={e=>e.currentTarget.style.transform='translateY(-4px)'}
                 onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
                 <div style={{height:'260px',background:'linear-gradient(145deg,#f5ede0,#e8ddd0)',display:'flex',alignItems:'center',justifyContent:'center',position:'relative',overflow:'hidden'}}>
@@ -81,6 +98,10 @@ function ProductsContent() {
                       {product.badge}
                     </span>
                   )}
+                  <div style={{position:'absolute',inset:0,background:'rgba(28,18,8,0)',transition:'background 0.2s'}}
+                    onMouseEnter={e=>e.currentTarget.style.background='rgba(28,18,8,0.1)'}
+                    onMouseLeave={e=>e.currentTarget.style.background='rgba(28,18,8,0)'}>
+                  </div>
                 </div>
                 <div style={{padding:'14px'}}>
                   <p style={{fontSize:'9px',color:'#b8966a',textTransform:'uppercase',letterSpacing:'1px',marginBottom:'4px'}}>{product.department}</p>
@@ -89,11 +110,11 @@ function ProductsContent() {
                     <span style={{fontSize:'16px',fontWeight:'600',color:'#1c1208'}}>${parseFloat(product.price).toFixed(2)}</span>
                     {product.compare_price && <span style={{fontSize:'12px',color:'#8a7a6a',textDecoration:'line-through'}}>${parseFloat(product.compare_price).toFixed(2)}</span>}
                   </div>
-                  <button style={{width:'100%',background:'#1c1208',color:'#f5ede0',border:'none',padding:'10px',fontSize:'11px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'4px'}}>
+                  <button onClick={(e)=>addToBag(e,product)} style={{width:'100%',background:'#1c1208',color:'#f5ede0',border:'none',padding:'10px',fontSize:'11px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'4px'}}>
                     Add to bag
                   </button>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
