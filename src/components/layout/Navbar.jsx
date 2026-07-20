@@ -59,16 +59,16 @@ export default function Navbar() {
 
       {/* Main navbar */}
       <nav style={{background:'#1c1208',position:'sticky',top:0,zIndex:1000,borderBottom:'1px solid rgba(245,237,224,0.1)'}}>
-        <div style={{maxWidth:'1400px',margin:'0 auto',padding:'0 2rem',display:'flex',alignItems:'center',justifyContent:'space-between',height:'60px'}}>
+        <div style={{width:'100%',padding:'0',display:'flex',alignItems:'center',justifyContent:'space-between',height:'60px'}}>
 
-          {/* Logo — left side only */}
-          <Link href="/" style={{textDecoration:'none',flexShrink:0}}>
+          {/* Logo — flush left edge */}
+          <Link href="/" style={{textDecoration:'none',flexShrink:0,paddingLeft:'1.5rem'}}>
             <div style={{color:'#f5ede0',fontSize:'15px',fontWeight:'600',letterSpacing:'4px',textTransform:'uppercase',lineHeight:'1'}}>Laurea</div>
             <div style={{color:'#b8966a',fontSize:'7px',letterSpacing:'4px',textTransform:'uppercase',marginTop:'2px'}}>Fashion House</div>
           </Link>
 
-          {/* Everything on the right */}
-          <div style={{display:'flex',alignItems:'center',gap:'20px'}}>
+          {/* Everything flush right edge */}
+          <div style={{display:'flex',alignItems:'center',gap:'18px',paddingRight:'1.5rem'}}>
 
             {/* Department links */}
             {departments.map(dept => (
@@ -81,11 +81,11 @@ export default function Navbar() {
             ))}
 
             {/* Divider */}
-            <div style={{width:'1px',height:'20px',background:'rgba(245,237,224,0.15)'}} />
+            <div style={{width:'1px',height:'20px',background:'rgba(245,237,224,0.15)',flexShrink:0}} />
 
             {/* Search */}
             <button onClick={()=>setSearchOpen(!searchOpen)}
-              style={{background:'none',border:'none',cursor:'pointer',color:'rgba(245,237,224,0.7)',fontSize:'18px',padding:'4px',transition:'color 0.15s'}}
+              style={{background:'none',border:'none',cursor:'pointer',color:'rgba(245,237,224,0.7)',fontSize:'18px',padding:'4px',transition:'color 0.15s',flexShrink:0}}
               onMouseEnter={e=>e.currentTarget.style.color='#b8966a'}
               onMouseLeave={e=>e.currentTarget.style.color='rgba(245,237,224,0.7)'}>
               🔍
@@ -93,21 +93,21 @@ export default function Navbar() {
 
             {/* Account */}
             {user ? (
-              <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'10px',flexShrink:0}}>
                 <Link href={user.role==='admin'?'/admin/dashboard':'/account'}
-                  style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',transition:'color 0.15s'}}
+                  style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',transition:'color 0.15s',whiteSpace:'nowrap'}}
                   onMouseEnter={e=>e.target.style.color='#b8966a'}
                   onMouseLeave={e=>e.target.style.color='rgba(245,237,224,0.7)'}>
                   👤 {user.first_name}
                 </Link>
                 <button onClick={handleLogout}
-                  style={{background:'none',border:'none',fontSize:'11px',color:'rgba(245,237,224,0.4)',cursor:'pointer',textDecoration:'underline'}}>
+                  style={{background:'none',border:'none',fontSize:'11px',color:'rgba(245,237,224,0.4)',cursor:'pointer',textDecoration:'underline',whiteSpace:'nowrap'}}>
                   Logout
                 </button>
               </div>
             ) : (
               <Link href="/auth/login"
-                style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',letterSpacing:'1px',textTransform:'uppercase',transition:'color 0.15s'}}
+                style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',letterSpacing:'1px',textTransform:'uppercase',transition:'color 0.15s',whiteSpace:'nowrap',flexShrink:0}}
                 onMouseEnter={e=>e.target.style.color='#b8966a'}
                 onMouseLeave={e=>e.target.style.color='rgba(245,237,224,0.7)'}>
                 👤 Login
@@ -115,7 +115,7 @@ export default function Navbar() {
             )}
 
             {/* Cart button */}
-            <Link href="/cart" style={{textDecoration:'none',position:'relative',display:'flex',alignItems:'center',gap:'8px',background:'#b8966a',color:'#1c1208',padding:'10px 22px',borderRadius:'6px',fontSize:'14px',fontWeight:'700',letterSpacing:'1px',textTransform:'uppercase',transition:'background 0.15s'}}
+            <Link href="/cart" style={{textDecoration:'none',position:'relative',display:'flex',alignItems:'center',gap:'8px',background:'#b8966a',color:'#1c1208',padding:'10px 22px',borderRadius:'6px',fontSize:'14px',fontWeight:'700',letterSpacing:'1px',textTransform:'uppercase',transition:'background 0.15s',flexShrink:0}}
               onMouseEnter={e=>e.currentTarget.style.background='#a07858'}
               onMouseLeave={e=>e.currentTarget.style.background='#b8966a'}>
               🛒 Bag
