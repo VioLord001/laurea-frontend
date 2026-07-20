@@ -14,6 +14,7 @@ function ProductContent() {
     bust:'', waist:'', hips:'', height:'', weight:'', unit:'cm'
   });
   const [added, setAdded] = useState(false);
+  const [activePhoto, setActivePhoto] = useState(0);
   const api = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
@@ -26,6 +27,18 @@ function ProductContent() {
   }, [params.slug]);
 
   const handleAddToBag = () => {
+    const cart = JSON.parse(localStorage.getItem('laurea_cart') || '[]');
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.primary_image,
+      size: selectedSize,
+      color: selectedColor,
+      department: product.department
+    });
+    localStorage.setItem('laurea_cart', JSON.stringify(cart));
+    window.dispatchEvent(new Event('cartUpdated'));
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -46,6 +59,12 @@ function ProductContent() {
     </div>
   );
 
+  const allImages = product.images && product.images.length > 0
+    ? product.images.map(img => img.url)
+    : product.primary_image
+    ? [product.primary_image]
+    : [];
+
   const sizes = product.tags || [];
   const discount = product.compare_price ? Math.round((1 - product.price / product.compare_price) * 100) : null;
   const inp = {width:'100%',border:'1px solid #e0d8cc',padding:'10px 12px',fontSize:'13px',color:'#1c1208',outline:'none',borderRadius:'6px',background:'#faf8f5'};
@@ -61,24 +80,63 @@ function ProductContent() {
           <span>›</span>
           <span style={{color:'#1c1208'}}>{product.name}</span>
         </nav>
+
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'3rem',background:'#fff',borderRadius:'16px',overflow:'hidden',border:'1px solid #e0d8cc'}}>
-          <div style={{background:'linear-gradient(145deg,#f5ede0,#e8ddd0)',minHeight:'500px',display:'flex',alignItems:'center',justifyContent:'center',position:'relative'}}>
-            {product.primary_image ? (
-              <img src={product.primary_image} alt={product.name} style={{width:'100%',height:'100%',objectFit:'cover',minHeight:'500px'}} />
-            ) : (
-              <span style={{fontSize:'96px'}}>
-                {product.department==='women'?'👗':product.department==='men'?'👔':product.department==='kids'?'🧒':product.department==='bags'?'👜':product.department==='jewelry'?'💍':product.department==='shoes'?'👟':'🛍️'}
-              </span>
+
+          {/* Left — Photo Gallery */}
+          <div style={{display:'flex',gap:'12px',padding:'1rem'}}>
+
+            {/* Thumbnails */}
+            {allImages.length > 1 && (
+              <div style={{display:'flex',flexDirection:'column',gap:'8px',width:'70px',flexShrink:0}}>
+                {allImages.map((img, index) => (
+                  <div key={index} onClick={()=>setActivePhoto(index)}
+                    style={{width:'70px',height:'70px',borderRadius:'6px',overflow:'hidden',cursor:'pointer',border:`2px solid ${activePhoto===index?'#b8966a':'#e0d8cc'}`,flexShrink:0,transition:'border 0.15s'}}>
+                    <img src={img} alt={`Photo ${index+1}`} style={{width:'100%',height:'100%',objectFit:'cover'}} />
+                  </div>
+                ))}
+              </div>
             )}
-            {product.badge && (
-              <span style={{position:'absolute',top:'16px',left:'16px',background:product.badge==='sale'?'#b8966a':'#1c1208',color:'#fff',fontSize:'10px',fontWeight:'600',padding:'4px 10px',textTransform:'uppercase',letterSpacing:'1px',borderRadius:'3px'}}>
-                {product.badge}
-              </span>
-            )}
-          </div>
+
+            {/* Main photo */}
+            <div style={{flex:1,position:'relative',borderRadius:'10px',overflow:'hidden',minHeight:'500px',background:'linear-gradient(145deg,#f5ede0,#e8ddd0)',display:'flex',alignItems:'center',justifyContent:'center'}}>
+              {allImages.length > 0 ? (
+                <img src={allImages[activePhoto]} alt={product.name} style={{width:'100%',height:'100%',objectFit:'cover',minHeight:'500px'}} />
+              ) : (
+                <span style={{fontSize:'96px'}}>
+                  {product.department==='women'?'👗':product.department==='men'?'👔':product.department==='kids'?'🧒':product.department==='bags'?'👜':product.department==='jewelry'?'💍':product.department==='shoes'?'👟':'🛍️'}
+                </span>
+              )}
+              {product.badge && (
+                <span style={{position:'absolute',top:'16px',left:'16px',background:product.badge==='sale'?'#b8966a':'#1c1208',color:'#fff',fontSize:'10px',fontWeight:'600',padding:'4px 10px',textTransform:'uppercase',letterSpacing:'1px',borderRadius:'3px'}}>
+                  {product.badge}
+                </span>
+              )}
+              {allImages.length > 1 && (
+                <>
+                  <button onClick={()=>setActivePhoto(p=>p>0?p-1:allImages.length-1)}
+                    style={{position:'absolute',left:'8px',top:'50%',transform:'translateY(-50%)',background:'rgba(255,255,255,0.9)',border:'none',width:'32px',height:'32px',borderRadius:'50%',cursor:'pointer',fontSize:'14px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                    ‹
+                  </button>
+                  <button onClick={()=>setActivePhoto(p=>p<allImages.length-1?p+1:0)}
+                    style={{position:'absolute',right:'8px',top:'50%',transform:'translateY(-50%)',background:'rgba(255,255,255,0.9)',border:'none',width:'32px',height:'32px',borderRadius:'50%',cursor:'pointer',fontSize:'14px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                    ›
+                  </button>
+                  <div style={{position:'absolute',bottom:'12px',left:'50%',transform:'translateX(-50%)',display:'flex',gap:'6px'}}>
+                    {allImages.map((_,i) => (
+                      <div key={i} onClick={()=>setActivePhoto(i)}
+                        style={{width:'6px',height:'6px',borderRadius:'50%',background:activePhoto===i?'#b8966a':'rgba(255,255,255,0.6)',cursor:'pointer',transition:'background 0.15s'}}>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>{/* Right — Details */}
           <div style={{padding:'2rem'}}>
             <p style={{fontSize:'10px',color:'#b8966a',textTransform:'uppercase',letterSpacing:'2px',marginBottom:'8px'}}>{product.department} · {product.category_name}</p>
             <h1 style={{fontSize:'24px',fontWeight:'400',color:'#1c1208',marginBottom:'12px',lineHeight:'1.3'}}>{product.name}</h1>
+
             <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'20px'}}>
               <span style={{fontSize:'28px',fontWeight:'600',color:'#1c1208'}}>${parseFloat(product.price).toFixed(2)}</span>
               {product.compare_price && (
@@ -88,9 +146,11 @@ function ProductContent() {
                 </>
               )}
             </div>
+
             {product.description && (
               <p style={{fontSize:'13px',color:'#8a7a6a',lineHeight:'1.8',marginBottom:'20px'}}>{product.description}</p>
             )}
+
             {sizes.length > 0 && (
               <div style={{marginBottom:'20px'}}>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'8px'}}>
@@ -109,7 +169,9 @@ function ProductContent() {
                   ))}
                 </div>
               </div>
-            )}{showMeasurements && (
+            )}
+
+            {showMeasurements && (
               <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'10px',padding:'1.25rem',marginBottom:'20px'}}>
                 <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'12px'}}>
                   <h3 style={{fontSize:'13px',fontWeight:'600',color:'#1c1208'}}>📏 Enter Your Measurements</h3>
@@ -139,10 +201,11 @@ function ProductContent() {
                   ))}
                 </div>
                 <p style={{fontSize:'11px',color:'#8a7a6a',marginTop:'10px',lineHeight:'1.6'}}>
-                  Your measurements help us recommend the best size. Based on standard sizing we recommend size: <strong style={{color:'#b8966a'}}>{selectedSize || 'please select a size above'}</strong>
+                  Your measurements help us recommend the best size. Currently selected: <strong style={{color:'#b8966a'}}>{selectedSize || 'none'}</strong>
                 </p>
               </div>
             )}
+
             {product.colors && product.colors.length > 0 && (
               <div style={{marginBottom:'20px'}}>
                 <label style={lbl}>Select Color</label>
@@ -156,13 +219,16 @@ function ProductContent() {
                 </div>
               </div>
             )}
+
             <button onClick={handleAddToBag}
               style={{width:'100%',background:added?'#b8966a':'#1c1208',color:added?'#1c1208':'#f5ede0',border:'none',padding:'16px',fontSize:'13px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer',borderRadius:'8px',marginBottom:'10px',transition:'all 0.2s'}}>
               {added ? '✓ Added to bag!' : 'Add to bag'}
             </button>
+
             <button style={{width:'100%',background:'transparent',color:'#1c1208',border:'1.5px solid #1c1208',padding:'14px',fontSize:'13px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer',borderRadius:'8px',marginBottom:'20px'}}>
               ♡ Add to wishlist
             </button>
+
             <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
               {[
                 {icon:'🚚',text:'Free delivery on orders over $30'},
