@@ -9,7 +9,15 @@ function ProductsContent() {
   const category = searchParams.get('category');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const api = process.env.NEXT_PUBLIC_API_URL;
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -43,7 +51,7 @@ function ProductsContent() {
 
   return (
     <div style={{minHeight:'100vh',background:'#faf8f5'}}>
-      <div style={{background:'#1c1208',padding:'2rem 3rem'}}>
+      <div style={{background:'#1c1208',padding:isMobile?'1.5rem 1rem':'2rem 3rem'}}>
         <nav style={{fontSize:'11px',color:'rgba(245,237,224,0.5)',marginBottom:'8px'}}>
           <Link href="/" style={{color:'rgba(245,237,224,0.5)',textDecoration:'none'}}>Home</Link>
           <span style={{margin:'0 8px'}}>›</span>
@@ -55,16 +63,16 @@ function ProductsContent() {
           )}
           <span style={{color:'#b8966a',textTransform:'capitalize'}}>{title}</span>
         </nav>
-        <h1 style={{fontSize:'28px',fontWeight:'300',color:'#f5ede0',textTransform:'capitalize'}}>{title}</h1>
+        <h1 style={{fontSize:isMobile?'20px':'28px',fontWeight:'300',color:'#f5ede0',textTransform:'capitalize'}}>{title}</h1>
         <p style={{fontSize:'13px',color:'rgba(245,237,224,0.5)',marginTop:'4px'}}>{loading ? 'Loading...' : `${products.length} products`}</p>
       </div>
 
-      <div style={{maxWidth:'1200px',margin:'0 auto',padding:'3rem 2rem'}}>
+      <div style={{maxWidth:'1200px',margin:'0 auto',padding:isMobile?'1rem':'3rem 2rem'}}>
         {loading ? (
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
+          <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(4,1fr)',gap:isMobile?'10px':'16px'}}>
             {Array.from({length:8}).map((_,i) => (
               <div key={i} style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden'}}>
-                <div style={{height:'260px',background:'#f0ece8'}} />
+                <div style={{height:isMobile?'180px':'260px',background:'#f0ece8'}} />
                 <div style={{padding:'12px'}}>
                   <div style={{height:'12px',background:'#f0ece8',borderRadius:'4px',marginBottom:'8px'}} />
                   <div style={{height:'10px',background:'#f0ece8',borderRadius:'4px',width:'60%'}} />
@@ -73,23 +81,23 @@ function ProductsContent() {
             ))}
           </div>
         ) : products.length === 0 ? (
-          <div style={{textAlign:'center',padding:'4rem 2rem'}}>
+          <div style={{textAlign:'center',padding:'4rem 1rem'}}>
             <div style={{fontSize:'64px',marginBottom:'1rem'}}>🛍️</div>
             <h2 style={{fontSize:'20px',fontWeight:'300',color:'#1c1208',marginBottom:'8px'}}>No products yet</h2>
             <p style={{fontSize:'13px',color:'#8a7a6a',marginBottom:'2rem'}}>Products will appear here once added from the admin panel</p>
             <Link href="/" style={{background:'#1c1208',color:'#f5ede0',padding:'12px 24px',textDecoration:'none',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',borderRadius:'6px'}}>Continue shopping</Link>
           </div>
         ) : (
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'16px'}}>
+          <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(4,1fr)',gap:isMobile?'10px':'16px'}}>
             {products.map((product) => (
               <Link key={product.id} href={`/products/${product.slug}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',cursor:'pointer',transition:'transform 0.2s',display:'block'}}
                 onMouseEnter={e=>e.currentTarget.style.transform='translateY(-4px)'}
                 onMouseLeave={e=>e.currentTarget.style.transform='translateY(0)'}>
-                <div style={{height:'260px',background:'linear-gradient(145deg,#f5ede0,#e8ddd0)',display:'flex',alignItems:'center',justifyContent:'center',position:'relative',overflow:'hidden'}}>
+                <div style={{height:isMobile?'180px':'260px',background:'linear-gradient(145deg,#f5ede0,#e8ddd0)',display:'flex',alignItems:'center',justifyContent:'center',position:'relative',overflow:'hidden'}}>
                   {product.primary_image ? (
                     <img src={product.primary_image} alt={product.name} style={{width:'100%',height:'100%',objectFit:'cover'}} />
                   ) : (
-                    <span style={{fontSize:'64px'}}>
+                    <span style={{fontSize:isMobile?'40px':'64px'}}>
                       {product.department==='women'?'👗':product.department==='men'?'👔':product.department==='kids'?'🧒':product.department==='bags'?'👜':product.department==='jewelry'?'💍':product.department==='shoes'?'👟':product.department==='beauty'?'💄':'🛍️'}
                     </span>
                   )}
@@ -98,19 +106,15 @@ function ProductsContent() {
                       {product.badge}
                     </span>
                   )}
-                  <div style={{position:'absolute',inset:0,background:'rgba(28,18,8,0)',transition:'background 0.2s'}}
-                    onMouseEnter={e=>e.currentTarget.style.background='rgba(28,18,8,0.1)'}
-                    onMouseLeave={e=>e.currentTarget.style.background='rgba(28,18,8,0)'}>
-                  </div>
                 </div>
-                <div style={{padding:'14px'}}>
+                <div style={{padding:isMobile?'10px':'14px'}}>
                   <p style={{fontSize:'9px',color:'#b8966a',textTransform:'uppercase',letterSpacing:'1px',marginBottom:'4px'}}>{product.department}</p>
-                  <p style={{fontSize:'13px',fontWeight:'500',color:'#1c1208',marginBottom:'8px',lineHeight:'1.4'}}>{product.name}</p>
-                  <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'12px'}}>
-                    <span style={{fontSize:'16px',fontWeight:'600',color:'#1c1208'}}>${parseFloat(product.price).toFixed(2)}</span>
-                    {product.compare_price && <span style={{fontSize:'12px',color:'#8a7a6a',textDecoration:'line-through'}}>${parseFloat(product.compare_price).toFixed(2)}</span>}
+                  <p style={{fontSize:isMobile?'12px':'13px',fontWeight:'500',color:'#1c1208',marginBottom:'6px',lineHeight:'1.4'}}>{product.name}</p>
+                  <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:isMobile?'8px':'12px'}}>
+                    <span style={{fontSize:isMobile?'14px':'16px',fontWeight:'600',color:'#1c1208'}}>${parseFloat(product.price).toFixed(2)}</span>
+                    {product.compare_price && <span style={{fontSize:'11px',color:'#8a7a6a',textDecoration:'line-through'}}>${parseFloat(product.compare_price).toFixed(2)}</span>}
                   </div>
-                  <button onClick={(e)=>addToBag(e,product)} style={{width:'100%',background:'#1c1208',color:'#f5ede0',border:'none',padding:'10px',fontSize:'11px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'4px'}}>
+                  <button onClick={(e)=>addToBag(e,product)} style={{width:'100%',background:'#1c1208',color:'#f5ede0',border:'none',padding:isMobile?'8px':'10px',fontSize:'11px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'4px'}}>
                     Add to bag
                   </button>
                 </div>
