@@ -11,7 +11,7 @@ const CATS = [
   { name:'Activewear', photo:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80', styles:['Gym shorts','Training tops','Tracksuits'] },
   { name:'Swimwear', photo:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80', styles:['Swim shorts','Board shorts','Swim trunks'] },
   { name:'Sleepwear', photo:'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&q=80', styles:['Pyjama sets','Robes','Loungewear'] },
-  { name:'Knitwear', photo:'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=80', styles:['Jumpers','Cardigans','Turtlenecks'] },
+  { name:'Knitwear', photo:'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=400&q=80', styles:['Jumpers','Cardigans','Turtlenecks'] },
 ];
 
 export default function MenPage() {
