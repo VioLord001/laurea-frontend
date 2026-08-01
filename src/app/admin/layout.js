@@ -4,12 +4,12 @@ import { usePathname } from 'next/navigation';
 
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
-
   const navLinks = [
     { href:'/admin/dashboard', label:'📊 Dashboard' },
     { href:'/admin/products', label:'📦 Products' },
     { href:'/admin/orders', label:'🛒 Orders' },
     { href:'/admin/users', label:'👥 Users' },
+    { href:'/admin/employees', label:'🧑‍💼 Employees' },
     { href:'/admin/customers', label:'🛍 Customers' },
     { href:'/admin/activity', label:'🔔 Login Activity' },
     { href:'/admin/payments', label:'💳 Payments' },
@@ -24,7 +24,8 @@ export default function AdminLayout({ children }) {
         </div>
         <nav style={{padding:'1rem 0',flex:1}}>
           {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} style={{display:'block',padding:'12px 1.5rem',color:pathname===link.href?'#b8966a':'rgba(245,237,224,0.6)',textDecoration:'none',fontSize:'13px',background:pathname===link.href?'rgba(184,150,106,0.1)':'transparent',borderLeft:pathname===link.href?'3px solid #b8966a':'3px solid transparent',transition:'all 0.15s'}}>
+            <Link key={link.href} href={link.href}
+              style={{display:'block',padding:'12px 1.5rem',color:pathname===link.href?'#b8966a':'rgba(245,237,224,0.6)',textDecoration:'none',fontSize:'13px',background:pathname===link.href?'rgba(184,150,106,0.1)':'transparent',borderLeft:pathname===link.href?'3px solid #b8966a':'3px solid transparent',transition:'all 0.15s'}}>
               {link.label}
             </Link>
           ))}
