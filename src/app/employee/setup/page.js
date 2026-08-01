@@ -1,12 +1,10 @@
 'use client';
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 const COUNTRIES = ['Nigeria','Ghana','Kenya','South Africa','United Kingdom','United States','Canada','Australia','Brazil','Mexico','India','Germany','France','Italy','Spain','Netherlands','Portugal','Other'];
 const DEPARTMENTS = ['Sales','Customer Support','Marketing','Operations','Logistics','Finance','Human Resources','Technology','Design','Management'];
 const POSITIONS = ['Sales Agent','Customer Support Agent','Marketing Officer','Operations Manager','Logistics Coordinator','Finance Officer','HR Officer','Software Developer','Graphic Designer','Store Manager','Brand Ambassador','Social Media Manager','Delivery Agent','Intern'];
-
 const STEPS = ['Personal Info','Identity','Contact','Employment','Emergency','Account Setup'];
 
 export default function EmployeeSetupPage() {
@@ -40,10 +38,11 @@ export default function EmployeeSetupPage() {
   const idBackRef = useRef();
 
   useEffect(() => {
-    const stored = localStorage.getItem('laurea_employee');
-    if (!stored) { router.push('/employee/login'); return; }
+    const stored = localStorage.getItem('laurea_user');
+    if (!stored) { router.push('/auth/login'); return; }
     const emp = JSON.parse(stored);
-    if (emp.profile_completed) { router.push('/employee/dashboard'); return; }
+    if (emp.role !== 'employee') { router.push('/'); return; }
+    if (emp.employee_profile_completed) { router.push('/employee/dashboard'); return; }
     setEmployee(emp);
     setForm(f => ({ ...f, fullName: `${emp.first_name} ${emp.last_name}` }));
   }, []);
@@ -85,7 +84,7 @@ export default function EmployeeSetupPage() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const token = localStorage.getItem('laurea_employee_token');
+      const token = localStorage.getItem('laurea_token');
       const formData = new FormData();
       Object.keys(form).forEach(k => formData.append(k, form[k]));
       if (passportPhoto) formData.append('passportPhoto', passportPhoto);
@@ -98,8 +97,8 @@ export default function EmployeeSetupPage() {
       });
       const data = await res.json();
       if (data.success) {
-        const updated = { ...employee, profile_completed: true };
-        localStorage.setItem('laurea_employee', JSON.stringify(updated));
+        const updated = { ...employee, employee_profile_completed: true };
+        localStorage.setItem('laurea_user', JSON.stringify(updated));
         router.push('/employee/dashboard');
       } else {
         setError(data.message || 'Failed to save. Please try again.');
@@ -126,7 +125,6 @@ export default function EmployeeSetupPage() {
           <div style={{color:'#b8966a',fontSize:'7px',letterSpacing:'3px',textTransform:'uppercase'}}>Fashion House — Employee Setup</div>
         </div>
 
-        {/* Progress */}
         <div style={{marginBottom:'1.5rem'}}>
           <div style={{display:'flex',justifyContent:'space-between',marginBottom:'6px'}}>
             <span style={{fontSize:'11px',color:'rgba(245,237,224,0.6)'}}>{STEPS[step-1]}</span>
@@ -141,7 +139,6 @@ export default function EmployeeSetupPage() {
 
           {error && <div style={{background:'#fff0f0',border:'1px solid #ffcccc',borderRadius:'8px',padding:'10px 14px',marginBottom:'1rem',fontSize:'12px',color:'#cc0000'}}>⚠️ {error}</div>}
 
-          {/* Step 1 — Personal Info */}
           {step === 1 && (
             <>
               <h2 style={{fontSize:'17px',fontWeight:'600',color:'#1c1208',marginBottom:'1.25rem'}}>Personal Information</h2>
@@ -198,7 +195,6 @@ export default function EmployeeSetupPage() {
             </>
           )}
 
-          {/* Step 2 — Identity */}
           {step === 2 && (
             <>
               <h2 style={{fontSize:'17px',fontWeight:'600',color:'#1c1208',marginBottom:'1.25rem'}}>Identity Verification</h2>
@@ -228,7 +224,6 @@ export default function EmployeeSetupPage() {
             </>
           )}
 
-          {/* Step 3 — Contact */}
           {step === 3 && (
             <>
               <h2 style={{fontSize:'17px',fontWeight:'600',color:'#1c1208',marginBottom:'1.25rem'}}>Contact Information</h2>
@@ -243,13 +238,9 @@ export default function EmployeeSetupPage() {
             </>
           )}
 
-          {/* Step 4 — Employment */}
           {step === 4 && (
             <>
               <h2 style={{fontSize:'17px',fontWeight:'600',color:'#1c1208',marginBottom:'1.25rem'}}>Employment Information</h2>
-              <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'10px 14px',marginBottom:'14px',fontSize:'11px',color:'#8a7a6a'}}>
-                🪪 <strong>Employee ID:</strong> <span style={{color:'#b8966a',fontWeight:'600'}}>{employee?.employee_id}</span>
-              </div>
               <label style={lbl}>Job Position *</label>
               <select style={inp} value={form.jobPosition} onChange={e=>set('jobPosition',e.target.value)}>
                 <option value="">Select position</option>
@@ -281,7 +272,6 @@ export default function EmployeeSetupPage() {
             </>
           )}
 
-          {/* Step 5 — Emergency Contact */}
           {step === 5 && (
             <>
               <h2 style={{fontSize:'17px',fontWeight:'600',color:'#1c1208',marginBottom:'1.25rem'}}>Emergency Contact</h2>
@@ -310,7 +300,6 @@ export default function EmployeeSetupPage() {
             </>
           )}
 
-          {/* Step 6 — Account Setup */}
           {step === 6 && (
             <>
               <h2 style={{fontSize:'17px',fontWeight:'600',color:'#1c1208',marginBottom:'1.25rem'}}>Set Your Password</h2>
@@ -320,7 +309,7 @@ export default function EmployeeSetupPage() {
               <label style={lbl}>Confirm New Password</label>
               <input style={inp} type="password" value={form.confirmPassword} onChange={e=>set('confirmPassword',e.target.value)} placeholder="Repeat password" />
               <div style={{background:'#fdf6ec',border:'1px solid #f0c040',borderRadius:'8px',padding:'12px',fontSize:'12px',color:'#8a7a6a',lineHeight:'1.7',marginBottom:'12px'}}>
-                ✅ After submitting you will be taken to your employee dashboard where you can manage your tasks and bank details.
+                ✅ After submitting you will be taken to your employee dashboard.
               </div>
               <button onClick={handleSubmit} disabled={loading}
                 style={{width:'100%',background:'#b8966a',color:'#1c1208',border:'none',padding:'14px',fontSize:'13px',fontWeight:'700',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'8px',opacity:loading?0.7:1,boxSizing:'border-box'}}>
@@ -329,7 +318,6 @@ export default function EmployeeSetupPage() {
             </>
           )}
 
-          {/* Navigation */}
           {step > 1 && step < 6 && (
             <div style={{display:'flex',gap:'10px',marginTop:'1.25rem'}}>
               <button onClick={handleBack} style={{flex:1,background:'none',border:'1px solid #e0d8cc',padding:'12px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',color:'#8a7a6a'}}>← Back</button>

@@ -24,7 +24,17 @@ export default function LoginPage() {
       if (!data.success) throw new Error(data.message || 'Login failed');
       localStorage.setItem('laurea_token', data.token);
       localStorage.setItem('laurea_user', JSON.stringify(data.user));
-      router.push(data.user.role === 'admin' ? '/admin/dashboard' : '/');
+      if (data.user.role === 'admin') {
+        router.push('/admin/dashboard');
+      } else if (data.user.role === 'employee') {
+        if (data.user.employee_profile_completed) {
+          router.push('/employee/dashboard');
+        } else {
+          router.push('/employee/setup');
+        }
+      } else {
+        router.push('/');
+      }
     } catch (err) {
       setError(err.message || 'Login failed. Please check your details and try again.');
     }
@@ -83,7 +93,6 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:'16px',color:'#8a7a6a',padding:'4px'}}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? '🙈' : '👁️'}
                 </button>
