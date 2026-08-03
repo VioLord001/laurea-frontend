@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -15,6 +15,16 @@ export default function LoginPage() {
   const router = useRouter();
   const api = process.env.NEXT_PUBLIC_API_URL;
 
+  // Restore step and email if user switched apps
+  useEffect(() => {
+    const savedStep = localStorage.getItem('laurea_login_step');
+    const savedEmail = localStorage.getItem('laurea_login_email');
+    if (savedStep === 'verify' && savedEmail) {
+      setStep('verify');
+      setForm(f => ({ ...f, email: savedEmail }));
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -28,6 +38,8 @@ export default function LoginPage() {
       const data = await res.json();
       if (!data.success) throw new Error(data.message || 'Login failed');
       if (data.requires2FA) {
+        localStorage.setItem('laurea_login_step', 'verify');
+        localStorage.setItem('laurea_login_email', form.email);
         setStep('verify');
       }
     } catch (err) {
@@ -55,6 +67,11 @@ export default function LoginPage() {
     }
   };
 
+  const clearLoginStorage = () => {
+    localStorage.removeItem('laurea_login_step');
+    localStorage.removeItem('laurea_login_email');
+  };
+
   const handleVerify = async () => {
     const fullCode = code.join('');
     if (fullCode.length < 6) { setError('Please enter the complete 6-digit code.'); return; }
@@ -70,6 +87,7 @@ export default function LoginPage() {
       if (!data.success) throw new Error(data.message || 'Invalid code');
       localStorage.setItem('laurea_token', data.token);
       localStorage.setItem('laurea_user', JSON.stringify(data.user));
+      clearLoginStorage();
       if (data.user.role === 'admin') {
         router.push('/admin/dashboard');
       } else if (data.user.role === 'employee') {
@@ -190,6 +208,9 @@ export default function LoginPage() {
                   We sent a 6-digit code to<br/>
                   <strong style={{color:'#1c1208'}}>{form.email}</strong>
                 </p>
+                <div style={{background:'#fdf6ec',border:'1px solid #f0c040',borderRadius:'8px',padding:'10px',marginTop:'12px',fontSize:'12px',color:'#8a6000'}}>
+                  💡 Switch to your email app to get the code — this screen will stay when you come back!
+                </div>
               </div>
 
               {error && (
@@ -236,7 +257,12 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              <button onClick={()=>{ setStep('login'); setCode(['','','','','','']); setError(''); }}
+              <button onClick={()=>{
+                setStep('login');
+                setCode(['','','','','','']);
+                setError('');
+                clearLoginStorage();
+              }}
                 style={{width:'100%',background:'none',border:'1px solid #e0d8cc',color:'#8a7a6a',padding:'12px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',boxSizing:'border-box'}}>
                 ← Back to login
               </button>
