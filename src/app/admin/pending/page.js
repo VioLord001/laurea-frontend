@@ -47,7 +47,7 @@ export default function PendingEmployeesPage() {
     const data = await res.json();
     if (data.success) {
       setEmployees(employees.filter(e => e.id !== id));
-      setMessage(`❌ ${name} has been rejected. They will receive an email.`);
+      setMessage(`✅ ${name} has been rejected. They will receive an email.`);
       setRejecting(null);
       setReason('');
     } else {
@@ -113,7 +113,6 @@ export default function PendingEmployeesPage() {
                 </div>
               </div>
 
-              {/* Rejection reason form */}
               {rejecting === emp.id && (
                 <div style={{marginTop:'1rem',padding:'1rem',background:'#fff0f0',border:'1px solid #ffcccc',borderRadius:'8px'}}>
                   <p style={{fontSize:'13px',fontWeight:'600',color:'#cc0000',marginBottom:'8px'}}>Reason for rejection (will be sent to employee):</p>
