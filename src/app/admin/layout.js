@@ -10,6 +10,7 @@ export default function AdminLayout({ children }) {
     { href:'/admin/orders', label:'🛒 Orders' },
     { href:'/admin/users', label:'👥 Users' },
     { href:'/admin/employees', label:'🧑‍💼 Employees' },
+    { href:'/admin/pending', label:'⏳ Pending Approvals' },
     { href:'/admin/customers', label:'🛍 Customers' },
     { href:'/admin/activity', label:'🔔 Login Activity' },
     { href:'/admin/payments', label:'💳 Payments' },
