@@ -48,6 +48,21 @@ export default function AdminUsers() {
     setTimeout(() => setMessage(''), 4000);
   };
 
+  const forceLogout = async (id, name) => {
+    if (!confirm(`Force logout ${name}? They will be logged out immediately.`)) return;
+    const res = await fetch(`${api}/admin/users/${id}/force-logout`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' }
+    });
+    const data = await res.json();
+    if (data.success) {
+      setMessage(`✅ ${name} has been logged out successfully.`);
+    } else {
+      setMessage(`❌ ${data.message}`);
+    }
+    setTimeout(() => setMessage(''), 4000);
+  };
+
   const getRoleBadgeStyle = (role) => {
     const styles = {
       admin: { background:'#1c1208', color:'#b8966a' },
@@ -144,10 +159,16 @@ export default function AdminUsers() {
                   </td>
 
                   <td style={{padding:'12px 14px'}}>
-                    <button onClick={()=>toggleApprove(user.id, user.is_approved!==false)}
-                      style={{background:user.is_approved!==false?'#fff0f0':'#eaf3de',color:user.is_approved!==false?'#cc0000':'#3b6d11',border:`1px solid ${user.is_approved!==false?'#ffcccc':'#97c459'}`,padding:'5px 12px',fontSize:'11px',fontWeight:'600',cursor:'pointer',borderRadius:'4px',textTransform:'uppercase',whiteSpace:'nowrap'}}>
-                      {user.is_approved !== false ? 'Block' : 'Unblock'}
-                    </button>
+                    <div style={{display:'flex',gap:'6px',flexDirection:'column'}}>
+                      <button onClick={()=>toggleApprove(user.id, user.is_approved!==false)}
+                        style={{background:user.is_approved!==false?'#fff0f0':'#eaf3de',color:user.is_approved!==false?'#cc0000':'#3b6d11',border:`1px solid ${user.is_approved!==false?'#ffcccc':'#97c459'}`,padding:'5px 12px',fontSize:'11px',fontWeight:'600',cursor:'pointer',borderRadius:'4px',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+                        {user.is_approved !== false ? 'Block' : 'Unblock'}
+                      </button>
+                      <button onClick={()=>forceLogout(user.id, `${user.first_name} ${user.last_name}`)}
+                        style={{background:'#fff8e1',color:'#8a6000',border:'1px solid #f0c040',padding:'5px 12px',fontSize:'11px',fontWeight:'600',cursor:'pointer',borderRadius:'4px',textTransform:'uppercase',whiteSpace:'nowrap'}}>
+                        🚪 Force Logout
+                      </button>
+                    </div>
                   </td>
 
                 </tr>
