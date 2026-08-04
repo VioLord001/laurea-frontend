@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 
 const COUNTRIES = ['Nigeria','Ghana','Kenya','South Africa','United Kingdom','United States','Canada','Australia','Brazil','Mexico','India','Germany','France','Italy','Spain','Netherlands','Portugal','Other'];
 const DEPARTMENTS = ['Sales','Customer Support','Marketing','Operations','Logistics','Finance','Human Resources','Technology','Design','Management'];
-const POSITIONS = ['Sales Agent','Customer Support Agent','Marketing Officer','Operations Manager','Logistics Coordinator','Finance Officer','HR Officer','Software Developer','Graphic Designer','Store Manager','Brand Ambassador','Social Media Manager','Delivery Agent','Intern'];
+const POSITIONS = ['Managing Director','Director of Payment Agents','Payment Agent (Third Party Payment)','Receptionist'];
 const STEPS = ['Personal Info','Identity','Contact','Employment','Emergency','Account Setup'];
 
 export default function EmployeeSetupPage() {
