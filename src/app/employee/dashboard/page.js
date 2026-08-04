@@ -6,7 +6,7 @@ import Link from 'next/link';
 export default function EmployeeDashboardPage() {
   const [employee, setEmployee] = useState(null);
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [bankForm, setBankForm] = useState({ accountName:'', accountNumber:'', bankName:'', bankCode:'', country:'', swiftCode:'' });
+  const [bankForm, setBankForm] = useState({ accountName:'', accountNumber:'', bankName:'', bankCode:'', country:'', swiftCode:'', pix:'', cpf:'' });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const router = useRouter();
@@ -25,6 +25,13 @@ export default function EmployeeDashboardPage() {
     localStorage.removeItem('laurea_token');
     localStorage.removeItem('laurea_user');
     router.push('/employee/login');
+  };
+
+  const isBrazilian = () => {
+    if (!employee) return false;
+    const nat = (employee.nationality || '').toLowerCase();
+    const country = (employee.country_of_residence || '').toLowerCase();
+    return nat.includes('brazil') || nat.includes('brasil') || nat.includes('brazilian') || nat.includes('brasilei') || country.includes('brazil') || country.includes('brasil');
   };
 
   const handleSaveBank = async (e) => {
@@ -168,31 +175,73 @@ export default function EmployeeDashboardPage() {
             <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'4px'}}>Bank Details</h1>
             <p style={{fontSize:'13px',color:'#8a7a6a',marginBottom:'2rem'}}>Add your bank details to receive payments</p>
             {message && <div style={{background:message.includes('❌')?'#fff0f0':'#f0fff4',border:`1px solid ${message.includes('❌')?'#ffcccc':'#ccffcc'}`,borderRadius:'8px',padding:'12px 16px',marginBottom:'1rem',fontSize:'13px'}}>{message}</div>}
-            <div style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem'}}>
-              <form onSubmit={handleSaveBank}>
-                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+
+            {isBrazilian() ? (
+              <div style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem'}}>
+                <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'1.25rem',paddingBottom:'1rem',borderBottom:'1px solid #f0ece8'}}>
+                  <span style={{fontSize:'24px'}}>🇧🇷</span>
                   <div>
-                    <label style={lbl}>Account Name *</label>
-                    <input style={inp} value={bankForm.accountName} onChange={e=>setBankForm({...bankForm,accountName:e.target.value})} placeholder="Full name on account" required />
-                    <label style={lbl}>Account Number *</label>
-                    <input style={inp} value={bankForm.accountNumber} onChange={e=>setBankForm({...bankForm,accountNumber:e.target.value})} placeholder="0123456789" required />
-                    <label style={lbl}>Bank Name *</label>
-                    <input style={inp} value={bankForm.bankName} onChange={e=>setBankForm({...bankForm,bankName:e.target.value})} placeholder="e.g. Access Bank" required />
-                  </div>
-                  <div>
-                    <label style={lbl}>Bank Code</label>
-                    <input style={inp} value={bankForm.bankCode} onChange={e=>setBankForm({...bankForm,bankCode:e.target.value})} placeholder="e.g. 044" />
-                    <label style={lbl}>Country</label>
-                    <input style={inp} value={bankForm.country} onChange={e=>setBankForm({...bankForm,country:e.target.value})} placeholder="e.g. Nigeria" />
-                    <label style={lbl}>SWIFT Code</label>
-                    <input style={inp} value={bankForm.swiftCode} onChange={e=>setBankForm({...bankForm,swiftCode:e.target.value})} placeholder="International transfers" />
+                    <div style={{fontSize:'14px',fontWeight:'600',color:'#1c1208'}}>Dados Bancários Brasileiros</div>
+                    <div style={{fontSize:'12px',color:'#8a7a6a'}}>Brazilian Bank Details</div>
                   </div>
                 </div>
-                <button type="submit" disabled={saving} style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'13px 28px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px',opacity:saving?0.7:1}}>
-                  {saving?'Saving...':'Save Bank Details'}
-                </button>
-              </form>
-            </div>
+                <form onSubmit={handleSaveBank}>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+                    <div>
+                      <label style={lbl}>Nome Completo / Full Name *</label>
+                      <input style={inp} value={bankForm.accountName} onChange={e=>setBankForm({...bankForm,accountName:e.target.value})} placeholder="Nome completo" required />
+                      <label style={lbl}>Nome do Banco / Bank Name *</label>
+                      <input style={inp} value={bankForm.bankName} onChange={e=>setBankForm({...bankForm,bankName:e.target.value})} placeholder="ex: Banco do Brasil, Itaú, Bradesco, Nubank" required />
+                      <label style={lbl}>Número da Agência / Agency Number *</label>
+                      <input style={inp} value={bankForm.bankCode} onChange={e=>setBankForm({...bankForm,bankCode:e.target.value})} placeholder="ex: 0001" required />
+                    </div>
+                    <div>
+                      <label style={lbl}>Número da Conta / Account Number *</label>
+                      <input style={inp} value={bankForm.accountNumber} onChange={e=>setBankForm({...bankForm,accountNumber:e.target.value})} placeholder="ex: 12345-6" required />
+                      <label style={lbl}>Chave PIX / PIX Key *</label>
+                      <input style={inp} value={bankForm.pix} onChange={e=>setBankForm({...bankForm,pix:e.target.value})} placeholder="CPF, e-mail, telefone ou chave aleatória" required />
+                      <label style={lbl}>CPF *</label>
+                      <input style={inp} value={bankForm.cpf} onChange={e=>setBankForm({...bankForm,cpf:e.target.value})} placeholder="ex: 000.000.000-00" required />
+                    </div>
+                  </div>
+                  <div style={{background:'#fdf6ec',border:'1px solid #f0c040',borderRadius:'8px',padding:'12px',fontSize:'12px',color:'#8a7a6a',marginBottom:'1rem',lineHeight:'1.7'}}>
+                    🔒 Seus dados bancários estão seguros e criptografados. Os pagamentos serão enviados diretamente para esta conta.
+                  </div>
+                  <button type="submit" disabled={saving} style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'13px 28px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px',opacity:saving?0.7:1}}>
+                    {saving?'Salvando...':'Salvar Dados Bancários'}
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <div style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem'}}>
+                <form onSubmit={handleSaveBank}>
+                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+                    <div>
+                      <label style={lbl}>Account Name *</label>
+                      <input style={inp} value={bankForm.accountName} onChange={e=>setBankForm({...bankForm,accountName:e.target.value})} placeholder="Full name on account" required />
+                      <label style={lbl}>Account Number *</label>
+                      <input style={inp} value={bankForm.accountNumber} onChange={e=>setBankForm({...bankForm,accountNumber:e.target.value})} placeholder="0123456789" required />
+                      <label style={lbl}>Bank Name *</label>
+                      <input style={inp} value={bankForm.bankName} onChange={e=>setBankForm({...bankForm,bankName:e.target.value})} placeholder="e.g. Access Bank" required />
+                    </div>
+                    <div>
+                      <label style={lbl}>Bank Code</label>
+                      <input style={inp} value={bankForm.bankCode} onChange={e=>setBankForm({...bankForm,bankCode:e.target.value})} placeholder="e.g. 044" />
+                      <label style={lbl}>Country</label>
+                      <input style={inp} value={bankForm.country} onChange={e=>setBankForm({...bankForm,country:e.target.value})} placeholder="e.g. Nigeria" />
+                      <label style={lbl}>SWIFT Code</label>
+                      <input style={inp} value={bankForm.swiftCode} onChange={e=>setBankForm({...bankForm,swiftCode:e.target.value})} placeholder="International transfers" />
+                    </div>
+                  </div>
+                  <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'8px',padding:'12px',fontSize:'12px',color:'#8a7a6a',marginBottom:'1rem',lineHeight:'1.7'}}>
+                    🔒 Your bank details are encrypted and secure. Payments will be sent directly to this account.
+                  </div>
+                  <button type="submit" disabled={saving} style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'13px 28px',fontSize:'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px',opacity:saving?0.7:1}}>
+                    {saving?'Saving...':'Save Bank Details'}
+                  </button>
+                </form>
+              </div>
+            )}
           </div>
         )}
 
