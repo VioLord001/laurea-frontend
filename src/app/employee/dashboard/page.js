@@ -60,6 +60,34 @@ export default function EmployeeDashboardPage() {
     </div>
   );
 
+  // Show pending approval screen
+  if (employee.is_approved === false) {
+    return (
+      <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#1c1208 0%,#2d1f0a 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem'}}>
+        <div style={{background:'#fff',borderRadius:'16px',padding:'2.5rem',maxWidth:'480px',width:'100%',textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
+          <div style={{fontSize:'64px',marginBottom:'1rem'}}>⏳</div>
+          <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'8px'}}>Application Under Review</h1>
+          <p style={{fontSize:'13px',color:'#8a7a6a',lineHeight:'1.8',marginBottom:'1.5rem'}}>
+            Thank you for completing your employee setup! Your application and documents are currently being reviewed by the Laurea Fashion House admin team.
+          </p>
+          <div style={{background:'#fdf6ec',border:'1px solid #f0c040',borderRadius:'10px',padding:'1rem',marginBottom:'1.5rem',fontSize:'13px',color:'#8a6000',lineHeight:'1.7'}}>
+            ⏱️ Reviews typically take <strong>24 to 48 hours</strong>.<br/>
+            You will receive an email once your account is approved.
+          </div>
+          <div style={{background:'#faf8f5',border:'1px solid #e0d8cc',borderRadius:'10px',padding:'1rem',marginBottom:'1.5rem',fontSize:'13px',color:'#8a7a6a',textAlign:'left'}}>
+            <div style={{fontWeight:'600',color:'#1c1208',marginBottom:'8px'}}>Your Details:</div>
+            <div>👤 {employee.first_name} {employee.last_name}</div>
+            <div>📧 {employee.email}</div>
+          </div>
+          <button onClick={handleLogout}
+            style={{background:'#1c1208',color:'#f5ede0',border:'none',padding:'12px 28px',fontSize:'13px',fontWeight:'600',cursor:'pointer',borderRadius:'8px',letterSpacing:'1px',textTransform:'uppercase'}}>
+            Sign Out
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const tabs = [
     {id:'dashboard',icon:'📊',label:'Dashboard'},
     {id:'profile',icon:'👤',label:'My Profile'},
