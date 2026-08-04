@@ -13,16 +13,17 @@ export default function EmployeeDashboardPage() {
   const api = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    const stored = localStorage.getItem('laurea_employee');
+    const stored = localStorage.getItem('laurea_user');
     if (!stored) { router.push('/employee/login'); return; }
     const emp = JSON.parse(stored);
-    if (!emp.profile_completed) { router.push('/employee/setup'); return; }
+    if (emp.role !== 'employee') { router.push('/'); return; }
+    if (!emp.employee_profile_completed) { router.push('/employee/setup'); return; }
     setEmployee(emp);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('laurea_employee_token');
-    localStorage.removeItem('laurea_employee');
+    localStorage.removeItem('laurea_token');
+    localStorage.removeItem('laurea_user');
     router.push('/employee/login');
   };
 
@@ -30,7 +31,7 @@ export default function EmployeeDashboardPage() {
     e.preventDefault();
     setSaving(true);
     setMessage('');
-    const token = localStorage.getItem('laurea_employee_token');
+    const token = localStorage.getItem('laurea_token');
     try {
       const res = await fetch(`${api}/employees/bank-details`, {
         method: 'POST',
@@ -72,12 +73,9 @@ export default function EmployeeDashboardPage() {
 
         <div style={{padding:'0 1.5rem',marginBottom:'1.5rem'}}>
           <div style={{background:'rgba(245,237,224,0.05)',borderRadius:'8px',padding:'12px'}}>
-            {employee.passport_photo && (
-              <img src={employee.passport_photo} alt="" style={{width:'40px',height:'40px',borderRadius:'50%',objectFit:'cover',marginBottom:'8px'}} />
-            )}
             <div style={{fontSize:'12px',color:'#f5ede0',fontWeight:'500'}}>{employee.first_name} {employee.last_name}</div>
-            <div style={{fontSize:'10px',color:'#b8966a',marginTop:'2px'}}>{employee.job_position || 'Employee'}</div>
-            <div style={{fontSize:'9px',color:'rgba(245,237,224,0.4)',marginTop:'4px'}}>{employee.employee_id}</div>
+            <div style={{fontSize:'10px',color:'#b8966a',marginTop:'2px'}}>{employee.role}</div>
+            <div style={{fontSize:'9px',color:'rgba(245,237,224,0.4)',marginTop:'4px'}}>{employee.email}</div>
           </div>
         </div>
 
@@ -99,7 +97,6 @@ export default function EmployeeDashboardPage() {
       {/* Main content */}
       <div style={{flex:1,padding:'2rem',overflowY:'auto'}}>
 
-        {/* Dashboard */}
         {activeTab === 'dashboard' && (
           <div>
             <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'4px'}}>Welcome, {employee.first_name}! 👋</h1>
@@ -120,12 +117,10 @@ export default function EmployeeDashboardPage() {
             <div style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem',marginBottom:'1rem'}}>
               <h2 style={{fontSize:'15px',fontWeight:'600',color:'#1c1208',marginBottom:'12px'}}>My Details</h2>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'12px',fontSize:'13px',color:'#8a7a6a'}}>
-                <div><strong style={{color:'#1c1208'}}>Employee ID:</strong> {employee.employee_id}</div>
-                <div><strong style={{color:'#1c1208'}}>Position:</strong> {employee.job_position || 'Not set'}</div>
-                <div><strong style={{color:'#1c1208'}}>Department:</strong> {employee.department || 'Not set'}</div>
-                <div><strong style={{color:'#1c1208'}}>Employment:</strong> {employee.employment_type?.replace('_',' ') || 'Not set'}</div>
+                <div><strong style={{color:'#1c1208'}}>Name:</strong> {employee.first_name} {employee.last_name}</div>
                 <div><strong style={{color:'#1c1208'}}>Email:</strong> {employee.email}</div>
-                <div><strong style={{color:'#1c1208'}}>Phone:</strong> {employee.mobile || 'Not set'}</div>
+                <div><strong style={{color:'#1c1208'}}>Role:</strong> {employee.role}</div>
+                <div><strong style={{color:'#1c1208'}}>Phone:</strong> {employee.phone || 'Not set'}</div>
               </div>
             </div>
             <div style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem'}}>
@@ -138,37 +133,25 @@ export default function EmployeeDashboardPage() {
           </div>
         )}
 
-        {/* Profile */}
         {activeTab === 'profile' && (
           <div>
             <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'2rem'}}>My Profile</h1>
             <div style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem'}}>
               <div style={{display:'flex',gap:'1.5rem',alignItems:'center',marginBottom:'1.5rem',paddingBottom:'1.5rem',borderBottom:'1px solid #e0d8cc'}}>
-                {employee.passport_photo ? (
-                  <img src={employee.passport_photo} alt="" style={{width:'80px',height:'80px',borderRadius:'50%',objectFit:'cover'}} />
-                ) : (
-                  <div style={{width:'80px',height:'80px',borderRadius:'50%',background:'#f5ede0',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'32px'}}>👤</div>
-                )}
+                <div style={{width:'80px',height:'80px',borderRadius:'50%',background:'#f5ede0',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'32px'}}>👤</div>
                 <div>
                   <div style={{fontSize:'18px',fontWeight:'600',color:'#1c1208'}}>{employee.first_name} {employee.last_name}</div>
-                  <div style={{fontSize:'13px',color:'#b8966a'}}>{employee.job_position}</div>
-                  <div style={{fontSize:'12px',color:'#8a7a6a'}}>{employee.employee_id}</div>
+                  <div style={{fontSize:'13px',color:'#b8966a'}}>{employee.role}</div>
+                  <div style={{fontSize:'12px',color:'#8a7a6a'}}>{employee.email}</div>
                 </div>
               </div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'16px',fontSize:'13px'}}>
                 {[
-                  {label:'Full Name',value:employee.full_name},
+                  {label:'First Name',value:employee.first_name},
+                  {label:'Last Name',value:employee.last_name},
                   {label:'Email',value:employee.email},
-                  {label:'Mobile',value:employee.mobile},
-                  {label:'WhatsApp',value:employee.whatsapp},
-                  {label:'Department',value:employee.department},
-                  {label:'Position',value:employee.job_position},
-                  {label:'Employment Type',value:employee.employment_type?.replace('_',' ')},
-                  {label:'Work Location',value:employee.work_location},
-                  {label:'Supervisor',value:employee.supervisor},
-                  {label:'Country',value:employee.country_of_residence},
-                  {label:'City',value:employee.city},
-                  {label:'Address',value:employee.address},
+                  {label:'Phone',value:employee.phone},
+                  {label:'Role',value:employee.role},
                 ].map((field,i) => (
                   <div key={i} style={{borderBottom:'1px solid #f5ede0',paddingBottom:'10px'}}>
                     <div style={{fontSize:'10px',color:'#8a7a6a',textTransform:'uppercase',letterSpacing:'0.5px',marginBottom:'3px'}}>{field.label}</div>
@@ -180,7 +163,6 @@ export default function EmployeeDashboardPage() {
           </div>
         )}
 
-        {/* Bank Details */}
         {activeTab === 'bank' && (
           <div>
             <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'4px'}}>Bank Details</h1>
@@ -214,7 +196,6 @@ export default function EmployeeDashboardPage() {
           </div>
         )}
 
-        {/* Tasks */}
         {activeTab === 'tasks' && (
           <div>
             <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'2rem'}}>My Tasks</h1>
@@ -225,7 +206,6 @@ export default function EmployeeDashboardPage() {
           </div>
         )}
 
-        {/* Earnings */}
         {activeTab === 'earnings' && (
           <div>
             <h1 style={{fontSize:'22px',fontWeight:'600',color:'#1c1208',marginBottom:'2rem'}}>Earnings</h1>
