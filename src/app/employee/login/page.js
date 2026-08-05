@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -14,6 +14,15 @@ export default function EmployeeLoginPage() {
   const [resendMessage, setResendMessage] = useState('');
   const router = useRouter();
   const api = process.env.NEXT_PUBLIC_API_URL;
+
+  useEffect(() => {
+    const savedStep = localStorage.getItem('laurea_login_step');
+    const savedEmail = localStorage.getItem('laurea_login_email');
+    if (savedStep === 'verify' && savedEmail) {
+      setStep('verify');
+      setForm(f => ({ ...f, email: savedEmail }));
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -115,128 +124,132 @@ export default function EmployeeLoginPage() {
   };
 
   return (
-    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#1c1208 0%,#2d1f0a 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem'}}>
+    <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#0f0a04 0%,#1c1208 60%,#2d1f0a 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem 1rem',fontFamily:"'Inter',sans-serif"}}>
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap'); * { box-sizing: border-box; }`}</style>
+
       <div style={{width:'100%',maxWidth:'420px'}}>
 
-        <div style={{textAlign:'center',marginBottom:'2rem'}}>
-          <Link href="/" style={{textDecoration:'none'}}>
-            <div style={{color:'#f5ede0',fontSize:'20px',fontWeight:'600',letterSpacing:'4px',textTransform:'uppercase'}}>Laurea</div>
-            <div style={{color:'#b8966a',fontSize:'9px',letterSpacing:'4px',textTransform:'uppercase',marginTop:'2px'}}>Fashion House</div>
+        {/* Logo */}
+        <div style={{textAlign:'center',marginBottom:'2.5rem'}}>
+          <Link href="/" style={{textDecoration:'none',display:'inline-block'}}>
+            <div style={{color:'#f5ede0',fontSize:'22px',fontWeight:'700',letterSpacing:'6px',textTransform:'uppercase'}}>Laurea</div>
+            <div style={{color:'rgba(184,150,106,0.6)',fontSize:'8px',letterSpacing:'5px',textTransform:'uppercase',marginTop:'4px'}}>Fashion House</div>
           </Link>
-          <div style={{marginTop:'1.5rem',background:'rgba(184,150,106,0.15)',border:'1px solid rgba(184,150,106,0.3)',borderRadius:'6px',padding:'6px 16px',display:'inline-block'}}>
-            <span style={{fontSize:'11px',color:'#b8966a',letterSpacing:'2px',textTransform:'uppercase',fontWeight:'600'}}>👤 Employee Portal</span>
+          <div style={{marginTop:'1.5rem',display:'inline-block',background:'rgba(184,150,106,0.1)',border:'1px solid rgba(184,150,106,0.25)',borderRadius:'6px',padding:'5px 14px'}}>
+            <span style={{fontSize:'10px',color:'rgba(184,150,106,0.8)',letterSpacing:'2px',textTransform:'uppercase',fontWeight:'600'}}>Employee Portal</span>
           </div>
         </div>
 
-        <div style={{background:'#fff',borderRadius:'16px',padding:'2rem',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
+        {/* Card */}
+        <div style={{background:'rgba(255,255,255,0.03)',backdropFilter:'blur(20px)',border:'1px solid rgba(184,150,106,0.15)',borderRadius:'24px',padding:'2.5rem',boxShadow:'0 25px 80px rgba(0,0,0,0.5)'}}>
 
-          {/* Login form */}
           {step === 'login' && (
             <>
-              <h1 style={{fontSize:'20px',fontWeight:'600',color:'#1c1208',marginBottom:'4px',textAlign:'center'}}>Employee Login</h1>
-              <p style={{fontSize:'12px',color:'#8a7a6a',textAlign:'center',marginBottom:'1.5rem'}}>Sign in with your company credentials</p>
+              <h1 style={{fontSize:'22px',fontWeight:'700',color:'#f5ede0',marginBottom:'6px',textAlign:'center'}}>Welcome back</h1>
+              <p style={{fontSize:'13px',color:'rgba(245,237,224,0.4)',textAlign:'center',marginBottom:'2rem'}}>Sign in to your employee account</p>
 
               {error && (
-                <div style={{background:'#fff0f0',border:'1px solid #ffcccc',borderRadius:'8px',padding:'10px 14px',marginBottom:'1rem',fontSize:'12px',color:'#cc0000'}}>
-                  ⚠️ {error}
+                <div style={{background:'rgba(204,0,0,0.1)',border:'1px solid rgba(204,0,0,0.3)',borderRadius:'10px',padding:'12px 14px',marginBottom:'1.25rem',fontSize:'13px',color:'#ff6b6b',display:'flex',gap:'8px',alignItems:'flex-start'}}>
+                  <span style={{flexShrink:0}}>⚠️</span><span>{error}</span>
                 </div>
               )}
 
               <form onSubmit={handleSubmit}>
-                <label style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',letterSpacing:'0.5px',display:'block',marginBottom:'6px'}}>Email Address</label>
-                <input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="your@email.com" required
-                  style={{width:'100%',border:'1px solid #e0d8cc',padding:'12px 14px',fontSize:'13px',color:'#1c1208',outline:'none',borderRadius:'8px',background:'#faf8f5',boxSizing:'border-box',marginBottom:'1rem'}} />
+                <div style={{marginBottom:'1rem'}}>
+                  <label style={{fontSize:'10px',fontWeight:'600',color:'rgba(184,150,106,0.8)',textTransform:'uppercase',letterSpacing:'1px',display:'block',marginBottom:'8px'}}>Email Address</label>
+                  <input type="email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="your@email.com" required
+                    style={{width:'100%',border:'1px solid rgba(184,150,106,0.2)',padding:'13px 16px',fontSize:'14px',color:'#f5ede0',outline:'none',borderRadius:'12px',background:'rgba(255,255,255,0.04)',fontFamily:'Inter,sans-serif',transition:'border-color 0.2s'}}
+                    onFocus={e=>e.target.style.borderColor='rgba(184,150,106,0.5)'}
+                    onBlur={e=>e.target.style.borderColor='rgba(184,150,106,0.2)'} />
+                </div>
 
-                <label style={{fontSize:'11px',fontWeight:'600',color:'#8a7a6a',textTransform:'uppercase',letterSpacing:'0.5px',display:'block',marginBottom:'6px'}}>Password</label>
-                <div style={{position:'relative',marginBottom:'1.5rem'}}>
-                  <input type={showPassword?'text':'password'} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder="Enter your password" required
-                    style={{width:'100%',border:'1px solid #e0d8cc',padding:'12px 44px 12px 14px',fontSize:'13px',color:'#1c1208',outline:'none',borderRadius:'8px',background:'#faf8f5',boxSizing:'border-box'}} />
-                  <button type="button" onClick={()=>setShowPassword(!showPassword)}
-                    style={{position:'absolute',right:'12px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:'16px'}}>
-                    {showPassword?'🙈':'👁️'}
-                  </button>
+                <div style={{marginBottom:'2rem'}}>
+                  <label style={{fontSize:'10px',fontWeight:'600',color:'rgba(184,150,106,0.8)',textTransform:'uppercase',letterSpacing:'1px',display:'block',marginBottom:'8px'}}>Password</label>
+                  <div style={{position:'relative'}}>
+                    <input type={showPassword?'text':'password'} value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder="••••••••" required
+                      style={{width:'100%',border:'1px solid rgba(184,150,106,0.2)',padding:'13px 48px 13px 16px',fontSize:'14px',color:'#f5ede0',outline:'none',borderRadius:'12px',background:'rgba(255,255,255,0.04)',fontFamily:'Inter,sans-serif',transition:'border-color 0.2s'}}
+                      onFocus={e=>e.target.style.borderColor='rgba(184,150,106,0.5)'}
+                      onBlur={e=>e.target.style.borderColor='rgba(184,150,106,0.2)'} />
+                    <button type="button" onClick={()=>setShowPassword(!showPassword)}
+                      style={{position:'absolute',right:'14px',top:'50%',transform:'translateY(-50%)',background:'none',border:'none',cursor:'pointer',fontSize:'16px',color:'rgba(245,237,224,0.4)',padding:'4px'}}>
+                      {showPassword?'🙈':'👁️'}
+                    </button>
+                  </div>
                 </div>
 
                 <button type="submit" disabled={loading}
-                  style={{width:'100%',background:'#1c1208',color:'#f5ede0',border:'none',padding:'14px',fontSize:'13px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer',borderRadius:'8px',opacity:loading?0.7:1,boxSizing:'border-box'}}>
+                  style={{width:'100%',background:'linear-gradient(135deg,#b8966a,#8a6a3e)',color:'#1c1208',border:'none',padding:'14px',fontSize:'13px',fontWeight:'700',letterSpacing:'1.5px',textTransform:'uppercase',cursor:loading?'default':'pointer',borderRadius:'12px',opacity:loading?0.7:1,fontFamily:'Inter,sans-serif',transition:'opacity 0.2s'}}>
                   {loading?'Signing in...':'Sign In'}
                 </button>
               </form>
 
-              <p style={{textAlign:'center',fontSize:'12px',color:'#8a7a6a',marginTop:'1.5rem',paddingTop:'1.5rem',borderTop:'1px solid #e0d8cc'}}>
-                Your account is created by admin. Contact your manager if you cannot log in.
+              <p style={{textAlign:'center',fontSize:'12px',color:'rgba(245,237,224,0.3)',marginTop:'1.75rem',lineHeight:'1.6'}}>
+                Your account is created by admin.<br/>Contact your manager if you cannot log in.
               </p>
             </>
           )}
 
-          {/* 2FA verification screen */}
           {step === 'verify' && (
             <>
-              <div style={{textAlign:'center',marginBottom:'1.5rem'}}>
-                <div style={{fontSize:'48px',marginBottom:'12px'}}>🔐</div>
-                <h1 style={{fontSize:'20px',fontWeight:'600',color:'#1c1208',marginBottom:'8px'}}>Verify your login</h1>
-                <p style={{fontSize:'13px',color:'#8a7a6a',lineHeight:'1.6'}}>
+              <div style={{textAlign:'center',marginBottom:'1.75rem'}}>
+                <div style={{width:'64px',height:'64px',background:'rgba(184,150,106,0.1)',border:'1px solid rgba(184,150,106,0.2)',borderRadius:'16px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'28px',margin:'0 auto 1rem'}}>🔐</div>
+                <h1 style={{fontSize:'20px',fontWeight:'700',color:'#f5ede0',marginBottom:'8px'}}>Check your email</h1>
+                <p style={{fontSize:'13px',color:'rgba(245,237,224,0.4)',lineHeight:'1.6'}}>
                   We sent a 6-digit code to<br/>
-                  <strong style={{color:'#1c1208'}}>{form.email}</strong>
+                  <strong style={{color:'rgba(184,150,106,0.8)'}}>{form.email}</strong>
                 </p>
-                <div style={{background:'#fdf6ec',border:'1px solid #f0c040',borderRadius:'8px',padding:'10px',marginTop:'12px',fontSize:'12px',color:'#8a6000'}}>
+                <div style={{background:'rgba(184,150,106,0.06)',border:'1px solid rgba(184,150,106,0.15)',borderRadius:'8px',padding:'10px',marginTop:'12px',fontSize:'11px',color:'rgba(245,237,224,0.4)'}}>
                   💡 Switch to your email app — this screen will stay when you come back!
                 </div>
               </div>
 
               {error && (
-                <div style={{background:'#fff0f0',border:'1px solid #ffcccc',color:'#cc0000',padding:'10px 14px',borderRadius:'8px',fontSize:'12px',marginBottom:'1rem'}}>
+                <div style={{background:'rgba(204,0,0,0.1)',border:'1px solid rgba(204,0,0,0.3)',borderRadius:'10px',padding:'12px 14px',marginBottom:'1.25rem',fontSize:'13px',color:'#ff6b6b'}}>
                   ⚠️ {error}
                 </div>
               )}
 
               {resendMessage && (
-                <div style={{background:'#f0fff4',border:'1px solid #ccffcc',color:'#1a7a3a',padding:'10px 14px',borderRadius:'8px',fontSize:'12px',marginBottom:'1rem',textAlign:'center'}}>
+                <div style={{background:'rgba(59,109,17,0.1)',border:'1px solid rgba(59,109,17,0.3)',borderRadius:'10px',padding:'12px 14px',marginBottom:'1.25rem',fontSize:'13px',color:'#7bc44e',textAlign:'center'}}>
                   {resendMessage}
                 </div>
               )}
 
-              <div style={{display:'flex',gap:'8px',justifyContent:'center',marginBottom:'1.5rem'}}>
+              {/* Code boxes */}
+              <div style={{display:'flex',gap:'8px',justifyContent:'center',marginBottom:'1.75rem'}}>
                 {code.map((digit, index) => (
-                  <input
-                    key={index}
-                    id={`emp-code-${index}`}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={digit}
+                  <input key={index} id={`emp-code-${index}`} type="text" inputMode="numeric" maxLength={1} value={digit}
                     onChange={e=>handleCodeChange(index,e.target.value)}
                     onKeyDown={e=>handleCodeKeyDown(index,e)}
-                    style={{width:'46px',height:'56px',textAlign:'center',fontSize:'22px',fontWeight:'600',color:'#1c1208',border:'2px solid #e0d8cc',borderRadius:'8px',outline:'none',background:'#faf8f5'}}
-                    onFocus={e=>e.target.style.borderColor='#b8966a'}
-                    onBlur={e=>e.target.style.borderColor=digit?'#b8966a':'#e0d8cc'}
-                  />
+                    style={{width:'46px',height:'56px',textAlign:'center',fontSize:'22px',fontWeight:'700',color:'#f5ede0',border:'1px solid rgba(184,150,106,0.2)',borderRadius:'12px',outline:'none',background:'rgba(255,255,255,0.04)',fontFamily:'Inter,sans-serif',transition:'border-color 0.2s'}}
+                    onFocus={e=>e.target.style.borderColor='rgba(184,150,106,0.6)'}
+                    onBlur={e=>e.target.style.borderColor=digit?'rgba(184,150,106,0.4)':'rgba(184,150,106,0.2)'} />
                 ))}
               </div>
 
               <button onClick={handleVerify} disabled={loading}
-                style={{width:'100%',background:'#1c1208',color:'#f5ede0',border:'none',padding:'14px',fontSize:'13px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer',borderRadius:'8px',marginBottom:'1rem',opacity:loading?0.7:1,boxSizing:'border-box'}}>
+                style={{width:'100%',background:'linear-gradient(135deg,#b8966a,#8a6a3e)',color:'#1c1208',border:'none',padding:'14px',fontSize:'13px',fontWeight:'700',letterSpacing:'1.5px',textTransform:'uppercase',cursor:loading?'default':'pointer',borderRadius:'12px',marginBottom:'1rem',opacity:loading?0.7:1,fontFamily:'Inter,sans-serif'}}>
                 {loading?'Verifying...':'Verify & Sign In'}
               </button>
 
               <div style={{textAlign:'center',marginBottom:'1rem'}}>
-                <p style={{fontSize:'12px',color:'#8a7a6a',marginBottom:'8px'}}>Did not receive the code?</p>
+                <p style={{fontSize:'12px',color:'rgba(245,237,224,0.3)',marginBottom:'8px'}}>Did not receive the code?</p>
                 <button onClick={handleResend} disabled={resending}
-                  style={{background:'none',border:'none',color:'#b8966a',fontSize:'12px',fontWeight:'600',cursor:'pointer',textDecoration:'underline'}}>
+                  style={{background:'none',border:'none',color:'rgba(184,150,106,0.7)',fontSize:'13px',fontWeight:'600',cursor:'pointer',textDecoration:'underline',fontFamily:'Inter,sans-serif'}}>
                   {resending?'Sending...':'Resend code'}
                 </button>
               </div>
 
               <button onClick={()=>{ setStep('login'); setCode(['','','','','','']); setError(''); localStorage.removeItem('laurea_login_step'); localStorage.removeItem('laurea_login_email'); }}
-                style={{width:'100%',background:'none',border:'1px solid #e0d8cc',color:'#8a7a6a',padding:'12px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',boxSizing:'border-box'}}>
+                style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',color:'rgba(245,237,224,0.4)',padding:'12px',fontSize:'13px',cursor:'pointer',borderRadius:'12px',fontFamily:'Inter,sans-serif'}}>
                 ← Back to login
               </button>
             </>
           )}
         </div>
 
-        <p style={{textAlign:'center',marginTop:'1rem'}}>
-          <Link href="/" style={{fontSize:'11px',color:'rgba(245,237,224,0.4)',textDecoration:'none'}}>← Back to website</Link>
+        <p style={{textAlign:'center',marginTop:'1.5rem'}}>
+          <Link href="/" style={{fontSize:'11px',color:'rgba(245,237,224,0.2)',textDecoration:'none'}}>← Back to website</Link>
         </p>
       </div>
     </div>
