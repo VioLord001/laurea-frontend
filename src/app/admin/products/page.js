@@ -4,8 +4,8 @@ import { useState, useRef } from 'react';
 const CATEGORIES = {
   women: ['Tops','Bottoms','Denim','Dresses','Outerwear','Sleepwear','Activewear','Swimwear','Lingerie','Co-ords','Knitwear','Shirts','Jumpsuits','Blazers','Cardigans'],
   men: ['T-Shirts','Shirts','Trousers','Denim','Outerwear','Suits','Activewear','Swimwear','Sleepwear','Knitwear'],
-  kids: ['Girls Tops','Boys Tops','Girls Dresses','Boys Bottoms','Outerwear','School Uniform','Activewear','Swimwear','Sleepwear','Accessories'],
-  bags: ['Handbags','Crossbody','Clutches','Backpacks','Tote Bags','Wallets','Travel Bags',"Men's Bags"],
+  kids: ['Girls Tops','Boys Tops','Girls Dresses','Boys Bottoms','Outerwear'],
+  bags: ['Crossbody','Clutches','Backpacks','Tote Bags','Wallets','Travel Bags',"Men's Bags"],
   jewelry: ['Necklaces','Rings','Earrings','Bracelets','Anklets','Sets','Fine Jewellery'],
   shoes: ['Sneakers','Heels','Boots','Sandals','Flats',"Men's Shoes",'Kids Shoes','Sports Shoes'],
   beauty: ['Skincare','Makeup','Hair Care','Fragrance','Body Care','Nail Care'],
