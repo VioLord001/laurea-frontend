@@ -8,11 +8,7 @@ const CATS = [
   { name:'Girls Dresses', photo:'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=400&q=80', styles:['Casual dresses','Party dresses','School dresses'] },
   { name:'Boys Bottoms', photo:'https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&q=80', styles:['Jeans','Shorts','Joggers'] },
   { name:'Outerwear', photo:'https://images.unsplash.com/photo-1548624313-0396c75e4b1a?w=400&q=80', styles:['Puffer jackets','Raincoats','Coats'] },
-  { name:'School Uniform', photo:'https://images.unsplash.com/photo-1491013516836-7db643ee125a?w=400&q=80', styles:['Shirts','Trousers','Skirts'] },
-  { name:'Activewear', photo:'https://images.unsplash.com/photo-1518310383802-640c2de311b2?w=400&q=80', styles:['Tracksuits','Gym sets','Sports tops'] },
-  { name:'Swimwear', photo:'https://images.unsplash.com/photo-1570976447640-ac859083963f?w=400&q=80', styles:['Swimsuits','Swim shorts','Rash guards'] },
-  { name:'Sleepwear', photo:'https://images.unsplash.com/photo-1631947430066-48c30d57b943?w=400&q=80', styles:['Pyjama sets','Onesies','Nightgowns'] },
-  { name:'Accessories', photo:'https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=400&q=80', styles:['Hats','Bags','Socks','Belts'] },
+
 ];
 
 export default function KidsPage() {

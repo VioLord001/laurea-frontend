@@ -3,7 +3,6 @@ import Link from 'next/link';
 import useMobile from '../../hooks/useMobile';
 
 const CATS = [
-  { name:'Handbags', photo:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80', styles:['Tote bags','Satchels','Shoulder bags'] },
   { name:'Crossbody', photo:'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=400&q=80', styles:['Mini crossbody','Chain bags','Belt bags'] },
   { name:'Clutches', photo:'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?w=400&q=80', styles:['Evening clutches','Envelope clutches','Wristlets'] },
   { name:'Backpacks', photo:'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&q=80', styles:['Mini backpacks','Fashion backpacks','Travel backpacks'] },
