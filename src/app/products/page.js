@@ -50,15 +50,15 @@ function ProductsContent() {
   };
 
   return (
-    <div style={{minHeight:'100vh',background:'#faf8f5'}}>
-      <div style={{maxWidth:'1400px',margin:'0 auto',padding:isMobile?'1rem':'2rem'}}>
+    <div style={{minHeight:'100vh',background:'#faf8f5',overflowX:'hidden',width:'100%',boxSizing:'border-box'}}>
+      <div style={{maxWidth:'1400px',margin:'0 auto',padding:isMobile?'0.75rem':'2rem',boxSizing:'border-box',width:'100%'}}>
 
         {/* Header */}
-        <div style={{marginBottom:'1.5rem'}}>
+        <div style={{marginBottom:'1.25rem'}}>
           <p style={{fontSize:'12px',color:'#8a7a6a',textTransform:'capitalize'}}>
             {department || 'All'}{category ? ` › ${category}` : ''}
           </p>
-          <h1 style={{fontSize:isMobile?'20px':'26px',fontWeight:'400',color:'#1c1208',marginTop:'4px',textTransform:'capitalize'}}>
+          <h1 style={{fontSize:isMobile?'18px':'26px',fontWeight:'400',color:'#1c1208',marginTop:'4px',textTransform:'capitalize'}}>
             {category || department || 'All Products'}
           </h1>
           {!loading && <p style={{fontSize:'12px',color:'#8a7a6a',marginTop:'4px'}}>{products.length} products</p>}
@@ -66,14 +66,16 @@ function ProductsContent() {
 
         {/* Products grid */}
         {loading ? (
-          <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr 1fr':'repeat(4,1fr)',gap:'1rem'}}>
+          <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,minmax(0,1fr))':'repeat(4,1fr)',gap:isMobile?'8px':'1rem'}}>
             {[...Array(8)].map((_,i) => (
               <div key={i} style={{background:'#fff',borderRadius:'12px',overflow:'hidden',border:'1px solid #e0d8cc'}}>
-                <div style={{height:'280px',background:'#f0ece8',animation:'pulse 1.5s ease-in-out infinite'}} />
-                <div style={{padding:'1rem'}}>
-                  <div style={{height:'14px',background:'#f0ece8',borderRadius:'4px',marginBottom:'8px'}} />
-                  <div style={{height:'14px',background:'#f0ece8',borderRadius:'4px',width:'60%',marginBottom:'12px'}} />
-                  <div style={{height:'36px',background:'#f0ece8',borderRadius:'6px'}} />
+                <div style={{paddingTop:'120%',background:'#f0ece8',position:'relative'}}>
+                  <div style={{position:'absolute',inset:0,background:'linear-gradient(90deg,#f0ece8 25%,#e8e0d8 50%,#f0ece8 75%)',backgroundSize:'200% 100%',animation:'shimmer 1.5s infinite'}} />
+                </div>
+                <div style={{padding:'10px'}}>
+                  <div style={{height:'12px',background:'#f0ece8',borderRadius:'4px',marginBottom:'6px'}} />
+                  <div style={{height:'12px',background:'#f0ece8',borderRadius:'4px',width:'60%',marginBottom:'10px'}} />
+                  <div style={{height:'32px',background:'#f0ece8',borderRadius:'6px'}} />
                 </div>
               </div>
             ))}
@@ -85,10 +87,10 @@ function ProductsContent() {
             <p style={{fontSize:'13px',color:'#8a7a6a'}}>Check back soon for new arrivals!</p>
           </div>
         ) : (
-          <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr 1fr':'repeat(4,1fr)',gap:isMobile?'10px':'1rem'}}>
+          <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,minmax(0,1fr))':'repeat(4,1fr)',gap:isMobile?'8px':'1rem',width:'100%'}}>
             {products.map(product => (
-              <Link key={product.id} href={`/products/${product.slug}`} style={{textDecoration:'none'}}>
-                <div style={{background:'#fff',borderRadius:'12px',overflow:'hidden',border:'1px solid #e0d8cc',display:'flex',flexDirection:'column',height:'100%',transition:'box-shadow 0.2s',cursor:'pointer'}}
+              <Link key={product.id} href={`/products/${product.slug}`} style={{textDecoration:'none',display:'block',minWidth:0}}>
+                <div style={{background:'#fff',borderRadius:'12px',overflow:'hidden',border:'1px solid #e0d8cc',display:'flex',flexDirection:'column',height:'100%',transition:'box-shadow 0.2s'}}
                   onMouseEnter={e=>e.currentTarget.style.boxShadow='0 4px 20px rgba(0,0,0,0.08)'}
                   onMouseLeave={e=>e.currentTarget.style.boxShadow='none'}>
 
@@ -114,35 +116,31 @@ function ProductsContent() {
                     )}
                   </div>
 
-                  {/* Info — flex:1 so it fills space and pushes button down */}
-                  <div style={{padding:isMobile?'10px':'14px',display:'flex',flexDirection:'column',flex:1}}>
+                  {/* Info */}
+                  <div style={{padding:isMobile?'8px':'14px',display:'flex',flexDirection:'column',flex:1}}>
 
-                    {/* Department label */}
                     <p style={{fontSize:'9px',color:'#b8966a',textTransform:'uppercase',letterSpacing:'1.5px',marginBottom:'4px'}}>
                       {product.department}
                     </p>
 
-                    {/* Product name — flex:1 so it grows and pushes price+button down */}
                     <h3 style={{fontSize:isMobile?'11px':'12px',fontWeight:'400',color:'#1c1208',lineHeight:'1.5',marginBottom:'8px',flex:1,display:'-webkit-box',WebkitLineClamp:3,WebkitBoxOrient:'vertical',overflow:'hidden'}}>
                       {product.name}
                     </h3>
 
-                    {/* Price — always at same position */}
-                    <div style={{display:'flex',alignItems:'center',gap:'8px',marginBottom:'10px'}}>
-                      <span style={{fontSize:isMobile?'14px':'16px',fontWeight:'600',color:'#1c1208'}}>
+                    <div style={{display:'flex',alignItems:'center',gap:'6px',marginBottom:'8px',flexWrap:'wrap'}}>
+                      <span style={{fontSize:isMobile?'13px':'16px',fontWeight:'600',color:'#1c1208'}}>
                         ${parseFloat(product.price).toFixed(2)}
                       </span>
                       {product.compare_price && (
-                        <span style={{fontSize:'12px',color:'#8a7a6a',textDecoration:'line-through'}}>
+                        <span style={{fontSize:'11px',color:'#8a7a6a',textDecoration:'line-through'}}>
                           ${parseFloat(product.compare_price).toFixed(2)}
                         </span>
                       )}
                     </div>
 
-                    {/* Button — always at bottom */}
                     <button
                       onClick={(e) => addToBag(e, product)}
-                      style={{width:'100%',background:addedIds[product.id]?'#b8966a':'#1c1208',color:addedIds[product.id]?'#1c1208':'#f5ede0',border:'none',padding:isMobile?'9px':'11px',fontSize:isMobile?'10px':'11px',fontWeight:'600',letterSpacing:'1.5px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px',transition:'all 0.2s',marginTop:'auto'}}>
+                      style={{width:'100%',background:addedIds[product.id]?'#b8966a':'#1c1208',color:addedIds[product.id]?'#1c1208':'#f5ede0',border:'none',padding:isMobile?'8px 4px':'11px',fontSize:isMobile?'9px':'11px',fontWeight:'600',letterSpacing:isMobile?'0.5px':'1.5px',textTransform:'uppercase',cursor:'pointer',borderRadius:'6px',transition:'all 0.2s',marginTop:'auto',whiteSpace:'nowrap',fontFamily:'inherit',boxSizing:'border-box'}}>
                       {addedIds[product.id] ? '✓ Added!' : 'Add to Bag'}
                     </button>
                   </div>
@@ -154,9 +152,9 @@ function ProductsContent() {
       </div>
 
       <style>{`
-        @keyframes pulse {
-          0%,100% { opacity:1; }
-          50% { opacity:0.5; }
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
         }
       `}</style>
     </div>
