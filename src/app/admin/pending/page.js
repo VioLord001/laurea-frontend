@@ -31,9 +31,11 @@ export default function PendingEmployeesPage() {
     });
     const data = await res.json();
     if (data.success) {
-      setEmployees(employees.filter(e => e.id !== id));
+      setEmployees(prev => prev.filter(e => e.id !== id));
       setViewing(null);
-      setMessage(`✅ ${name} approved! They will receive an email.`);
+      setRejecting(null);
+      setReason('');
+      setMessage(`✅ ${name} approved! They will receive an approval email.`);
     } else {
       setMessage(`❌ ${data.message}`);
     }
@@ -53,11 +55,11 @@ export default function PendingEmployeesPage() {
     });
     const data = await res.json();
     if (data.success) {
-      setEmployees(employees.filter(e => e.id !== id));
+      setEmployees(prev => prev.filter(e => e.id !== id));
       setViewing(null);
       setRejecting(null);
       setReason('');
-      setMessage(`✅ ${name} rejected. They will receive an email with your reason.`);
+      setMessage(`✅ ${name} has been rejected and removed from the pending list.`);
     } else {
       setMessage(`❌ ${data.message}`);
     }
@@ -186,10 +188,10 @@ export default function PendingEmployeesPage() {
                   value={reason}
                   onChange={e=>setReason(e.target.value)}
                   placeholder="e.g. Your ID photo was not clear. Please resubmit with a clearer photo..."
-                  style={{width:'100%',border:'1px solid #ffcccc',padding:'12px',fontSize:'13px',borderRadius:'8px',minHeight:'100px',boxSizing:'border-box',marginBottom:'12px',resize:'vertical',fontFamily:'sans-serif',color:'#1c1208'}}
+                  style={{width:'100%',border:'1px solid #ffcccc',padding:'12px',fontSize:'13px',borderRadius:'8px',minHeight:'100px',boxSizing:'border-box',marginBottom:'8px',resize:'vertical',fontFamily:'sans-serif',color:'#1c1208'}}
                 />
-                <div style={{fontSize:'12px',color:'#8a7a6a',marginBottom:'10px'}}>
-                  Characters typed: <strong>{reason.length}</strong>
+                <div style={{fontSize:'12px',color:'#8a7a6a',marginBottom:'12px'}}>
+                  Characters typed: <strong style={{color:reason.length>0?'#cc0000':'#8a7a6a'}}>{reason.length}</strong>
                 </div>
                 <div style={{display:'flex',gap:'8px'}}>
                   <button onClick={()=>handleReject(viewing.id, `${viewing.first_name} ${viewing.last_name}`)}
