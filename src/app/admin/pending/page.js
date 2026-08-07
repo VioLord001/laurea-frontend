@@ -27,7 +27,7 @@ export default function PendingEmployeesPage() {
     const res = await fetch(`${api}/admin/approve-employee/${id}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ approved: true })
+      body: JSON.stringify({ approved: true, reason: '' })
     });
     const data = await res.json();
     if (data.success) {
@@ -41,11 +41,15 @@ export default function PendingEmployeesPage() {
   };
 
   const handleReject = async (id, name) => {
-    if (!reason.trim()) { alert('Please enter a reason for rejection.'); return; }
+    if (!reason || !reason.trim()) {
+      alert('Please enter a reason for rejection.');
+      return;
+    }
+    const trimmedReason = reason.trim();
     const res = await fetch(`${api}/admin/approve-employee/${id}`, {
       method: 'POST',
       headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ approved: false, reason })
+      body: JSON.stringify({ approved: false, reason: trimmedReason })
     });
     const data = await res.json();
     if (data.success) {
@@ -104,7 +108,6 @@ export default function PendingEmployeesPage() {
               👤 {viewing.first_name} {viewing.last_name} — Full Application
             </h2>
 
-            {/* Passport Photo */}
             {viewing.passport_photo_url && (
               <div style={{textAlign:'center',marginBottom:'1rem'}}>
                 <img src={viewing.passport_photo_url} alt="Passport" style={{width:'100px',height:'100px',borderRadius:'50%',objectFit:'cover',border:'3px solid #b8966a'}} />
@@ -182,16 +185,19 @@ export default function PendingEmployeesPage() {
                 <textarea
                   value={reason}
                   onChange={e=>setReason(e.target.value)}
-                  placeholder="e.g. Invalid ID photo, information does not match, fake details detected..."
-                  style={{width:'100%',border:'1px solid #ffcccc',padding:'10px',fontSize:'13px',borderRadius:'6px',minHeight:'80px',boxSizing:'border-box',marginBottom:'10px',resize:'vertical'}}
+                  placeholder="e.g. Your ID photo was not clear. Please resubmit with a clearer photo..."
+                  style={{width:'100%',border:'1px solid #ffcccc',padding:'12px',fontSize:'13px',borderRadius:'8px',minHeight:'100px',boxSizing:'border-box',marginBottom:'12px',resize:'vertical',fontFamily:'sans-serif',color:'#1c1208'}}
                 />
+                <div style={{fontSize:'12px',color:'#8a7a6a',marginBottom:'10px'}}>
+                  Characters typed: <strong>{reason.length}</strong>
+                </div>
                 <div style={{display:'flex',gap:'8px'}}>
                   <button onClick={()=>handleReject(viewing.id, `${viewing.first_name} ${viewing.last_name}`)}
-                    style={{background:'#cc0000',color:'#fff',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'600',cursor:'pointer',borderRadius:'6px',textTransform:'uppercase'}}>
-                    Confirm Rejection
+                    style={{background:'#cc0000',color:'#fff',border:'none',padding:'12px 24px',fontSize:'13px',fontWeight:'600',cursor:'pointer',borderRadius:'8px',textTransform:'uppercase'}}>
+                    Send Rejection Email
                   </button>
                   <button onClick={()=>{ setRejecting(null); setReason(''); }}
-                    style={{background:'none',border:'1px solid #e0d8cc',padding:'10px 20px',fontSize:'12px',cursor:'pointer',borderRadius:'6px',color:'#8a7a6a'}}>
+                    style={{background:'none',border:'1px solid #e0d8cc',padding:'12px 24px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',color:'#8a7a6a'}}>
                     Cancel
                   </button>
                 </div>
@@ -214,15 +220,12 @@ export default function PendingEmployeesPage() {
           {employees.map(emp => (
             <div key={emp.id} style={{background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',padding:'1.5rem'}}>
               <div style={{display:'grid',gridTemplateColumns:'auto 1fr auto',gap:'1rem',alignItems:'center'}}>
-
-                {/* Passport photo */}
                 <div style={{width:'56px',height:'56px',borderRadius:'50%',background:'#f5ede0',display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden',flexShrink:0}}>
                   {emp.passport_photo_url ?
                     <img src={emp.passport_photo_url} alt="" style={{width:'100%',height:'100%',objectFit:'cover'}} /> :
                     <span style={{fontSize:'24px'}}>👤</span>
                   }
                 </div>
-
                 <div>
                   <div style={{fontSize:'16px',fontWeight:'600',color:'#1c1208',marginBottom:'4px'}}>{emp.first_name} {emp.last_name}</div>
                   <div style={{fontSize:'12px',color:'#8a7a6a',marginBottom:'4px'}}>{emp.email}</div>
@@ -236,7 +239,6 @@ export default function PendingEmployeesPage() {
                     </span>
                   </div>
                 </div>
-
                 <div style={{display:'flex',gap:'6px',flexDirection:'column',minWidth:'140px'}}>
                   <button onClick={()=>{ setViewing(emp); setRejecting(null); setReason(''); }}
                     style={{background:'#1c1208',color:'#f5ede0',border:'none',padding:'9px 14px',fontSize:'11px',fontWeight:'600',cursor:'pointer',borderRadius:'6px',textTransform:'uppercase',letterSpacing:'1px'}}>
