@@ -2,217 +2,232 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/LanguageContext';
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
   const [cartCount, setCartCount] = useState(0);
+  const [user, setUser] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
+  const { t, lang, changeLang } = useLanguage();
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
+  useEffect(() => {
+    const updateCart = () => {
+      const cart = JSON.parse(localStorage.getItem('laurea_cart') || '[]');
+      setCartCount(cart.length);
+    };
+    updateCart();
+    window.addEventListener('cartUpdated', updateCart);
+    return () => window.removeEventListener('cartUpdated', updateCart);
+  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem('laurea_user');
     if (stored) setUser(JSON.parse(stored));
-    updateCart();
-    window.addEventListener('cartUpdated', updateCart);
-    const check = () => setIsMobile(window.innerWidth < 900);
-    check();
-    window.addEventListener('resize', check);
-    return () => {
-      window.removeEventListener('cartUpdated', updateCart);
-      window.removeEventListener('resize', check);
-    };
   }, []);
-
-  const updateCart = () => {
-    const cart = JSON.parse(localStorage.getItem('laurea_cart') || '[]');
-    setCartCount(cart.length);
-  };
 
   const handleLogout = () => {
     localStorage.removeItem('laurea_token');
     localStorage.removeItem('laurea_user');
     setUser(null);
     router.push('/');
-    setMenuOpen(false);
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
       setSearchOpen(false);
-      setMenuOpen(false);
       setSearchQuery('');
     }
   };
 
-  const departments = [
-    { name:'Women', href:'/women' },
-    { name:'Men', href:'/men' },
-    { name:'Kids', href:'/kids' },
-    { name:'Bags', href:'/bags' },
-    { name:'Jewellery', href:'/jewelry' },
-    { name:'Shoes', href:'/shoes' },
-    { name:'Beauty', href:'/beauty' },
-    { name:'Home', href:'/home' },
+  const navLinks = [
+    { href:'/women', label:t('women') },
+    { href:'/men', label:t('men') },
+    { href:'/kids', label:t('kids') },
+    { href:'/bags', label:t('bags') },
+    { href:'/jewelry', label:t('jewellery') },
+    { href:'/shoes', label:t('shoes') },
+    { href:'/beauty', label:t('beauty') },
+    { href:'/home', label:t('home') },
+  ];
+
+  const langOptions = [
+    { code:'en', label:'EN', flag:'🇬🇧' },
+    { code:'pt', label:'PT', flag:'🇧🇷' },
+    { code:'es', label:'ES', flag:'🇪🇸' },
   ];
 
   return (
     <>
       {/* Promo bar */}
-      <div style={{background:'#b8966a',color:'#1c1208',textAlign:'center',padding:'7px',fontSize:'11px',letterSpacing:'1px',fontWeight:'500'}}>
-        Free delivery on orders over $30 · Use code <strong>LAUREA20</strong> for 20% off
+      <div style={{background:'#b8966a',color:'#1c1208',textAlign:'center',padding:'8px 1rem',fontSize:'12px',fontWeight:'500',letterSpacing:'0.5px'}}>
+        {t('freeDelivery')} · {t('useCode')} <strong>LAUREA20</strong> for 20% {t('off')}
       </div>
 
       {/* Main navbar */}
-      <nav style={{background:'#1c1208',position:'sticky',top:0,zIndex:1000,borderBottom:'1px solid rgba(245,237,224,0.1)'}}>
-        <div style={{width:'100%',padding:'0 1rem',display:'flex',alignItems:'center',justifyContent:'space-between',height:'56px'}}>
+      <nav style={{background:'#1c1208',padding:'0 1.5rem',position:'sticky',top:0,zIndex:50,borderBottom:'1px solid rgba(184,150,106,0.15)'}}>
+        <div style={{maxWidth:'1400px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',height:'60px'}}>
 
           {/* Logo */}
-          <Link href="/" style={{textDecoration:'none',flexShrink:0}} onClick={()=>setMenuOpen(false)}>
-            <div style={{color:'#f5ede0',fontSize:'14px',fontWeight:'600',letterSpacing:'4px',textTransform:'uppercase',lineHeight:'1'}}>Laurea</div>
-            <div style={{color:'#b8966a',fontSize:'7px',letterSpacing:'4px',textTransform:'uppercase',marginTop:'2px'}}>Fashion House</div>
+          <Link href="/" style={{textDecoration:'none',flexShrink:0}}>
+            <div style={{color:'#f5ede0',fontSize:'16px',fontWeight:'600',letterSpacing:'4px',textTransform:'uppercase',lineHeight:'1'}}>LAUREA</div>
+            <div style={{color:'#b8966a',fontSize:'7px',letterSpacing:'3px',textTransform:'uppercase',marginTop:'2px'}}>
+              {lang==='pt'?'CASA DE MODA':lang==='es'?'CASA DE MODA':'FASHION HOUSE'}
+            </div>
           </Link>
 
-          {/* Desktop links */}
+          {/* Desktop nav links */}
           {!isMobile && (
-            <div style={{display:'flex',alignItems:'center',gap:'18px'}}>
-              {departments.map(dept => (
-                <Link key={dept.name} href={dept.href}
-                  style={{textDecoration:'none',fontSize:'11px',fontWeight:'500',color:'rgba(245,237,224,0.7)',letterSpacing:'1px',textTransform:'uppercase',whiteSpace:'nowrap'}}
+            <div style={{display:'flex',gap:'1.5rem',alignItems:'center'}}>
+              {navLinks.map(link => (
+                <Link key={link.href} href={link.href}
+                  style={{color:'rgba(245,237,224,0.7)',textDecoration:'none',fontSize:'12px',fontWeight:'500',letterSpacing:'1.5px',textTransform:'uppercase',transition:'color 0.15s'}}
                   onMouseEnter={e=>e.target.style.color='#b8966a'}
                   onMouseLeave={e=>e.target.style.color='rgba(245,237,224,0.7)'}>
-                  {dept.name}
+                  {link.label}
                 </Link>
               ))}
             </div>
           )}
 
           {/* Right side */}
-          <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
 
-            {/* Search — desktop only */}
-            {!isMobile && (
-              <button onClick={()=>setSearchOpen(!searchOpen)}
-                style={{background:'none',border:'none',cursor:'pointer',color:'rgba(245,237,224,0.7)',fontSize:'18px',padding:'4px'}}>
-                🔍
-              </button>
+            {/* Language switcher */}
+            <div style={{display:'flex',gap:'4px'}}>
+              {langOptions.map(l => (
+                <button key={l.code} onClick={()=>changeLang(l.code)}
+                  style={{background:lang===l.code?'rgba(184,150,106,0.2)':'transparent',border:`1px solid ${lang===l.code?'rgba(184,150,106,0.5)':'transparent'}`,color:lang===l.code?'#b8966a':'rgba(245,237,224,0.4)',padding:'3px 7px',fontSize:'10px',cursor:'pointer',borderRadius:'4px',fontWeight:lang===l.code?'700':'400',fontFamily:'inherit',transition:'all 0.15s'}}>
+                  {l.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Search */}
+            <button onClick={()=>setSearchOpen(!searchOpen)}
+              style={{background:'none',border:'none',color:'rgba(245,237,224,0.7)',cursor:'pointer',fontSize:'18px',padding:'4px',display:'flex',alignItems:'center'}}>
+              🔍
+            </button>
+
+            {/* User */}
+            {user ? (
+              <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+                {!isMobile && <span style={{fontSize:'12px',color:'rgba(245,237,224,0.6)'}}>{user.first_name}</span>}
+                <button onClick={handleLogout}
+                  style={{background:'none',border:'1px solid rgba(245,237,224,0.2)',color:'rgba(245,237,224,0.6)',padding:'5px 12px',fontSize:'11px',cursor:'pointer',borderRadius:'4px',fontFamily:'inherit',letterSpacing:'0.5px'}}>
+                  {t('logout')}
+                </button>
+              </div>
+            ) : (
+              <Link href="/auth/login"
+                style={{color:'rgba(245,237,224,0.7)',textDecoration:'none',fontSize:'12px',letterSpacing:'1px',textTransform:'uppercase'}}>
+                {t('login')}
+              </Link>
             )}
 
-            {/* Account — desktop only */}
-            {!isMobile && (
-              user ? (
-                <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-                  <Link href={user.role==='admin'?'/admin/dashboard':'/account'}
-                    style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500'}}>
-                    👤 {user.first_name}
-                  </Link>
-                  <button onClick={handleLogout}
-                    style={{background:'none',border:'none',fontSize:'11px',color:'rgba(245,237,224,0.4)',cursor:'pointer',textDecoration:'underline'}}>
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <Link href="/auth/login"
-                  style={{textDecoration:'none',fontSize:'11px',color:'rgba(245,237,224,0.7)',fontWeight:'500',letterSpacing:'1px',textTransform:'uppercase'}}>
-                  👤 Login
-                </Link>
-              )
-            )}
-
-            {/* Cart button */}
-            <Link href="/cart" style={{textDecoration:'none',position:'relative',display:'flex',alignItems:'center',gap:'6px',background:'#b8966a',color:'#1c1208',padding:isMobile?'8px 14px':'10px 20px',borderRadius:'6px',fontSize:isMobile?'12px':'14px',fontWeight:'700',letterSpacing:'1px',textTransform:'uppercase'}}>
-              🛒 {!isMobile && 'Bag'}
-              {cartCount > 0 && (
-                <span style={{position:'absolute',top:'-8px',right:'-8px',background:'#f5ede0',color:'#1c1208',borderRadius:'50%',width:'20px',height:'20px',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'10px',fontWeight:'700',border:'2px solid #1c1208'}}>
-                  {cartCount}
-                </span>
-              )}
+            {/* Cart */}
+            <Link href="/cart" style={{textDecoration:'none',position:'relative'}}>
+              <div style={{background:'#b8966a',color:'#1c1208',padding:'6px 14px',borderRadius:'6px',fontSize:'12px',fontWeight:'700',letterSpacing:'1px',display:'flex',alignItems:'center',gap:'6px'}}>
+                🛒 {t('bag')}
+                {cartCount > 0 && (
+                  <span style={{background:'#1c1208',color:'#b8966a',borderRadius:'50%',width:'18px',height:'18px',fontSize:'10px',fontWeight:'700',display:'flex',alignItems:'center',justifyContent:'center'}}>
+                    {cartCount}
+                  </span>
+                )}
+              </div>
             </Link>
 
-            {/* Hamburger — mobile only */}
+            {/* Mobile hamburger */}
             {isMobile && (
               <button onClick={()=>setMenuOpen(!menuOpen)}
-                style={{background:'none',border:'none',cursor:'pointer',color:'#f5ede0',fontSize:'22px',padding:'4px',lineHeight:1}}>
+                style={{background:'none',border:'none',color:'rgba(245,237,224,0.7)',fontSize:'22px',cursor:'pointer',padding:'4px'}}>
                 {menuOpen ? '✕' : '☰'}
               </button>
             )}
-
           </div>
         </div>
 
-        {/* Search dropdown — desktop */}
-        {!isMobile && searchOpen && (
-          <div style={{borderTop:'1px solid rgba(245,237,224,0.1)',padding:'12px 2rem',background:'#2d1f0a'}}>
-            <form onSubmit={handleSearch} style={{maxWidth:'600px',margin:'0 auto',display:'flex',gap:'8px'}}>
+        {/* Search dropdown */}
+        {searchOpen && (
+          <div style={{borderTop:'1px solid rgba(184,150,106,0.1)',padding:'12px 0'}}>
+            <form onSubmit={handleSearch} style={{maxWidth:'500px',margin:'0 auto',display:'flex',gap:'8px'}}>
               <input
+                type="text"
                 value={searchQuery}
                 onChange={e=>setSearchQuery(e.target.value)}
-                placeholder="Search products..."
+                placeholder={lang==='pt'?'Pesquisar produtos...':lang==='es'?'Buscar productos...':'Search products...'}
                 autoFocus
-                style={{flex:1,border:'1px solid rgba(245,237,224,0.2)',padding:'10px 14px',fontSize:'13px',color:'#f5ede0',outline:'none',borderRadius:'6px',background:'rgba(245,237,224,0.05)'}}
+                style={{flex:1,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(184,150,106,0.3)',color:'#f5ede0',padding:'10px 14px',fontSize:'13px',borderRadius:'8px',outline:'none',fontFamily:'inherit'}}
               />
-              <button type="submit" style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'600',cursor:'pointer',borderRadius:'6px'}}>
-                Search
-              </button>
-              <button type="button" onClick={()=>setSearchOpen(false)} style={{background:'none',border:'1px solid rgba(245,237,224,0.2)',padding:'10px 14px',fontSize:'12px',cursor:'pointer',borderRadius:'6px',color:'rgba(245,237,224,0.6)'}}>
-                Cancel
+              <button type="submit"
+                style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'700',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit',letterSpacing:'1px'}}>
+                {lang==='pt'?'BUSCAR':lang==='es'?'BUSCAR':'SEARCH'}
               </button>
             </form>
           </div>
         )}
 
-        {/* Mobile menu dropdown */}
+        {/* Mobile menu */}
         {isMobile && menuOpen && (
-          <div style={{background:'#2d1f0a',borderTop:'1px solid rgba(245,237,224,0.1)',padding:'1rem'}}>
+          <div style={{borderTop:'1px solid rgba(184,150,106,0.1)',padding:'1rem 0',background:'#1c1208'}}>
 
-            {/* Mobile search */}
-            <form onSubmit={handleSearch} style={{display:'flex',gap:'8px',marginBottom:'1rem'}}>
-              <input
-                value={searchQuery}
-                onChange={e=>setSearchQuery(e.target.value)}
-                placeholder="Search products..."
-                style={{flex:1,border:'1px solid rgba(245,237,224,0.2)',padding:'10px 12px',fontSize:'13px',color:'#f5ede0',outline:'none',borderRadius:'6px',background:'rgba(245,237,224,0.05)'}}
-              />
-              <button type="submit" style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'10px 16px',fontSize:'12px',fontWeight:'600',cursor:'pointer',borderRadius:'6px'}}>
-                🔍
-              </button>
-            </form>
-
-            {/* Mobile department links */}
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',marginBottom:'1rem'}}>
-              {departments.map(dept => (
-                <Link key={dept.name} href={dept.href} onClick={()=>setMenuOpen(false)}
-                  style={{textDecoration:'none',fontSize:'13px',fontWeight:'500',color:'rgba(245,237,224,0.8)',letterSpacing:'1px',textTransform:'uppercase',padding:'10px 12px',background:'rgba(245,237,224,0.05)',borderRadius:'6px',border:'1px solid rgba(245,237,224,0.1)'}}>
-                  {dept.name}
+            {/* Mobile nav links */}
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'2px',marginBottom:'1rem'}}>
+              {navLinks.map(link => (
+                <Link key={link.href} href={link.href}
+                  onClick={()=>setMenuOpen(false)}
+                  style={{color:'rgba(245,237,224,0.7)',textDecoration:'none',fontSize:'12px',fontWeight:'500',letterSpacing:'1.5px',textTransform:'uppercase',padding:'12px 1rem',display:'block',borderBottom:'1px solid rgba(184,150,106,0.06)'}}>
+                  {link.label}
                 </Link>
               ))}
             </div>
 
-            {/* Mobile account */}
-            <div style={{borderTop:'1px solid rgba(245,237,224,0.1)',paddingTop:'1rem',display:'flex',gap:'10px'}}>
+            {/* Mobile search */}
+            <div style={{padding:'0 1rem',marginBottom:'1rem'}}>
+              <form onSubmit={handleSearch} style={{display:'flex',gap:'8px'}}>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={e=>setSearchQuery(e.target.value)}
+                  placeholder={lang==='pt'?'Pesquisar...':lang==='es'?'Buscar...':'Search...'}
+                  style={{flex:1,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(184,150,106,0.3)',color:'#f5ede0',padding:'10px 14px',fontSize:'13px',borderRadius:'8px',outline:'none',fontFamily:'inherit'}}
+                />
+                <button type="submit"
+                  style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'10px 16px',fontSize:'11px',fontWeight:'700',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit'}}>
+                  🔍
+                </button>
+              </form>
+            </div>
+
+            {/* Mobile login/logout */}
+            <div style={{padding:'0 1rem',borderTop:'1px solid rgba(184,150,106,0.1)',paddingTop:'1rem'}}>
               {user ? (
-                <>
-                  <Link href={user.role==='admin'?'/admin/dashboard':'/account'} onClick={()=>setMenuOpen(false)}
-                    style={{textDecoration:'none',fontSize:'13px',color:'rgba(245,237,224,0.7)',flex:1,padding:'10px',background:'rgba(245,237,224,0.05)',borderRadius:'6px',textAlign:'center'}}>
-                    👤 {user.first_name}
-                  </Link>
-                  <button onClick={handleLogout}
-                    style={{background:'rgba(245,237,224,0.05)',border:'1px solid rgba(245,237,224,0.1)',fontSize:'13px',color:'rgba(245,237,224,0.5)',cursor:'pointer',padding:'10px',borderRadius:'6px',flex:1}}>
-                    Logout
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+                  <span style={{fontSize:'13px',color:'rgba(245,237,224,0.6)'}}>{user.first_name} {user.last_name}</span>
+                  <button onClick={()=>{ handleLogout(); setMenuOpen(false); }}
+                    style={{background:'rgba(184,150,106,0.1)',border:'1px solid rgba(184,150,106,0.3)',color:'#b8966a',padding:'8px 16px',fontSize:'12px',cursor:'pointer',borderRadius:'6px',fontFamily:'inherit'}}>
+                    {t('logout')}
                   </button>
-                </>
+                </div>
               ) : (
                 <Link href="/auth/login" onClick={()=>setMenuOpen(false)}
-                  style={{textDecoration:'none',fontSize:'13px',color:'#f5ede0',flex:1,padding:'10px',background:'#b8966a',borderRadius:'6px',textAlign:'center',fontWeight:'600',color:'#1c1208'}}>
-                  👤 Login
+                  style={{display:'block',background:'#b8966a',color:'#1c1208',textAlign:'center',padding:'12px',textDecoration:'none',fontSize:'12px',fontWeight:'700',letterSpacing:'2px',textTransform:'uppercase',borderRadius:'8px'}}>
+                  {t('login')}
                 </Link>
               )}
             </div>
-
           </div>
         )}
       </nav>
