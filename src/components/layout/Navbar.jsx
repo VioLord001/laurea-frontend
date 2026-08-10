@@ -12,10 +12,10 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
-  const { t, lang, changeLang } = useLanguage();
+  const { t, lang } = useLanguage();
 
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
+    const check = () => setIsMobile(window.innerWidth < 1024);
     check();
     window.addEventListener('resize', check);
     return () => window.removeEventListener('resize', check);
@@ -63,12 +63,6 @@ export default function Navbar() {
     { href:'/home', label:t('home') },
   ];
 
-  const langOptions = [
-    { code:'en', label:'EN', flag:'🇬🇧' },
-    { code:'pt', label:'PT', flag:'🇧🇷' },
-    { code:'es', label:'ES', flag:'🇪🇸' },
-  ];
-
   return (
     <>
       {/* Promo bar */}
@@ -104,16 +98,6 @@ export default function Navbar() {
 
           {/* Right side */}
           <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
-
-            {/* Language switcher */}
-            <div style={{display:'flex',gap:'4px'}}>
-              {langOptions.map(l => (
-                <button key={l.code} onClick={()=>changeLang(l.code)}
-                  style={{background:lang===l.code?'rgba(184,150,106,0.2)':'transparent',border:`1px solid ${lang===l.code?'rgba(184,150,106,0.5)':'transparent'}`,color:lang===l.code?'#b8966a':'rgba(245,237,224,0.4)',padding:'3px 7px',fontSize:'10px',cursor:'pointer',borderRadius:'4px',fontWeight:lang===l.code?'700':'400',fontFamily:'inherit',transition:'all 0.15s'}}>
-                  {l.label}
-                </button>
-              ))}
-            </div>
 
             {/* Search */}
             <button onClick={()=>setSearchOpen(!searchOpen)}
