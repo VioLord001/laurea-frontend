@@ -39,7 +39,7 @@ export default function Navbar() {
       </div>
 
       <header className="bg-white border-b border-stone-100 sticky top-0 z-50">
-        <div className="w-full px-6">
+        <div className="w-full px-3 md:px-6">
           <div className="flex items-center h-16 gap-4">
 
             {/* Mobile menu button */}
@@ -73,7 +73,7 @@ export default function Navbar() {
                 </form>
               ) : (
                 <button onClick={() => setSearchOpen(true)} className="p-2 text-stone-600 hover:text-stone-900" aria-label="Search">
-                  <Search size={18} />
+                  <Search size={16} className="md:w-[18px] md:h-[18px]" />
                 </button>
               )}
 
