@@ -4,9 +4,9 @@
 @tailwind utilities;
 
 :root {
-  --gold: #b8966a;
-  --dark: #1c1208;
-  --cream: #f5ede0;
+  --gold: #8a7560;
+  --dark: #0d1b2a;
+  --cream: #ffffff;
 }
 
 @layer base {
@@ -18,23 +18,23 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-dark text-cream px-6 py-3 text-xs font-medium tracking-widest uppercase
-    transition-all duration-200 hover:bg-gold hover:text-dark focus:outline-none focus:ring-2 focus:ring-gold;
+    @apply bg-dark text-white px-6 py-3 text-xs font-medium tracking-widest uppercase
+    transition-all duration-200 hover:bg-[#8a7560] hover:text-white focus:outline-none focus:ring-2 focus:ring-[#8a7560];
   }
   .btn-gold {
-    @apply bg-gold text-dark px-6 py-3 text-xs font-medium tracking-widest uppercase
-    transition-all duration-200 hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-gold;
+    @apply bg-[#8a7560] text-white px-6 py-3 text-xs font-medium tracking-widest uppercase
+    transition-all duration-200 hover:opacity-85 focus:outline-none focus:ring-2 focus:ring-[#8a7560];
   }
   .btn-outline {
     @apply border border-stone-300 text-stone-700 px-6 py-3 text-xs font-medium tracking-widest uppercase
-    transition-all duration-200 hover:border-dark hover:text-dark focus:outline-none;
+    transition-all duration-200 hover:border-[#0d1b2a] hover:text-[#0d1b2a] focus:outline-none;
   }
   .input-field {
     @apply w-full border border-stone-200 bg-stone-50 px-4 py-3 text-sm text-stone-800
-    focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-colors;
+    focus:outline-none focus:border-[#8a7560] focus:ring-1 focus:ring-[#8a7560] transition-colors;
   }
-  .badge-sale { @apply bg-gold text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wider; }
-  .badge-new  { @apply bg-dark text-cream text-xs font-medium px-2 py-0.5 uppercase tracking-wider; }
+  .badge-sale { @apply bg-[#8a7560] text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wider; }
+  .badge-new  { @apply bg-[#0d1b2a] text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wider; }
   .badge-hot  { @apply bg-amber-800 text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wider; }
   .badge-excl { @apply bg-purple-800 text-white text-xs font-medium px-2 py-0.5 uppercase tracking-wider; }
   .card-shadow { @apply shadow-[0_2px_16px_rgba(0,0,0,0.08)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)] transition-shadow duration-300; }
