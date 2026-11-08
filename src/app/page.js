@@ -37,27 +37,21 @@ export default async function HomePage() {
   return (
     <div>
       {/* ── Hero ───────────────────────────────── */}
-      <section className="bg-dark py-16 px-6 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="text-center md:text-left">
-          <p className="text-[9px] tracking-[0.5em] uppercase text-gold mb-3">2026 Collection</p>
-          <h1 className="text-4xl md:text-5xl font-serif font-light text-cream leading-tight mb-4">
-            Dress with<br /><em className="text-gold">intention.</em>
+      <section style={{position:'relative',height:'90vh',minHeight:'500px',overflow:'hidden'}}>
+        <video autoPlay muted loop playsInline style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}}>
+          <source src="https://videos.pexels.com/video-files/3576378/3576378-uhd_2560_1440_25fps.mp4" type="video/mp4" />
+        </video>
+        <div style={{position:'absolute',inset:0,background:'linear-gradient(to right,rgba(13,27,42,0.75) 50%,rgba(13,27,42,0.3))'}} />
+        <div style={{position:'absolute',bottom:'15%',left:0,right:0,padding:'0 2rem',zIndex:1}}>
+          <p style={{fontSize:'9px',letterSpacing:'5px',color:'#b8966a',textTransform:'uppercase',marginBottom:'12px'}}>2026 Collection</p>
+          <h1 style={{fontSize:'clamp(32px,5vw,56px)',fontWeight:'300',color:'#f5ede0',lineHeight:'1.15',marginBottom:'12px',fontFamily:'serif'}}>
+            Dress with<br /><em style={{color:'#b8966a'}}>intention.</em>
           </h1>
-          <p className="text-xs text-stone-400 tracking-widest mb-8">Women · Men · Kids · Bags · Jewellery & More</p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
-            <Link href="/women" className="btn-gold">Shop women</Link>
-            <Link href="/men" className="btn-outline border-stone-600 text-stone-300 hover:border-cream hover:text-cream">Shop men</Link>
+          <p style={{fontSize:'12px',color:'rgba(245,237,224,0.6)',marginBottom:'1.5rem',letterSpacing:'2px'}}>Women · Men · Kids · Bags · Jewellery & More</p>
+          <div style={{display:'flex',gap:'10px',flexWrap:'wrap'}}>
+            <Link href="/women" className="btn-gold">Shop Women</Link>
+            <Link href="/men" style={{background:'transparent',color:'#f5ede0',border:'1px solid rgba(245,237,224,0.4)',padding:'12px 28px',fontSize:'11px',fontWeight:'500',letterSpacing:'2px',textTransform:'uppercase',textDecoration:'none'}}>Shop Men</Link>
           </div>
-        </div>
-        <div className="flex gap-3">
-          {[{ dept: 'women', emoji: '👗' }, { dept: 'men', emoji: '👔' }, { dept: 'kids', emoji: '🧒' }].map((c, i) => (
-            <Link key={c.dept} href={`/${c.dept}`}
-              className={`rounded-xl flex flex-col items-center justify-end pb-3 w-20 hover:scale-105 transition-transform cursor-pointer
-                ${i === 0 ? 'h-24 mt-5 bg-[#e8c5b0]' : i === 1 ? 'h-28 bg-[#a0b5c8]' : 'h-24 mt-5 bg-[#c4a07a]'}`}>
-              <span className="text-3xl">{c.emoji}</span>
-              <span className="text-[7px] tracking-widest uppercase text-stone-600 mt-1">{c.dept}</span>
-            </Link>
-          ))}
         </div>
       </section>
 
