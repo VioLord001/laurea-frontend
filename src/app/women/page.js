@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 
 const CATS = [
@@ -17,8 +18,6 @@ const CATS = [
   { name:'Blazers', photo:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', styles:['Power blazers','Oversized','Checked'] },
   { name:'Cardigans', photo:'https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&q=80', styles:['Long cardigans','Cropped','Open-front'] },
 ];
-
-export const metadata = { title: "Women's Fashion | Laurea Fashion House" };
 
 export default function WomenPage() {
   return (
@@ -45,8 +44,7 @@ export default function WomenPage() {
             <Link key={cat.name} href={`/women/${cat.name.toLowerCase().replace(/ /g,'-')}`}
               style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block',height:'200px'}}>
               <img src={cat.photo} alt={cat.name} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',transition:'transform 0.3s'}}
-                onMouseEnter={e=>e.target.style.transform='scale(1.05)'}
-                onMouseLeave={e=>e.target.style.transform='scale(1)'} />
+                />
               <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(13,27,42,0.75) 40%,transparent)'}} />
               <div style={{position:'absolute',bottom:0,left:0,right:0,padding:'12px'}}>
                 <p style={{fontSize:'11px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',color:'#fff',marginBottom:'4px'}}>{cat.name}</p>
