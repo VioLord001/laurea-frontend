@@ -7,14 +7,14 @@ import ProductCard from '@/components/product/ProductCard';
 
 // In production these would be fetched from the API
 const DEPARTMENTS = [
-  { name: 'Women', href: '/women', emoji: '👗', sub: '15 categories', style: 'bg-[#f0e8e0]' },
-  { name: 'Men', href: '/men', emoji: '👔', sub: '15 categories', style: 'bg-[#dce4ec]' },
-  { name: 'Kids', href: '/kids', emoji: '🧒', sub: '14 categories', style: 'bg-[#f0e0e8]' },
-  { name: 'Bags', href: '/bags', emoji: '👜', sub: '8 types', style: 'bg-[#e8e0d0]' },
-  { name: 'Jewellery', href: '/jewelry', emoji: '💍', sub: '7 types', style: 'bg-[#f0e8c8]' },
-  { name: 'Shoes', href: '/shoes', emoji: '👟', sub: '8 types', style: 'bg-[#e0dcd8]' },
-  { name: 'Beauty', href: '/beauty', emoji: '💄', sub: '6 types', style: 'bg-[#f0d8e0]' },
-  { name: 'Home & Living', href: '/home', emoji: '🏡', sub: '6 types', style: 'bg-[#d8e8d8]' },
+  { name: 'Women', href: '/women', photo: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80', sub: '15 categories' },
+  { name: 'Men', href: '/men', photo: 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=400&q=80', sub: '15 categories' },
+  { name: 'Kids', href: '/kids', photo: 'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=400&q=80', sub: '14 categories' },
+  { name: 'Bags', href: '/bags', photo: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80', sub: '8 types' },
+  { name: 'Jewellery', href: '/jewelry', photo: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80', sub: '7 types' },
+  { name: 'Shoes', href: '/shoes', photo: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80', sub: '8 types' },
+  { name: 'Beauty', href: '/beauty', photo: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80', sub: '6 types' },
+  { name: 'Home & Living', href: '/home', photo: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&q=80', sub: '6 types' },
 ];
 
 
@@ -61,11 +61,12 @@ export default async function HomePage() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {DEPARTMENTS.map((dept) => (
             <Link key={dept.name} href={dept.href}
-              className={`${dept.style} rounded-xl h-28 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 transition-transform`}>
-              <span className="text-3xl">{dept.emoji}</span>
-              <div className="text-center">
-                <p className="text-xs font-medium tracking-widest uppercase text-stone-700">{dept.name}</p>
-                <p className="text-[9px] text-stone-500 mt-0.5">{dept.sub}</p>
+              className="relative rounded-xl h-36 overflow-hidden hover:-translate-y-1 transition-transform block">
+              <img src={dept.photo} alt={dept.name} className="absolute inset-0 w-full h-full object-cover object-center" />
+              <div className="absolute inset-0 bg-black/40" />
+              <div className="absolute bottom-0 left-0 right-0 p-3 text-center">
+                <p className="text-xs font-medium tracking-widest uppercase text-white">{dept.name}</p>
+                <p className="text-[9px] text-white/70 mt-0.5">{dept.sub}</p>
               </div>
             </Link>
           ))}
