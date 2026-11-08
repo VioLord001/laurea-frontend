@@ -29,11 +29,8 @@ const ARRIVALS = [
 ];
 
 const SOCIAL = [
-  {n:'Instagram',i:'📸',h:'@laureafashion'},
-  {n:'TikTok',i:'🎵',h:'@laureafashion'},
-  {n:'Facebook',i:'📘',h:'Laurea Fashion'},
-  {n:'WhatsApp',i:'💬',h:'+55 00 00000-0000'},
-  {n:'Twitter',i:'🐦',h:'@laureafashion'},
+  {n:'Instagram',i:'📸',h:'@laureafashionhouse',url:'https://instagram.com/laureafashionhouse'},
+  {n:'WhatsApp',i:'💬',h:'+55 18 98206-1771',url:'https://wa.me/5518982061771'},
 ];
 
 export default function HomePage() {
@@ -51,7 +48,9 @@ export default function HomePage() {
 
       {/* Hero */}
       <section style={{position:'relative',height:isMobile?'60vh':'90vh',minHeight:isMobile?'300px':'500px',overflow:'hidden'}}>
-        <img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1400&q=80" alt="hero" style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}} />
+        <video autoPlay muted loop playsInline style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}}>
+          <source src="https://videos.pexels.com/video-files/3576378/3576378-uhd_2560_1440_25fps.mp4" type="video/mp4" />
+        </video>
         <div style={{position:'absolute',inset:0,background:'linear-gradient(to right,rgba(28,18,8,0.85) 40%,rgba(28,18,8,0.2))'}} />
         <div style={{position:'relative',zIndex:1,height:'100%',display:'flex',alignItems:'center',padding:isMobile?'0 1.5rem':'0 3rem'}}>
           <div style={{maxWidth:'520px'}}>
