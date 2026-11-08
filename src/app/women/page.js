@@ -24,7 +24,7 @@ export default function WomenPage() {
     <div style={{minHeight:'100vh',background:'#fff'}}>
       {/* Hero banner */}
       <div style={{position:'relative',height:'280px',overflow:'hidden'}}>
-        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=80" alt="Women's Fashion" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}} />
+        <img src="https://images.unsplash.com/photo-1529635696563-b0f4d1f9a5e3?w=1400&q=80" alt="Women's Fashion" style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}} />
         <div style={{position:'absolute',inset:0,background:'rgba(13,27,42,0.5)'}} />
         <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',justifyContent:'flex-end',padding:'2rem 2.5rem'}}>
           <nav style={{fontSize:'10px',letterSpacing:'2px',textTransform:'uppercase',color:'rgba(255,255,255,0.6)',marginBottom:'8px'}}>
