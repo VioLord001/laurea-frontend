@@ -33,11 +33,6 @@ export default function Navbar() {
 
   return (
     <>
-      {/* Announcement bar */}
-      <div className="bg-gold py-2 px-4 text-center text-xs tracking-widest uppercase text-dark">
-        Free shipping on orders over $30 &nbsp;·&nbsp; Use code LAUREA20 for 20% off
-      </div>
-
       <header className="bg-white border-b border-stone-100 sticky top-0 z-50">
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center h-16 gap-4">
