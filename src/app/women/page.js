@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 const CATS = [
   { name:'Tops', photo:'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400&q=80', styles:['T-shirts','Crop tops','Blouses','Bodysuits'] },
-  { name:'Bottoms', photo:'https://images.unsplash.com/photo-1594938298603-c8148c4b4057?w=400&q=80', styles:['Trousers','Wide-leg','Mini skirts','Leggings'] },
+  { name:'Bottoms', photo:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=400&q=80', styles:['Trousers','Wide-leg','Mini skirts','Leggings'] },
   { name:'Denim', photo:'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400&q=80', styles:['Skinny jeans','Wide-leg jeans','Mom jeans'] },
   { name:'Dresses', photo:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80', styles:['Mini dresses','Midi dresses','Wrap dresses'] },
   { name:'Outerwear', photo:'https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=400&q=80', styles:['Coats','Puffer jackets','Trench coats'] },
@@ -15,7 +15,7 @@ const CATS = [
   { name:'Knitwear', photo:'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=400&q=80', styles:['Jumpers','Cardigans','Knit dresses'] },
   { name:'Shirts', photo:'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400&q=80', styles:['Oversized','Linen shirts','Satin shirts'] },
   { name:'Jumpsuits', photo:'https://images.unsplash.com/photo-1612336307429-8a898d10e223?w=400&q=80', styles:['Playsuits','Casual','Party jumpsuits'] },
-  { name:'Blazers', photo:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80', styles:['Power blazers','Oversized','Checked'] },
+  { name:'Blazers', photo:'https://images.unsplash.com/photo-1591369822096-ffd140ec948f?w=400&q=80', styles:['Power blazers','Oversized','Checked'] },
   { name:'Cardigans', photo:'https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=400&q=80', styles:['Long cardigans','Cropped','Open-front'] },
 ];
 
