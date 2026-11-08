@@ -73,36 +73,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Flash sale ─────────────────────────── */}
-      <section className="bg-dark py-8 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-gold text-lg">⚡</span>
-            <span className="text-[11px] tracking-[0.3em] uppercase text-cream">Flash sale</span>
-            <div className="ml-auto flex gap-1 items-center" id="countdown">
-              {['04', '22', '09'].map((n, i) => (
-                <span key={i} className={`bg-gold text-dark text-xs font-medium px-2 py-1 ${i < 2 ? 'mr-0' : ''}`}>{n}</span>
-              ))}
-            </div>
-          </div>
-          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            {[
-              { e:'👗', n:'Wrap dress', p:'$8.99', o:'$24.99' }, { e:'💍', n:'Ring set', p:'$6.99', o:'$19.99' },
-              { e:'👜', n:'Crossbody bag', p:'$14.99', o:'$44.99' }, { e:'👟', n:'White sneakers', p:'$12.99', o:'$39.99' },
-              { e:'💄', n:'Lip set x6', p:'$8.99', o:'$22.99' }, { e:'🕯', n:'Oud candle', p:'$7.99', o:'$22.99' },
-              { e:'👖', n:'Wide-leg jeans', p:'$12.99', o:'$39.99' }, { e:'🧥', n:'Puffer jacket', p:'$18.99', o:'$54.99' },
-            ].map((item, i) => (
-              <div key={i} className="flex-shrink-0 w-24 bg-stone-800/50 border border-stone-700 p-3 text-center rounded hover:bg-stone-700/50 transition-colors cursor-pointer">
-                <div className="text-2xl mb-2">{item.e}</div>
-                <p className="text-[9px] text-stone-300 mb-1 leading-tight">{item.n}</p>
-                <p className="text-xs font-medium text-gold">{item.p}</p>
-                <p className="text-[9px] text-stone-500 line-through">{item.o}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── Featured products ─────────────────── */}
       <section className="max-w-7xl mx-auto px-4 py-12">
         <div className="flex items-center gap-4 mb-6">
