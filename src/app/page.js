@@ -1,166 +1,180 @@
 'use client';
+// ============================================
+// STAGE 2: HOME PAGE
+// ============================================
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import ProductCard from '@/components/product/ProductCard';
 
+// In production these would be fetched from the API
 const DEPARTMENTS = [
-  { name:'Women', href:'/women', photo:'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=400&q=80', sub:'15 categories' },
-  { name:'Men', href:'/men', photo:'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?w=400&q=80', sub:'15 categories' },
-  { name:'Kids', href:'/kids', photo:'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?w=400&q=80', sub:'14 categories' },
-  { name:'Bags', href:'/bags', photo:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80', sub:'8 types' },
-  { name:'Jewellery', href:'/jewelry', photo:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80', sub:'7 types' },
-  { name:'Shoes', href:'/shoes', photo:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80', sub:'8 types' },
-  { name:'Beauty', href:'/beauty', photo:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400&q=80', sub:'6 types' },
-  { name:'Home', href:'/home', photo:'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=400&q=80', sub:'6 types' },
+  { name: 'Women', href: '/women', emoji: '👗', sub: '15 categories', style: 'bg-[#f0e8e0]' },
+  { name: 'Men', href: '/men', emoji: '👔', sub: '15 categories', style: 'bg-[#dce4ec]' },
+  { name: 'Kids', href: '/kids', emoji: '🧒', sub: '14 categories', style: 'bg-[#f0e0e8]' },
+  { name: 'Bags', href: '/bags', emoji: '👜', sub: '8 types', style: 'bg-[#e8e0d0]' },
+  { name: 'Jewellery', href: '/jewelry', emoji: '💍', sub: '7 types', style: 'bg-[#f0e8c8]' },
+  { name: 'Shoes', href: '/shoes', emoji: '👟', sub: '8 types', style: 'bg-[#e0dcd8]' },
+  { name: 'Beauty', href: '/beauty', emoji: '💄', sub: '6 types', style: 'bg-[#f0d8e0]' },
+  { name: 'Home & Living', href: '/home', emoji: '🏡', sub: '6 types', style: 'bg-[#d8e8d8]' },
 ];
 
-const FLASH = [
-  { photo:'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=200&q=80', n:'Wrap dress', p:'$8.99', o:'$24.99' },
-  { photo:'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=200&q=80', n:'Ring set', p:'$6.99', o:'$19.99' },
-  { photo:'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&q=80', n:'Crossbody bag', p:'$14.99', o:'$44.99' },
-  { photo:'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80', n:'White sneakers', p:'$12.99', o:'$39.99' },
-  { photo:'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=200&q=80', n:'Lip set', p:'$8.99', o:'$22.99' },
-  { photo:'https://images.unsplash.com/photo-1470309864661-68328b2cd0a5?w=200&q=80', n:'Oud candle', p:'$7.99', o:'$22.99' },
-];
 
-const ARRIVALS = [
-  { href:'/women', photo:'https://images.unsplash.com/photo-1509631179647-0177331693ae?w=600&q=80', label:'Women', pos:'center top' },
-  { href:'/men', photo:'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=600&q=80', label:'Men', pos:'center top' },
-  { href:'/kids', photo:'https://images.unsplash.com/photo-1476703993599-0035a21b17a9?w=600&q=80', label:'Kids', pos:'center top' },
-];
+async function getFeaturedProducts() {
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?featured=true&limit=8`, {
+      next: { revalidate: 300 } // Cache for 5 minutes
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.products || [];
+  } catch {
+    return [];
+  }
+}
 
-const SOCIAL = [
-  {n:'Instagram',i:'📸',h:'@laureafashionhouse',url:'https://instagram.com/laureafashionhouse'},
-  {n:'WhatsApp',i:'💬',h:'+55 18 98206-1771',url:'https://wa.me/5518982061771'},
-];
-
-export default function HomePage() {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 768);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
+export default async function HomePage() {
+  const featuredProducts = await getFeaturedProducts();
 
   return (
-    <div style={{minHeight:'100vh'}}>
-
-      {/* Hero */}
-      <section style={{position:'relative',height:isMobile?'60vh':'90vh',minHeight:isMobile?'300px':'500px',overflow:'hidden'}}>
-        <video autoPlay muted loop playsInline style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top'}}>
-          <source src="https://videos.pexels.com/video-files/3576378/3576378-uhd_2560_1440_25fps.mp4" type="video/mp4" />
-        </video>
-        <div style={{position:'absolute',inset:0,background:'linear-gradient(to right,rgba(28,18,8,0.85) 40%,rgba(28,18,8,0.2))'}} />
-        <div style={{position:'relative',zIndex:1,height:'100%',display:'flex',alignItems:'center',padding:isMobile?'0 1.5rem':'0 3rem'}}>
-          <div style={{maxWidth:'520px'}}>
-            <p style={{fontSize:'9px',letterSpacing:'5px',color:'#b8966a',textTransform:'uppercase',marginBottom:'12px'}}>2026 Collection</p>
-            <h1 style={{fontSize:isMobile?'28px':'48px',fontWeight:'300',color:'#f5ede0',lineHeight:'1.15',marginBottom:'12px'}}>
-              Dress with<br /><em style={{color:'#b8966a'}}>intention.</em>
-            </h1>
-            <p style={{fontSize:isMobile?'11px':'13px',color:'rgba(245,237,224,0.6)',marginBottom:'1.5rem',letterSpacing:'1px'}}>Women · Men · Kids · Bags · Jewellery & More</p>
-            <div style={{display:'flex',gap:'10px',flexWrap:'wrap'}}>
-              <Link href="/women" style={{background:'#b8966a',color:'#1c1208',padding:isMobile?'10px 18px':'14px 28px',fontSize:'11px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',textDecoration:'none',borderRadius:'2px'}}>Shop women</Link>
-              <Link href="/men" style={{background:'transparent',color:'#f5ede0',border:'1px solid rgba(245,237,224,0.4)',padding:isMobile?'10px 18px':'14px 28px',fontSize:'11px',letterSpacing:'2px',textTransform:'uppercase',textDecoration:'none',borderRadius:'2px'}}>Shop men</Link>
-            </div>
+    <div>
+      {/* ── Hero ───────────────────────────────── */}
+      <section className="bg-dark py-16 px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+        <div className="text-center md:text-left">
+          <p className="text-[9px] tracking-[0.5em] uppercase text-gold mb-3">2026 Collection</p>
+          <h1 className="text-4xl md:text-5xl font-serif font-light text-cream leading-tight mb-4">
+            Dress with<br /><em className="text-gold">intention.</em>
+          </h1>
+          <p className="text-xs text-stone-400 tracking-widest mb-8">Women · Men · Kids · Bags · Jewellery & More</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center md:justify-start">
+            <Link href="/women" className="btn-gold">Shop women</Link>
+            <Link href="/men" className="btn-outline border-stone-600 text-stone-300 hover:border-cream hover:text-cream">Shop men</Link>
           </div>
+        </div>
+        <div className="flex gap-3">
+          {[{ dept: 'women', emoji: '👗' }, { dept: 'men', emoji: '👔' }, { dept: 'kids', emoji: '🧒' }].map((c, i) => (
+            <Link key={c.dept} href={`/${c.dept}`}
+              className={`rounded-xl flex flex-col items-center justify-end pb-3 w-20 hover:scale-105 transition-transform cursor-pointer
+                ${i === 0 ? 'h-24 mt-5 bg-[#e8c5b0]' : i === 1 ? 'h-28 bg-[#a0b5c8]' : 'h-24 mt-5 bg-[#c4a07a]'}`}>
+              <span className="text-3xl">{c.emoji}</span>
+              <span className="text-[7px] tracking-widest uppercase text-stone-600 mt-1">{c.dept}</span>
+            </Link>
+          ))}
         </div>
       </section>
 
-      {/* Departments */}
-      <section style={{padding:isMobile?'2rem 1rem':'3rem 2rem',background:'#faf8f5'}}>
-        <p style={{fontSize:'11px',fontWeight:'600',letterSpacing:'3px',textTransform:'uppercase',color:'#2a1e10',marginBottom:'1.5rem',textAlign:'center'}}>Shop by department</p>
-        <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(4,1fr)',gap:isMobile?'10px':'16px',maxWidth:'1200px',margin:'0 auto'}}>
-          {DEPARTMENTS.map((d) => (
-            <Link key={d.name} href={d.href} style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block',height:isMobile?'180px':'260px'}}>
-              <img src={d.photo} alt={d.name} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center top',transition:'transform 0.5s'}}
-                onMouseEnter={e=>e.target.style.transform='scale(1.05)'}
-                onMouseLeave={e=>e.target.style.transform='scale(1)'} />
-              <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(28,18,8,0.85) 0%,rgba(28,18,8,0.1) 60%)'}} />
-              <div style={{position:'absolute',bottom:0,left:0,right:0,padding:isMobile?'0.75rem':'1rem'}}>
-                <p style={{color:'#f5ede0',fontSize:isMobile?'11px':'13px',fontWeight:'600',letterSpacing:'2px',textTransform:'uppercase',marginBottom:'2px'}}>{d.name}</p>
-                <p style={{color:'rgba(245,237,224,0.6)',fontSize:'10px'}}>{d.sub}</p>
+      {/* ── Department grid ───────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <h2 className="text-xs tracking-[0.25em] uppercase text-stone-500 mb-6">Shop by department</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {DEPARTMENTS.map((dept) => (
+            <Link key={dept.name} href={dept.href}
+              className={`${dept.style} rounded-xl h-28 flex flex-col items-center justify-center gap-2 hover:-translate-y-1 transition-transform`}>
+              <span className="text-3xl">{dept.emoji}</span>
+              <div className="text-center">
+                <p className="text-xs font-medium tracking-widest uppercase text-stone-700">{dept.name}</p>
+                <p className="text-[9px] text-stone-500 mt-0.5">{dept.sub}</p>
               </div>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Flash sale */}
-      <section style={{background:'#1c1208',padding:isMobile?'1.5rem 1rem':'2.5rem 2rem'}}>
-        <div style={{maxWidth:'1200px',margin:'0 auto'}}>
-          <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'1.5rem'}}>
-            <span style={{color:'#b8966a',fontSize:'18px'}}>⚡</span>
-            <span style={{color:'#f5ede0',fontSize:'11px',letterSpacing:'4px',textTransform:'uppercase',fontWeight:'600'}}>Flash sale</span>
+      {/* ── Flash sale ─────────────────────────── */}
+      <section className="bg-dark py-8 px-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center gap-3 mb-4">
+            <span className="text-gold text-lg">⚡</span>
+            <span className="text-[11px] tracking-[0.3em] uppercase text-cream">Flash sale</span>
+            <div className="ml-auto flex gap-1 items-center" id="countdown">
+              {['04', '22', '09'].map((n, i) => (
+                <span key={i} className={`bg-gold text-dark text-xs font-medium px-2 py-1 ${i < 2 ? 'mr-0' : ''}`}>{n}</span>
+              ))}
+            </div>
           </div>
-          <div style={{display:'flex',gap:isMobile?'8px':'12px',overflowX:'auto',paddingBottom:'8px'}}>
-            {FLASH.map((item,i) => (
-              <div key={i} style={{flexShrink:0,width:isMobile?'120px':'140px',background:'rgba(245,237,224,0.05)',border:'1px solid rgba(245,237,224,0.1)',borderRadius:'10px',overflow:'hidden',cursor:'pointer'}}>
-                <div style={{height:isMobile?'120px':'140px',overflow:'hidden'}}>
-                  <img src={item.photo} alt={item.n} style={{width:'100%',height:'100%',objectFit:'cover'}} />
-                </div>
-                <div style={{padding:'10px'}}>
-                  <p style={{fontSize:'11px',color:'rgba(245,237,224,0.75)',marginBottom:'4px'}}>{item.n}</p>
-                  <p style={{fontSize:'13px',fontWeight:'600',color:'#b8966a'}}>{item.p}</p>
-                  <p style={{fontSize:'10px',color:'rgba(245,237,224,0.35)',textDecoration:'line-through'}}>{item.o}</p>
-                </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            {[
+              { e:'👗', n:'Wrap dress', p:'$8.99', o:'$24.99' }, { e:'💍', n:'Ring set', p:'$6.99', o:'$19.99' },
+              { e:'👜', n:'Crossbody bag', p:'$14.99', o:'$44.99' }, { e:'👟', n:'White sneakers', p:'$12.99', o:'$39.99' },
+              { e:'💄', n:'Lip set x6', p:'$8.99', o:'$22.99' }, { e:'🕯', n:'Oud candle', p:'$7.99', o:'$22.99' },
+              { e:'👖', n:'Wide-leg jeans', p:'$12.99', o:'$39.99' }, { e:'🧥', n:'Puffer jacket', p:'$18.99', o:'$54.99' },
+            ].map((item, i) => (
+              <div key={i} className="flex-shrink-0 w-24 bg-stone-800/50 border border-stone-700 p-3 text-center rounded hover:bg-stone-700/50 transition-colors cursor-pointer">
+                <div className="text-2xl mb-2">{item.e}</div>
+                <p className="text-[9px] text-stone-300 mb-1 leading-tight">{item.n}</p>
+                <p className="text-xs font-medium text-gold">{item.p}</p>
+                <p className="text-[9px] text-stone-500 line-through">{item.o}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* New arrivals */}
-      <section style={{padding:isMobile?'2rem 1rem':'3rem 2rem',background:'#fff'}}>
-        <div style={{maxWidth:'1200px',margin:'0 auto'}}>
-          <p style={{fontSize:'11px',fontWeight:'600',letterSpacing:'3px',textTransform:'uppercase',color:'#2a1e10',marginBottom:'1.5rem',textAlign:'center'}}>New arrivals</p>
-          <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'repeat(3,1fr)',gap:isMobile?'10px':'16px'}}>
-            {ARRIVALS.map((a) => (
-              <Link key={a.label} href={a.href} style={{textDecoration:'none',position:'relative',borderRadius:'12px',overflow:'hidden',display:'block',height:isMobile?'200px':'300px'}}>
-                <img src={a.photo} alt={a.label} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:a.pos}} />
-                <div style={{position:'absolute',inset:0,background:'linear-gradient(to top,rgba(28,18,8,0.8) 0%,rgba(28,18,8,0.05) 50%)'}} />
-                <div style={{position:'absolute',bottom:'1.25rem',left:'1.25rem',right:'1.25rem'}}>
-                  <p style={{color:'rgba(245,237,224,0.6)',fontSize:'9px',letterSpacing:'3px',textTransform:'uppercase',marginBottom:'4px'}}>New arrivals</p>
-                  <p style={{color:'#f5ede0',fontSize:isMobile?'16px':'18px',fontWeight:'300'}}>{a.label}</p>
-                  <p style={{color:'#b8966a',fontSize:'10px',letterSpacing:'2px',textTransform:'uppercase',marginTop:'6px'}}>Shop now →</p>
-                </div>
-              </Link>
-            ))}
-          </div>
+      {/* ── Featured products ─────────────────── */}
+      <section className="max-w-7xl mx-auto px-4 py-12">
+        <div className="flex items-center gap-4 mb-6">
+          <h2 className="text-xs tracking-[0.25em] uppercase text-stone-800 whitespace-nowrap">Featured pieces</h2>
+          <div className="flex-1 h-px bg-stone-200"></div>
+          <Link href="/products" className="text-[10px] tracking-widest uppercase text-gold whitespace-nowrap">View all</Link>
         </div>
-      </section>
-
-      {/* Social */}
-      <section style={{background:'#1c1208',padding:isMobile?'2rem 1rem':'3rem 2rem',textAlign:'center'}}>
-        <div style={{maxWidth:'1200px',margin:'0 auto'}}>
-          <p style={{fontSize:'9px',letterSpacing:'5px',textTransform:'uppercase',color:'#b8966a',marginBottom:'8px'}}>Follow us</p>
-          <h2 style={{fontSize:isMobile?'20px':'28px',fontWeight:'300',color:'#f5ede0',marginBottom:'6px'}}>Join the Laurea community</h2>
-          <p style={{fontSize:isMobile?'11px':'13px',color:'rgba(245,237,224,0.5)',marginBottom:'2rem'}}>Style inspiration, new drops and exclusive offers every day</p>
-          <div style={{display:'flex',gap:isMobile?'8px':'12px',justifyContent:'center',flexWrap:'wrap',marginBottom:'2rem'}}>
-            {SOCIAL.map((s) => (
-              <div key={s.n} style={{background:'rgba(255,255,255,0.05)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'12px',padding:isMobile?'12px 10px':'16px 20px',display:'flex',flexDirection:'column',alignItems:'center',gap:'6px',minWidth:isMobile?'60px':'100px'}}>
-                <span style={{fontSize:isMobile?'20px':'24px'}}>{s.i}</span>
-                <span style={{fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',color:'#f5ede0',fontWeight:'600'}}>{s.n}</span>
-                {!isMobile && <span style={{fontSize:'10px',color:'rgba(245,237,224,0.4)'}}>{s.h}</span>}
+        {featuredProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {featuredProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {/* Placeholder cards before products are added */}
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse">
+                <div className="bg-stone-100 aspect-[3/4] rounded mb-3" />
+                <div className="h-3 bg-stone-100 rounded mb-1 w-3/4" />
+                <div className="h-3 bg-stone-100 rounded w-1/2" />
               </div>
             ))}
           </div>
+        )}
+      </section>
+
+      {/* ── Social media ──────────────────────── */}
+      <section className="bg-dark py-12 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-[9px] tracking-[0.5em] uppercase text-gold mb-2">Follow us</p>
+          <h2 className="text-2xl font-serif font-light text-cream mb-2">Join the Laurea community</h2>
+          <p className="text-xs text-stone-400 mb-8">Style inspiration, new drops & exclusive offers — every day</p>
+          <div className="grid grid-cols-3 md:grid-cols-5 gap-3 max-w-2xl mx-auto mb-6">
+            {[
+              { n: 'Instagram', h: '@laureafashion', f: '142K', c: 'from-[#3a1a2e] to-[#4a1a38]', i: '📸' },
+              { n: 'TikTok', h: '@laureafashion', f: '89K', c: 'from-[#0a0a18] to-[#141428]', i: '🎵' },
+              { n: 'Facebook', h: 'Laurea Fashion House', f: '56K', c: 'from-[#0a1a38] to-[#0e2248]', i: '📘' },
+              { n: 'Twitter/X', h: '@laureafashion', f: '31K', c: 'from-[#0a1c28] to-[#0e2438]', i: '🐦' },
+              { n: 'YouTube', h: 'Laurea Fashion House', f: '24K', c: 'from-[#2a0a0a] to-[#3a0e0e]', i: '▶️' },
+            ].map((s) => (
+              <div key={s.n} className={`bg-gradient-to-br ${s.c} rounded-xl p-4 flex flex-col items-center gap-2 border border-white/10 hover:-translate-y-1 transition-transform cursor-pointer`}>
+                <span className="text-2xl">{s.i}</span>
+                <span className="text-[9px] tracking-wider uppercase text-white/90 font-medium">{s.n}</span>
+                <span className="text-[9px] text-white/50">{s.h}</span>
+                <span className="text-xs font-medium text-white">{s.f}</span>
+              </div>
+            ))}
+          </div>
+          <a href="https://instagram.com/laureafashion" target="_blank" rel="noopener noreferrer"
+            className="inline-block border border-white/20 text-white/80 px-8 py-3 text-[10px] tracking-widest uppercase hover:bg-gold hover:border-gold hover:text-dark transition-all">
+            Follow us on Instagram
+          </a>
         </div>
       </section>
 
-      {/* Promo */}
-      <section style={{background:'#f5ede0',padding:isMobile?'1rem':'1.5rem 2rem'}}>
-        <div style={{maxWidth:'1200px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:'1rem',padding:isMobile?'0 1rem':'0'}}>
+      {/* ── Promo banner ──────────────────────── */}
+      <section className="bg-cream border-y border-stone-200">
+        <div className="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h3 style={{fontSize:isMobile?'13px':'15px',fontWeight:'600',color:'#1c1208',marginBottom:'4px'}}>Welcome to Laurea Fashion House</h3>
-            <p style={{fontSize:'12px',color:'#6b5a3e'}}>Use code for 20% off your first order</p>
+            <h3 className="text-sm font-medium text-dark">Welcome to Laurea Fashion House</h3>
+            <p className="text-xs text-stone-500 mt-1">Use code for 20% off your first order</p>
           </div>
-          <div onClick={()=>navigator.clipboard?.writeText('LAUREA20')} style={{background:'#1c1208',color:'#b8966a',padding:'12px 20px',fontSize:'12px',fontWeight:'600',letterSpacing:'3px',border:'1px dashed #b8966a',cursor:'pointer',borderRadius:'4px'}}>
+          <div className="bg-dark text-gold px-5 py-2 text-sm font-medium tracking-[0.2em] border border-dashed border-gold cursor-pointer hover:bg-gold hover:text-dark hover:border-dark transition-all"
+            onClick={() => { navigator.clipboard?.writeText('LAUREA20'); }}>
             LAUREA20
           </div>
         </div>
       </section>
-
     </div>
   );
 }

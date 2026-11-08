@@ -1,220 +1,117 @@
 'use client';
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useLanguage } from '@/context/LanguageContext';
+import { useState } from 'react';
+import { ShoppingBag, Heart, User, Search, Menu, X } from 'lucide-react';
+import useCartStore from '@/store/useCartStore';
+import useAuthStore from '@/store/useAuthStore';
+
+const DEPARTMENTS = [
+  { name: 'Women', href: '/women' },
+  { name: 'Men', href: '/men' },
+  { name: 'Kids', href: '/kids' },
+  { name: 'Bags', href: '/bags' },
+  { name: 'Jewellery', href: '/jewelry' },
+  { name: 'Shoes', href: '/shoes' },
+  { name: 'Beauty', href: '/beauty' },
+  { name: 'Home & Living', href: '/home' },
+];
 
 export default function Navbar() {
-  const [cartCount, setCartCount] = useState(0);
-  const [user, setUser] = useState(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isMobile, setIsMobile] = useState(false);
-  const router = useRouter();
-  const { t, lang } = useLanguage();
-
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < 1024);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-
-  useEffect(() => {
-    const updateCart = () => {
-      const cart = JSON.parse(localStorage.getItem('laurea_cart') || '[]');
-      setCartCount(cart.length);
-    };
-    updateCart();
-    window.addEventListener('cartUpdated', updateCart);
-    return () => window.removeEventListener('cartUpdated', updateCart);
-  }, []);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('laurea_user');
-    if (stored) setUser(JSON.parse(stored));
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('laurea_token');
-    localStorage.removeItem('laurea_user');
-    setUser(null);
-    router.push('/');
-  };
+  const itemCount = useCartStore((s) => s.getItemCount());
+  const toggleCart = useCartStore((s) => s.toggleCart);
+  const { user, isAuthenticated } = useAuthStore();
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchQuery)}`);
-      setSearchOpen(false);
-      setSearchQuery('');
+      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
     }
   };
 
-  const navLinks = [
-    { href:'/women', label:t('women') },
-    { href:'/men', label:t('men') },
-    { href:'/kids', label:t('kids') },
-    { href:'/bags', label:t('bags') },
-    { href:'/jewelry', label:t('jewellery') },
-    { href:'/shoes', label:t('shoes') },
-    { href:'/beauty', label:t('beauty') },
-    { href:'/home', label:t('home') },
-  ];
-
   return (
     <>
-      {/* Promo bar */}
-      <div style={{background:'#b8966a',color:'#1c1208',textAlign:'center',padding:'8px 1rem',fontSize:'12px',fontWeight:'500',letterSpacing:'0.5px'}}>
-        {t('freeDelivery')} · {t('useCode')} <strong>LAUREA20</strong> for 20% {t('off')}
+      {/* Announcement bar */}
+      <div className="bg-gold py-2 px-4 text-center text-xs tracking-widest uppercase text-dark">
+        Free shipping on orders over $30 &nbsp;·&nbsp; Use code LAUREA20 for 20% off
       </div>
 
-      {/* Main navbar */}
-      <nav style={{background:'#1c1208',padding:'0 1.5rem',position:'sticky',top:0,zIndex:50,borderBottom:'1px solid rgba(184,150,106,0.15)'}}>
-        <div style={{maxWidth:'1400px',margin:'0 auto',display:'flex',alignItems:'center',justifyContent:'space-between',height:'60px'}}>
+      <header className="bg-white border-b border-stone-100 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex items-center h-16 gap-4">
 
-          {/* Logo */}
-          <Link href="/" style={{textDecoration:'none',flexShrink:0}}>
-            <div style={{color:'#f5ede0',fontSize:'16px',fontWeight:'600',letterSpacing:'4px',textTransform:'uppercase',lineHeight:'1'}}>LAUREA</div>
-            <div style={{color:'#b8966a',fontSize:'7px',letterSpacing:'3px',textTransform:'uppercase',marginTop:'2px'}}>
-              {lang==='pt'?'CASA DE MODA':lang==='es'?'CASA DE MODA':'FASHION HOUSE'}
-            </div>
-          </Link>
-
-          {/* Desktop nav links */}
-          {!isMobile && (
-            <div style={{display:'flex',gap:'1.5rem',alignItems:'center'}}>
-              {navLinks.map(link => (
-                <Link key={link.href} href={link.href}
-                  style={{color:'rgba(245,237,224,0.7)',textDecoration:'none',fontSize:'12px',fontWeight:'500',letterSpacing:'1.5px',textTransform:'uppercase',transition:'color 0.15s'}}
-                  onMouseEnter={e=>e.target.style.color='#b8966a'}
-                  onMouseLeave={e=>e.target.style.color='rgba(245,237,224,0.7)'}>
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          )}
-
-          {/* Right side */}
-          <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
-
-            {/* Search */}
-            <button onClick={()=>setSearchOpen(!searchOpen)}
-              style={{background:'none',border:'none',color:'rgba(245,237,224,0.7)',cursor:'pointer',fontSize:'18px',padding:'4px',display:'flex',alignItems:'center'}}>
-              🔍
+            {/* Mobile menu button */}
+            <button className="lg:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
+              {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
-            {/* User */}
-            {user ? (
-              <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
-                {!isMobile && <span style={{fontSize:'12px',color:'rgba(245,237,224,0.6)'}}>{user.first_name}</span>}
-                <button onClick={handleLogout}
-                  style={{background:'none',border:'1px solid rgba(245,237,224,0.2)',color:'rgba(245,237,224,0.6)',padding:'5px 12px',fontSize:'11px',cursor:'pointer',borderRadius:'4px',fontFamily:'inherit',letterSpacing:'0.5px'}}>
-                  {t('logout')}
-                </button>
-              </div>
-            ) : (
-              <Link href="/auth/login"
-                style={{color:'rgba(245,237,224,0.7)',textDecoration:'none',fontSize:'12px',letterSpacing:'1px',textTransform:'uppercase'}}>
-                {t('login')}
-              </Link>
-            )}
-
-            {/* Cart */}
-            <Link href="/cart" style={{textDecoration:'none',position:'relative'}}>
-              <div style={{background:'#b8966a',color:'#1c1208',padding:'6px 14px',borderRadius:'6px',fontSize:'12px',fontWeight:'700',letterSpacing:'1px',display:'flex',alignItems:'center',gap:'6px'}}>
-                🛒 {t('bag')}
-                {cartCount > 0 && (
-                  <span style={{background:'#1c1208',color:'#b8966a',borderRadius:'50%',width:'18px',height:'18px',fontSize:'10px',fontWeight:'700',display:'flex',alignItems:'center',justifyContent:'center'}}>
-                    {cartCount}
-                  </span>
-                )}
-              </div>
+            {/* Logo */}
+            <Link href="/" className="flex-shrink-0 text-center">
+              <div className="text-lg font-semibold tracking-[0.3em] text-stone-900 uppercase">Laurea</div>
+              <div className="text-[8px] tracking-[0.4em] text-gold uppercase">Fashion House</div>
             </Link>
 
-            {/* Mobile hamburger */}
-            {isMobile && (
-              <button onClick={()=>setMenuOpen(!menuOpen)}
-                style={{background:'none',border:'none',color:'rgba(245,237,224,0.7)',fontSize:'22px',cursor:'pointer',padding:'4px'}}>
-                {menuOpen ? '✕' : '☰'}
+            {/* Desktop nav */}
+            <nav className="hidden lg:flex flex-1 justify-center gap-1">
+              {DEPARTMENTS.map((dept) => (
+                <Link key={dept.name} href={dept.href}
+                  className="px-3 py-1.5 text-[10px] tracking-widest uppercase text-stone-500 hover:text-stone-900 transition-colors whitespace-nowrap border-b-2 border-transparent hover:border-gold">
+                  {dept.name}
+                </Link>
+              ))}
+            </nav>
+
+            {/* Right icons */}
+            <div className="flex items-center gap-2 ml-auto">
+              {searchOpen ? (
+                <form onSubmit={handleSearch} className="flex items-center border-b border-stone-300">
+                  <input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..." className="text-sm outline-none w-36 py-1 bg-transparent" />
+                  <button type="button" onClick={() => setSearchOpen(false)} className="p-1"><X size={14} /></button>
+                </form>
+              ) : (
+                <button onClick={() => setSearchOpen(true)} className="p-2 text-stone-600 hover:text-stone-900" aria-label="Search">
+                  <Search size={18} />
+                </button>
+              )}
+
+              <Link href="/account/wishlist" className="p-2 text-stone-600 hover:text-stone-900" aria-label="Wishlist">
+                <Heart size={18} />
+              </Link>
+
+              <button onClick={toggleCart} className="p-2 text-stone-600 hover:text-stone-900 relative" aria-label="Shopping bag">
+                <ShoppingBag size={18} />
+                {itemCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-white text-[9px] font-medium rounded-full w-4 h-4 flex items-center justify-center">
+                    {itemCount > 99 ? '99+' : itemCount}
+                  </span>
+                )}
               </button>
-            )}
+
+              <Link href={isAuthenticated() ? '/account' : '/auth/login'}
+                className="p-2 text-stone-600 hover:text-stone-900" aria-label="Account">
+                <User size={18} />
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Search dropdown */}
-        {searchOpen && (
-          <div style={{borderTop:'1px solid rgba(184,150,106,0.1)',padding:'12px 0'}}>
-            <form onSubmit={handleSearch} style={{maxWidth:'500px',margin:'0 auto',display:'flex',gap:'8px'}}>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={e=>setSearchQuery(e.target.value)}
-                placeholder={lang==='pt'?'Pesquisar produtos...':lang==='es'?'Buscar productos...':'Search products...'}
-                autoFocus
-                style={{flex:1,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(184,150,106,0.3)',color:'#f5ede0',padding:'10px 14px',fontSize:'13px',borderRadius:'8px',outline:'none',fontFamily:'inherit'}}
-              />
-              <button type="submit"
-                style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'10px 20px',fontSize:'12px',fontWeight:'700',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit',letterSpacing:'1px'}}>
-                {lang==='pt'?'BUSCAR':lang==='es'?'BUSCAR':'SEARCH'}
-              </button>
-            </form>
-          </div>
-        )}
-
-        {/* Mobile menu */}
-        {isMobile && menuOpen && (
-          <div style={{borderTop:'1px solid rgba(184,150,106,0.1)',padding:'1rem 0',background:'#1c1208'}}>
-
-            {/* Mobile nav links */}
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'2px',marginBottom:'1rem'}}>
-              {navLinks.map(link => (
-                <Link key={link.href} href={link.href}
-                  onClick={()=>setMenuOpen(false)}
-                  style={{color:'rgba(245,237,224,0.7)',textDecoration:'none',fontSize:'12px',fontWeight:'500',letterSpacing:'1.5px',textTransform:'uppercase',padding:'12px 1rem',display:'block',borderBottom:'1px solid rgba(184,150,106,0.06)'}}>
-                  {link.label}
+        {/* Mobile nav */}
+        {mobileOpen && (
+          <div className="lg:hidden border-t border-stone-100 bg-white">
+            <nav className="flex flex-col py-2">
+              {DEPARTMENTS.map((dept) => (
+                <Link key={dept.name} href={dept.href} onClick={() => setMobileOpen(false)}
+                  className="px-4 py-3 text-sm tracking-wider uppercase text-stone-600 hover:bg-stone-50 hover:text-stone-900">
+                  {dept.name}
                 </Link>
               ))}
-            </div>
-
-            {/* Mobile search */}
-            <div style={{padding:'0 1rem',marginBottom:'1rem'}}>
-              <form onSubmit={handleSearch} style={{display:'flex',gap:'8px'}}>
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e=>setSearchQuery(e.target.value)}
-                  placeholder={lang==='pt'?'Pesquisar...':lang==='es'?'Buscar...':'Search...'}
-                  style={{flex:1,background:'rgba(255,255,255,0.08)',border:'1px solid rgba(184,150,106,0.3)',color:'#f5ede0',padding:'10px 14px',fontSize:'13px',borderRadius:'8px',outline:'none',fontFamily:'inherit'}}
-                />
-                <button type="submit"
-                  style={{background:'#b8966a',color:'#1c1208',border:'none',padding:'10px 16px',fontSize:'11px',fontWeight:'700',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit'}}>
-                  🔍
-                </button>
-              </form>
-            </div>
-
-            {/* Mobile login/logout */}
-            <div style={{padding:'0 1rem',borderTop:'1px solid rgba(184,150,106,0.1)',paddingTop:'1rem'}}>
-              {user ? (
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
-                  <span style={{fontSize:'13px',color:'rgba(245,237,224,0.6)'}}>{user.first_name} {user.last_name}</span>
-                  <button onClick={()=>{ handleLogout(); setMenuOpen(false); }}
-                    style={{background:'rgba(184,150,106,0.1)',border:'1px solid rgba(184,150,106,0.3)',color:'#b8966a',padding:'8px 16px',fontSize:'12px',cursor:'pointer',borderRadius:'6px',fontFamily:'inherit'}}>
-                    {t('logout')}
-                  </button>
-                </div>
-              ) : (
-                <Link href="/auth/login" onClick={()=>setMenuOpen(false)}
-                  style={{display:'block',background:'#b8966a',color:'#1c1208',textAlign:'center',padding:'12px',textDecoration:'none',fontSize:'12px',fontWeight:'700',letterSpacing:'2px',textTransform:'uppercase',borderRadius:'8px'}}>
-                  {t('login')}
-                </Link>
-              )}
-            </div>
+            </nav>
           </div>
         )}
-      </nav>
+      </header>
     </>
   );
 }

@@ -3,7 +3,6 @@ import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { LanguageProvider } from '@/context/LanguageContext';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -21,14 +20,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <LanguageProvider>
-          <Toaster position="bottom-center" toastOptions={{ duration: 3000,
-            style: { background: '#1c1208', color: '#f5ede0', borderLeft: '3px solid #b8966a', borderRadius: '4px' }
-          }} />
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-        </LanguageProvider>
+        <Toaster position="bottom-center" toastOptions={{ duration: 3000,
+          style: { background: '#1c1208', color: '#f5ede0', borderLeft: '3px solid #b8966a', borderRadius: '4px' }
+        }} />
+        <Navbar />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
