@@ -29,11 +29,7 @@ export default function Navbar() {
   const router = useRouter();
 
   const isLoggedIn = !!token;
-  const dashboardHref = (user?.role === 'admin' || user?.role === 'superadmin')
-    ? '/admin/dashboard'
-    : user?.role === 'employee'
-    ? '/employee/dashboard'
-    : '/account';
+  const isStaff = user?.role === 'admin' || user?.role === 'superadmin' || user?.role === 'employee';
 
   useEffect(() => {
     const handler = (e) => {
@@ -54,6 +50,12 @@ export default function Navbar() {
     setAccountOpen(false);
     await logout();
     router.push('/');
+  };
+
+  const getDashboardHref = () => {
+    if (user?.role === 'admin' || user?.role === 'superadmin') return '/admin/dashboard';
+    if (user?.role === 'employee') return '/employee/dashboard';
+    return null;
   };
 
   return (
@@ -106,7 +108,6 @@ export default function Navbar() {
                 )}
               </button>
 
-              {/* Account icon with dropdown */}
               <div className="relative" ref={dropdownRef}>
                 <button onClick={() => setAccountOpen(!accountOpen)}
                   className="p-2 text-stone-600 hover:text-stone-900" aria-label="Account">
@@ -121,10 +122,18 @@ export default function Navbar() {
                           <p className="text-xs text-stone-500">Signed in as</p>
                           <p className="text-sm font-medium text-stone-900 truncate">{user?.firstName} {user?.lastName}</p>
                         </div>
-                        <Link href={dashboardHref} onClick={() => setAccountOpen(false)}
-                          className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">
-                          My Dashboard
-                        </Link>
+                        {isStaff && (
+                          <Link href={getDashboardHref()} onClick={() => setAccountOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">
+                            My Dashboard
+                          </Link>
+                        )}
+                        {!isStaff && (
+                          <Link href="/account/orders" onClick={() => setAccountOpen(false)}
+                            className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">
+                            My Orders
+                          </Link>
+                        )}
                         <button onClick={handleLogout}
                           className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-stone-50 border-t border-stone-100">
                           Sign out
