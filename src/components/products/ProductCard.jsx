@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ShoppingBag, Heart, Check } from 'lucide-react';
-import { useCartStore } from '@/store/cartStore';
+import { useCartStore } from '@/store/useCartStore';
 import toast from 'react-hot-toast';
 
 export default function ProductCard({ product }) {
