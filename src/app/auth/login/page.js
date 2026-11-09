@@ -14,7 +14,7 @@ export default function LoginPage() {
   const router = useRouter();
 
   const redirect = (role) => {
-    if (role === 'admin' || role === 'superadmin') router.push('/admin');
+    if (role === 'admin' || role === 'superadmin') router.push('/admin/dashboard');
     else if (role === 'employee') router.push('/employee/dashboard');
     else router.push('/account');
   };
