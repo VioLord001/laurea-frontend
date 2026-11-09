@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, CardElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import Link from 'next/link';
@@ -10,10 +10,22 @@ import { orderAPI, paymentAPI, promoAPI } from '@/lib/api';
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 const CARD_STYLE = { style: { base: { fontSize: '14px', color: '#1c1208', fontFamily: 'inherit', '::placeholder': { color: '#a89880' } }, invalid: { color: '#cc0000' } } };
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
+
 function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
   const stripe = useStripe();
   const elements = useElements();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -33,7 +45,7 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
       const res = await promoAPI.validate(promoCode.trim());
       const discount = res.data?.discount || 0;
       setPromoDiscount(discount);
-      setPromoMsg(`Code applied — $${discount.toFixed(2)} off`);
+      setPromoMsg('Code applied — $' + discount.toFixed(2) + ' off');
     } catch { setPromoDiscount(0); setPromoMsg('Invalid or expired code'); }
     finally { setPromoLoading(false); }
   };
@@ -68,12 +80,42 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
     finally { setLoading(false); }
   };
 
-  const inputStyle = { width: '100%', border: '1px solid #e0d8cc', borderRadius: '6px', padding: '10px 12px', fontSize: '13px', outline: 'none', boxSizing: 'border-box', background: '#fff' };
-  const labelStyle = { fontSize: '11px', color: '#8a7a6a', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' };
+  const inp = { width: '100%', border: '1px solid #e0d8cc', borderRadius: '6px', padding: '10px 12px', fontSize: '13px', outline: 'none', boxSizing: 'border-box', background: '#fff' };
+  const lbl = { fontSize: '11px', color: '#8a7a6a', display: 'block', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.5px' };
+
+  const summary = (
+    <div style={{ background: '#fff', border: '1px solid #e0d8cc', borderRadius: '12px', padding: '1.25rem', marginBottom: isMobile ? '1.5rem' : 0 }}>
+      <h2 style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Order Summary</h2>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
+        {items.map((item) => {
+          const img = item.product.primary_image || item.product.images?.[0];
+          return (
+            <div key={item.key} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+              <div style={{ width: '48px', height: '60px', background: '#f5ede0', borderRadius: '4px', flexShrink: 0, overflow: 'hidden' }}>
+                {img ? <img src={img} alt={item.product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🛍</div>}
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <p style={{ fontSize: '12px', color: '#1c1208', fontWeight: '500', lineHeight: '1.3', marginBottom: '2px' }}>{item.product.name}</p>
+                <p style={{ fontSize: '10px', color: '#8a7a6a' }}>Qty: {item.quantity}</p>
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', flexShrink: 0 }}>${(parseFloat(item.product.price) * item.quantity).toFixed(2)}</p>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{ borderTop: '1px solid #e0d8cc', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#8a7a6a' }}><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#8a7a6a' }}><span>Shipping</span><span style={{ color: shipping === 0 ? '#3b6d11' : '#1c1208' }}>{shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span></div>
+        {promoDiscount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#3b6d11' }}><span>Discount</span><span>-${promoDiscount.toFixed(2)}</span></div>}
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: '700', color: '#1c1208', borderTop: '1px solid #e0d8cc', paddingTop: '10px', marginTop: '4px' }}><span>Total</span><span>${finalTotal.toFixed(2)}</span></div>
+      </div>
+    </div>
+  );
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '2rem', alignItems: 'start' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 320px', gap: isMobile ? '0' : '2rem', alignItems: 'start' }}>
       <div>
+        {isMobile && summary}
         <div style={{ display: 'flex', marginBottom: '2rem' }}>
           {['Shipping','Payment'].map((s, i) => (
             <div key={s} style={{ flex: 1, textAlign: 'center', paddingBottom: '10px', borderBottom: '2px solid ' + (step === i+1 ? '#b8966a' : '#e0d8cc'), color: step === i+1 ? '#b8966a' : '#8a7a6a', fontSize: '11px', fontWeight: step === i+1 ? '600' : '400', letterSpacing: '1px', textTransform: 'uppercase' }}>
@@ -86,20 +128,20 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
         {step === 1 && (
           <form onSubmit={handleShippingNext}>
             <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#1c1208', marginBottom: '1.25rem' }}>Shipping Details</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
               {[['firstName','First name'],['lastName','Last name']].map(([name, label]) => (
-                <div key={name}><label style={labelStyle}>{label}</label><input name={name} value={form[name]} onChange={handleField} required style={inputStyle} /></div>
+                <div key={name}><label style={lbl}>{label}</label><input name={name} value={form[name]} onChange={handleField} required style={inp} /></div>
               ))}
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
               {[['email','Email'],['phone','Phone (optional)']].map(([name, label]) => (
-                <div key={name}><label style={labelStyle}>{label}</label><input name={name} value={form[name]} onChange={handleField} type={name==='email'?'email':'text'} style={inputStyle} /></div>
+                <div key={name}><label style={lbl}>{label}</label><input name={name} value={form[name]} onChange={handleField} type={name==='email'?'email':'text'} style={inp} /></div>
               ))}
             </div>
-            <div style={{ marginBottom: '12px' }}><label style={labelStyle}>Street address</label><input name="address" value={form.address} onChange={handleField} required style={inputStyle} /></div>
-            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
+            <div style={{ marginBottom: '12px' }}><label style={lbl}>Street address</label><input name="address" value={form.address} onChange={handleField} required style={inp} /></div>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr 1fr' : '2fr 1fr 1fr', gap: '12px', marginBottom: '1.5rem' }}>
               {[['city','City'],['state','State'],['zip','ZIP']].map(([name, label]) => (
-                <div key={name}><label style={labelStyle}>{label}</label><input name={name} value={form[name]} onChange={handleField} required style={inputStyle} /></div>
+                <div key={name}><label style={lbl}>{label}</label><input name={name} value={form[name]} onChange={handleField} required style={inp} /></div>
               ))}
             </div>
             <button type="submit" style={{ width: '100%', background: '#1c1208', color: '#f5ede0', border: 'none', padding: '14px', fontSize: '12px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', cursor: 'pointer', borderRadius: '6px' }}>
@@ -115,16 +157,16 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
               <h2 style={{ fontSize: '15px', fontWeight: '600', color: '#1c1208', margin: 0 }}>Payment</h2>
             </div>
             <div style={{ marginBottom: '16px' }}>
-              <label style={labelStyle}>Credit / Debit card</label>
+              <label style={lbl}>Credit / Debit card</label>
               <div style={{ border: '1px solid #e0d8cc', borderRadius: '6px', padding: '12px 14px', background: '#fff' }}><CardElement options={CARD_STYLE} /></div>
               <p style={{ fontSize: '10px', color: '#a89880', marginTop: '6px' }}>Secured by Stripe — your card details are never stored</p>
             </div>
             <div style={{ marginBottom: '16px' }}>
-              <label style={labelStyle}>Gift card code (optional)</label>
-              <input value={giftCard} onChange={(e) => setGiftCard(e.target.value)} placeholder="Enter gift card code" style={{ ...inputStyle, boxSizing: 'border-box' }} />
+              <label style={lbl}>Gift card code (optional)</label>
+              <input value={giftCard} onChange={(e) => setGiftCard(e.target.value)} placeholder="Enter gift card code" style={inp} />
             </div>
             <div style={{ marginBottom: '1.5rem' }}>
-              <label style={labelStyle}>Promo code</label>
+              <label style={lbl}>Promo code</label>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input value={promoCode} onChange={(e) => setPromoCode(e.target.value)} placeholder="e.g. LAUREA20" style={{ flex: 1, border: '1px solid #e0d8cc', borderRadius: '6px', padding: '10px 12px', fontSize: '13px', outline: 'none', background: '#fff' }} />
                 <button type="button" onClick={applyPromo} disabled={promoLoading} style={{ background: '#f5ede0', border: '1px solid #e0d8cc', borderRadius: '6px', padding: '10px 16px', fontSize: '11px', fontWeight: '600', cursor: 'pointer', textTransform: 'uppercase' }}>
@@ -139,38 +181,7 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
           </form>
         )}
       </div>
-
-      <div style={{ background: '#fff', border: '1px solid #e0d8cc', borderRadius: '12px', padding: '1.5rem', position: 'sticky', top: '80px' }}>
-        <h2 style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Order Summary</h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1rem' }}>
-          {items.map((item) => {
-            const img = item.product.primary_image || item.product.images?.[0];
-            return (
-              <div key={item.key} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <div style={{ width: '48px', height: '60px', background: '#f5ede0', borderRadius: '4px', flexShrink: 0, overflow: 'hidden' }}>
-                  {img ? <img src={img} alt={item.product.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🛍</div>}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '12px', color: '#1c1208', fontWeight: '500', lineHeight: '1.3', marginBottom: '2px' }}>{item.product.name}</p>
-                  <p style={{ fontSize: '10px', color: '#8a7a6a' }}>Qty: {item.quantity}</p>
-                </div>
-                <p style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', flexShrink: 0 }}>${(parseFloat(item.product.price) * item.quantity).toFixed(2)}</p>
-              </div>
-            );
-          })}
-        </div>
-        <div style={{ borderTop: '1px solid #e0d8cc', paddingTop: '12px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#8a7a6a' }}><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#8a7a6a' }}><span>Shipping</span><span style={{ color: shipping === 0 ? '#3b6d11' : '#1c1208' }}>{shipping === 0 ? 'Free' : '$' + shipping.toFixed(2)}</span></div>
-          {promoDiscount > 0 && <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#3b6d11' }}><span>Discount</span><span>-${promoDiscount.toFixed(2)}</span></div>}
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px', fontWeight: '700', color: '#1c1208', borderTop: '1px solid #e0d8cc', paddingTop: '10px', marginTop: '4px' }}><span>Total</span><span>${finalTotal.toFixed(2)}</span></div>
-        </div>
-        <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          {['Secure payment','Free returns within 30 days','Ships in 1-3 business days'].map((t) => (
-            <p key={t} style={{ fontSize: '10px', color: '#8a7a6a' }}>{t}</p>
-          ))}
-        </div>
-      </div>
+      {!isMobile && <div style={{ position: 'sticky', top: '80px' }}>{summary}</div>}
     </div>
   );
 }
@@ -193,7 +204,7 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#faf8f5', padding: '2rem 1rem' }}>
+    <div style={{ minHeight: '100vh', background: '#faf8f5', padding: '1.5rem 1rem' }}>
       <div style={{ maxWidth: '960px', margin: '0 auto' }}>
         <nav style={{ fontSize: '11px', color: '#8a7a6a', marginBottom: '1.5rem', display: 'flex', gap: '6px' }}>
           <Link href="/" style={{ color: '#8a7a6a', textDecoration: 'none' }}>Home</Link>
@@ -202,7 +213,7 @@ export default function CheckoutPage() {
           <span>›</span>
           <span style={{ color: '#1c1208' }}>Checkout</span>
         </nav>
-        <h1 style={{ fontSize: '24px', fontWeight: '300', color: '#1c1208', marginBottom: '2rem' }}>Checkout</h1>
+        <h1 style={{ fontSize: '22px', fontWeight: '300', color: '#1c1208', marginBottom: '1.5rem' }}>Checkout</h1>
         <Elements stripe={stripePromise}>
           <CheckoutForm items={items} subtotal={subtotal} shipping={shipping} total={total} clearCart={clearCart} />
         </Elements>
