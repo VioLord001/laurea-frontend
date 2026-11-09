@@ -3,6 +3,7 @@
 // ============================================
 import Link from 'next/link';
 import ProductCard from '@/components/products/ProductCard';
+import PromoCode from '@/components/PromoCode';
 
 // In production these would be fetched from the API
 const DEPARTMENTS = [
@@ -133,10 +134,7 @@ export default async function HomePage() {
             <h3 className="text-sm font-medium text-dark">Welcome to Laurea Fashion House</h3>
             <p className="text-xs text-stone-500 mt-1">Use code for 20% off your first order</p>
           </div>
-          <div className="bg-dark text-gold px-5 py-2 text-sm font-medium tracking-[0.2em] border border-dashed border-gold cursor-pointer hover:bg-gold hover:text-dark hover:border-dark transition-all"
-            onClick={() => { navigator.clipboard?.writeText('LAUREA20'); }}>
-            LAUREA20
-          </div>
+          <PromoCode code="LAUREA20" />
         </div>
       </section>
     </div>
