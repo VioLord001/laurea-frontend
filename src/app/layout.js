@@ -1,5 +1,6 @@
 import './globals.css';
 import { Inter } from 'next/font/google';
+import CartDrawer from '@/components/cart/CartDrawer';
 import { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -20,6 +21,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
+        <CartDrawer />
         <Toaster position="bottom-center" toastOptions={{ duration: 3000,
           style: { background: '#1c1208', color: '#f5ede0', borderLeft: '3px solid #b8966a', borderRadius: '4px' }
         }} />
