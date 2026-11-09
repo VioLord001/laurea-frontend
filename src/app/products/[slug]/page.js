@@ -2,8 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { ShoppingBag, Check, ArrowLeft } from 'lucide-react';
-import { useCartStore } from '@/store/useCartStore';
-import toast from 'react-hot-toast';
+import useCartStore from '@/store/useCartStore';
 import Link from 'next/link';
 
 export default function ProductDetailPage() {
@@ -25,9 +24,8 @@ export default function ProductDetailPage() {
 
   const handleAddToBag = () => {
     if (!product) return;
-    addItem({ id: product.id, name: product.name, price: parseFloat(product.price), image: product.images?.[0] || product.primary_image || '/placeholder.jpg', quantity: 1 });
+    addItem(product);
     setAdded(true);
-    toast.success('Added to bag!');
     setTimeout(() => setAdded(false), 2000);
   };
 

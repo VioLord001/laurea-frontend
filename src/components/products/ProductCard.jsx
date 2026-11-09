@@ -1,10 +1,8 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
-import { ShoppingBag, Heart, Check } from 'lucide-react';
-import { useCartStore } from '@/store/useCartStore';
-import toast from 'react-hot-toast';
+import { ShoppingBag, Check } from 'lucide-react';
+import useCartStore from '@/store/useCartStore';
 
 export default function ProductCard({ product }) {
   const [added, setAdded] = useState(false);
@@ -13,28 +11,22 @@ export default function ProductCard({ product }) {
   const handleAddToBag = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: parseFloat(product.price),
-      image: product.primary_image || product.images?.[0] || '/placeholder.jpg',
-      quantity: 1,
-    });
+    addItem(product);
     setAdded(true);
-    toast.success('Added to bag!');
     setTimeout(() => setAdded(false), 2000);
   };
 
   const price = parseFloat(product.price || 0);
   const comparePrice = parseFloat(product.compare_price || 0);
   const hasDiscount = comparePrice > price;
+  const image = product.primary_image || product.images?.[0];
 
   return (
     <Link href={`/products/${product.id}`} className="group block">
       <div className="relative overflow-hidden bg-gray-100 aspect-[3/4]">
-        {product.primary_image || product.images?.[0] ? (
+        {image ? (
           <img
-            src={product.primary_image || product.images[0]}
+            src={image}
             alt={product.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
@@ -44,19 +36,13 @@ export default function ProductCard({ product }) {
           </div>
         )}
         {hasDiscount && (
-          <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1">
-            SALE
-          </div>
+          <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1">SALE</div>
         )}
         <button
           onClick={handleAddToBag}
           className="absolute bottom-0 left-0 right-0 bg-black text-white py-3 text-sm tracking-widest uppercase translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2"
         >
-          {added ? (
-            <><Check size={16} /> Added</>
-          ) : (
-            <><ShoppingBag size={16} /> Add to Bag</>
-          )}
+          {added ? <><Check size={16} /> Added</> : <><ShoppingBag size={16} /> Add to Bag</>}
         </button>
       </div>
       <div className="mt-3 space-y-1">
