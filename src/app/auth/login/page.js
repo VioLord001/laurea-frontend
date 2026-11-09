@@ -13,10 +13,19 @@ export default function LoginPage() {
   const { login, verifyLogin, isLoading } = useAuthStore();
   const router = useRouter();
 
-  const redirect = (role) => {
-    if (role === 'admin' || role === 'superadmin') router.push('/admin/dashboard');
-    else if (role === 'employee') router.push('/employee/dashboard');
-    else router.push('/account');
+  const redirect = (user) => {
+    const role = user?.role;
+    if (role === 'admin' || role === 'superadmin') {
+      router.push('/admin/dashboard');
+    } else if (role === 'employee') {
+      if (!user?.employee_profile_completed) {
+        router.push('/employee/setup');
+      } else {
+        router.push('/employee/dashboard');
+      }
+    } else {
+      router.push('/account');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -24,7 +33,7 @@ export default function LoginPage() {
     try {
       const result = await login(form.email, form.password);
       if (result?.requires2FA) { setPendingEmail(result.email); setStep('2fa'); }
-      else redirect(result?.user?.role);
+      else redirect(result?.user);
     } catch (err) { setError(err.response?.data?.message || 'Login failed.'); }
   };
 
@@ -32,7 +41,7 @@ export default function LoginPage() {
     e.preventDefault(); setError('');
     try {
       const result = await verifyLogin(pendingEmail, code);
-      redirect(result?.user?.role);
+      redirect(result?.user);
     } catch (err) { setError(err.response?.data?.message || 'Invalid or expired code.'); }
   };
 
