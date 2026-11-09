@@ -1,7 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ShoppingBag, Heart, User, Search, Menu, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import useCartStore from '@/store/useCartStore';
 import useAuthStore from '@/store/useAuthStore';
 
@@ -20,15 +21,39 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [accountOpen, setAccountOpen] = useState(false);
+  const dropdownRef = useRef(null);
   const itemCount = useCartStore((s) => s.getItemCount());
   const toggleCart = useCartStore((s) => s.toggleCart);
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, token, logout } = useAuthStore();
+  const router = useRouter();
+
+  const isLoggedIn = !!token;
+  const dashboardHref = (user?.role === 'admin' || user?.role === 'superadmin')
+    ? '/admin/dashboard'
+    : user?.role === 'employee'
+    ? '/employee/dashboard'
+    : '/account';
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setAccountOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
 
   const handleSearch = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
-    }
+    if (searchQuery.trim()) window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`;
+  };
+
+  const handleLogout = async () => {
+    setAccountOpen(false);
+    await logout();
+    router.push('/');
   };
 
   return (
@@ -37,18 +62,15 @@ export default function Navbar() {
         <div className="w-full px-3 md:px-6">
           <div className="flex items-center h-16 gap-4">
 
-            {/* Mobile menu button */}
             <button className="lg:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Menu">
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
 
-            {/* Logo */}
             <Link href="/" className="flex-shrink-0 text-center">
               <div className="text-lg font-semibold tracking-[0.3em] text-stone-900 uppercase">Laurea</div>
               <div className="text-[8px] tracking-[0.4em] text-gold uppercase">Fashion House</div>
             </Link>
 
-            {/* Desktop nav */}
             <nav className="hidden lg:flex flex-1 justify-center gap-1">
               {DEPARTMENTS.map((dept) => (
                 <Link key={dept.name} href={dept.href}
@@ -58,7 +80,6 @@ export default function Navbar() {
               ))}
             </nav>
 
-            {/* Right icons */}
             <div className="flex items-center gap-2 ml-auto">
               {searchOpen ? (
                 <form onSubmit={handleSearch} className="flex items-center border-b border-stone-300">
@@ -85,15 +106,49 @@ export default function Navbar() {
                 )}
               </button>
 
-              <Link href={isAuthenticated() ? '/account' : '/auth/login'}
-                className="p-2 text-stone-600 hover:text-stone-900" aria-label="Account">
-                <User size={18} />
-              </Link>
+              {/* Account icon with dropdown */}
+              <div className="relative" ref={dropdownRef}>
+                <button onClick={() => setAccountOpen(!accountOpen)}
+                  className="p-2 text-stone-600 hover:text-stone-900" aria-label="Account">
+                  <User size={18} />
+                </button>
+
+                {accountOpen && (
+                  <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-stone-200 shadow-lg z-50">
+                    {isLoggedIn ? (
+                      <>
+                        <div className="px-4 py-3 border-b border-stone-100">
+                          <p className="text-xs text-stone-500">Signed in as</p>
+                          <p className="text-sm font-medium text-stone-900 truncate">{user?.firstName} {user?.lastName}</p>
+                        </div>
+                        <Link href={dashboardHref} onClick={() => setAccountOpen(false)}
+                          className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">
+                          My Dashboard
+                        </Link>
+                        <button onClick={handleLogout}
+                          className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-stone-50 border-t border-stone-100">
+                          Sign out
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <Link href="/auth/login" onClick={() => setAccountOpen(false)}
+                          className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50">
+                          Sign in
+                        </Link>
+                        <Link href="/auth/register" onClick={() => setAccountOpen(false)}
+                          className="block px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 border-t border-stone-100">
+                          Create account
+                        </Link>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Mobile nav */}
         {mobileOpen && (
           <div className="lg:hidden border-t border-stone-100 bg-white">
             <nav className="flex flex-col py-2">
