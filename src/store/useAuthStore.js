@@ -1,6 +1,3 @@
-// ============================================
-// AUTH STORE — Zustand user session state
-// ============================================
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { authAPI } from '@/lib/api';
@@ -17,6 +14,24 @@ const useAuthStore = create(
         set({ isLoading: true });
         try {
           const { data } = await authAPI.login({ email, password });
+          if (data.requires2FA) {
+            set({ isLoading: false });
+            return { requires2FA: true, email: data.email };
+          }
+          localStorage.setItem('laurea_token', data.token);
+          set({ user: data.user, token: data.token, isLoading: false });
+          toast.success(`Welcome back, ${data.user.firstName}!`);
+          return data;
+        } catch (err) {
+          set({ isLoading: false });
+          throw err;
+        }
+      },
+
+      verifyLogin: async (email, code) => {
+        set({ isLoading: true });
+        try {
+          const { data } = await authAPI.verifyLogin({ email, code });
           localStorage.setItem('laurea_token', data.token);
           set({ user: data.user, token: data.token, isLoading: false });
           toast.success(`Welcome back, ${data.user.firstName}!`);
