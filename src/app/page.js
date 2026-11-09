@@ -1,9 +1,8 @@
-'use client';
 // ============================================
 // STAGE 2: HOME PAGE
 // ============================================
 import Link from 'next/link';
-import ProductCard from '@/components/product/ProductCard';
+import ProductCard from '@/components/products/ProductCard';
 
 // In production these would be fetched from the API
 const DEPARTMENTS = [
