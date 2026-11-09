@@ -56,7 +56,7 @@ export default function WishlistPage() {
           <Link href="/" className="btn-primary px-8 py-3 text-sm">Start Shopping</Link>
         </div>
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {items.map(item => (
             <div key={item.id} className="border border-stone-200 group">
               <div className="relative aspect-[3/4] bg-stone-50 overflow-hidden">
