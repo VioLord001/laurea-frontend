@@ -24,7 +24,7 @@ export default function LoginPage() {
         router.push('/employee/dashboard');
       }
     } else {
-      router.push('/account');
+      router.push('/');
     }
   };
 
