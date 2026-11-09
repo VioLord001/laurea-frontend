@@ -3,15 +3,15 @@ import Link from 'next/link';
 import useMobile from '../../hooks/useMobile';
 
 const CATS = [
-  { name:'T-Shirts', photo:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80', styles:['Plain tees','Graphic tees','Polo shirts'] },
-  { name:'Trousers', photo:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80', styles:['Chinos','Cargo pants','Formal trousers'] },
-  { name:'Denim', photo:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80', styles:['Skinny jeans','Straight jeans','Relaxed fit'] },
-  { name:'Outerwear', photo:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80', styles:['Puffer jackets','Coats','Windbreakers'] },
-  { name:'Suits', photo:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80', styles:['2-piece suits','3-piece suits','Blazers'] },
-  { name:'Activewear', photo:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80', styles:['Gym shorts','Training tops','Tracksuits'] },
-  { name:'Swimwear', photo:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80', styles:['Swim shorts','Board shorts','Swim trunks'] },
-  { name:'Sleepwear', photo:'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&q=80', styles:['Pyjama sets','Robes','Loungewear'] },
-  { name:'Knitwear', photo:'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=400&q=80', styles:['Jumpers','Cardigans','Turtlenecks'] },
+  { name:'T-Shirts', slug:'t-shirts', photo:'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&q=80' },
+  { name:'Trousers', slug:'trousers', photo:'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80' },
+  { name:'Denim', slug:'denim', photo:'https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&q=80' },
+  { name:'Outerwear', slug:'outerwear', photo:'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=400&q=80' },
+  { name:'Suits', slug:'suits', photo:'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400&q=80' },
+  { name:'Activewear', slug:'activewear', photo:'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&q=80' },
+  { name:'Swimwear', slug:'swimwear', photo:'https://images.unsplash.com/photo-1506629082955-511b1aa562c8?w=400&q=80' },
+  { name:'Sleepwear', slug:'sleepwear', photo:'https://images.unsplash.com/photo-1586790170083-2f9ceadc732d?w=400&q=80' },
+  { name:'Knitwear', slug:'knitwear', photo:'https://images.unsplash.com/photo-1516257984-b1b4d707412e?w=400&q=80' },
 ];
 
 export default function MenPage() {
@@ -36,17 +36,12 @@ export default function MenPage() {
       <div style={{maxWidth:'1200px',margin:'0 auto',padding:isMobile?'1.5rem 1rem':'3rem 2rem'}}>
         <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(5,1fr)',gap:isMobile?'10px':'16px'}}>
           {CATS.map((cat) => (
-            <Link key={cat.name} href={`/products?department=men&category=${cat.name.toLowerCase()}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
+            <Link key={cat.slug} href={`/men/${cat.slug}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
               <div style={{height:isMobile?'130px':'160px',overflow:'hidden'}}>
                 <img src={cat.photo} alt={cat.name} style={{width:'100%',height:'100%',objectFit:'cover'}} />
               </div>
               <div style={{padding:isMobile?'8px':'12px'}}>
-                <h2 style={{fontSize:isMobile?'11px':'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',color:'#1c1208',marginBottom:'4px'}}>{cat.name}</h2>
-                <div style={{display:'flex',flexWrap:'wrap',gap:'4px'}}>
-                  {cat.styles.slice(0,isMobile?1:2).map((s) => (
-                    <span key={s} style={{fontSize:'9px',background:'#f5ede0',color:'#8a7a6a',padding:'2px 6px',borderRadius:'3px'}}>{s}</span>
-                  ))}
-                </div>
+                <h2 style={{fontSize:isMobile?'11px':'12px',fontWeight:'600',letterSpacing:'1px',textTransform:'uppercase',color:'#1c1208'}}>{cat.name}</h2>
               </div>
             </Link>
           ))}
