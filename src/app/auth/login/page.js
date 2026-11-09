@@ -20,8 +20,9 @@ export default function LoginPage() {
       if (result?.requires2FA) {
         setPendingEmail(result.email);
         setStep('2fa');
-      } else {
-        router.push(data.user?.role === 'admin' ? '/admin' : data.user?.role === 'employee' ? '/employee/dashboard' : '/account');
+      } else if (result?.user) {
+        const role = result.user.role;
+        router.push(role === 'admin' ? '/admin' : role === 'employee' ? '/employee/dashboard' : '/account');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed.');
@@ -31,8 +32,9 @@ export default function LoginPage() {
   const handleVerify = async (e) => {
     e.preventDefault(); setError('');
     try {
-      await verifyLogin(pendingEmail, code);
-      router.push(data.user?.role === 'admin' ? '/admin' : data.user?.role === 'employee' ? '/employee/dashboard' : '/account');
+      const result = await verifyLogin(pendingEmail, code);
+      const role = result?.user?.role;
+      router.push(role === 'admin' ? '/admin' : role === 'employee' ? '/employee/dashboard' : '/account');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid or expired code.');
     }
