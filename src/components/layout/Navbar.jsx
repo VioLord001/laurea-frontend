@@ -7,6 +7,7 @@ import useCartStore from '@/store/useCartStore';
 import useAuthStore from '@/store/useAuthStore';
 
 const DEPARTMENTS = [
+  { name: 'Home', href: '/' },
   { name: 'Women', href: '/women' },
   { name: 'Men', href: '/men' },
   { name: 'Kids', href: '/kids' },
