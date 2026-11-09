@@ -34,7 +34,7 @@ export default function MenPage() {
         </div>
       </div>
       <div style={{maxWidth:'1200px',margin:'0 auto',padding:isMobile?'1.5rem 1rem':'3rem 2rem'}}>
-        <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(5,1fr)',gap:isMobile?'10px':'16px'}}>
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(1,1fr)':'repeat(5,1fr)',gap:isMobile?'10px':'16px'}}>
           {CATS.map((cat) => (
             <Link key={cat.slug} href={`/men/${cat.slug}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
               <div style={{height:isMobile?'130px':'160px',overflow:'hidden'}}>
