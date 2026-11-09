@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { ShoppingBag, Check } from 'lucide-react';
 import useCartStore from '@/store/useCartStore';
 
 export default function ProductCard({ product }) {
@@ -20,9 +19,10 @@ export default function ProductCard({ product }) {
   const comparePrice = parseFloat(product.compare_price || 0);
   const hasDiscount = comparePrice > price;
   const image = product.primary_image || product.images?.[0];
+  const isNew = product.is_new || product.tag === 'new';
 
   return (
-    <Link href={`/products/${product.id}`} className="group block">
+    <Link href={`/products/${product.id}`} className="group block border border-gray-100 rounded overflow-hidden bg-white">
       <div className="relative overflow-hidden bg-gray-100 aspect-[3/4]">
         {image ? (
           <img
@@ -36,24 +36,27 @@ export default function ProductCard({ product }) {
           </div>
         )}
         {hasDiscount && (
-          <div className="absolute top-2 left-2 bg-black text-white text-xs px-2 py-1">SALE</div>
+          <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">SALE</div>
         )}
-        <button
-          onClick={handleAddToBag}
-          className="absolute bottom-0 left-0 right-0 bg-black text-white py-3 text-sm tracking-widest uppercase translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex items-center justify-center gap-2"
-        >
-          {added ? <><Check size={16} /> Added</> : <><ShoppingBag size={16} /> Add to Bag</>}
-        </button>
+        {isNew && !hasDiscount && (
+          <div className="absolute top-2 left-2 bg-black text-white text-xs font-bold px-2 py-1 rounded">NEW</div>
+        )}
       </div>
-      <div className="mt-3 space-y-1">
-        <p className="text-xs text-gray-500 uppercase tracking-wider">{product.brand || product.category_name}</p>
-        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{product.name}</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-semibold">₦{price.toLocaleString()}</span>
+      <div className="p-3 space-y-1">
+        <p className="text-xs text-gray-500 uppercase tracking-wider font-medium">{product.category_name || product.brand}</p>
+        <h3 className="text-sm text-gray-900 line-clamp-2 leading-snug">{product.name}</h3>
+        <div className="flex items-center gap-2 pt-1">
+          <span className="text-sm font-semibold">${price.toFixed(2)}</span>
           {hasDiscount && (
-            <span className="text-sm text-gray-400 line-through">₦{comparePrice.toLocaleString()}</span>
+            <span className="text-sm text-gray-400 line-through">${comparePrice.toFixed(2)}</span>
           )}
         </div>
+        <button
+          onClick={handleAddToBag}
+          className="mt-2 w-full bg-black text-white py-2.5 text-xs tracking-widest uppercase font-medium hover:bg-gray-800 transition-colors"
+        >
+          {added ? '✓ ADDED' : 'ADD TO BAG'}
+        </button>
       </div>
     </Link>
   );
