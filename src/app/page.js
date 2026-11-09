@@ -20,7 +20,7 @@ const DEPARTMENTS = [
 
 async function getFeaturedProducts() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?featured=true&limit=8`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/products?featured=true&limit=6`, {
       next: { revalidate: 300 } // Cache for 5 minutes
     });
     if (!res.ok) return [];
@@ -81,11 +81,11 @@ export default async function HomePage() {
           <Link href="/products" className="text-[10px] tracking-widest uppercase text-gold whitespace-nowrap">View all</Link>
         </div>
         {featuredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {featuredProducts.map((product) => (<ProductCard key={product.id} product={product} />))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
             {/* Placeholder cards before products are added */}
             {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="animate-pulse">
