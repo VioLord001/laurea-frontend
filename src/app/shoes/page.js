@@ -35,7 +35,7 @@ export default function ShoesPage() {
       <div style={{maxWidth:'1200px',margin:'0 auto',padding:isMobile?'1.5rem 1rem':'3rem 2rem'}}>
         <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(1,1fr)':'repeat(4,1fr)',gap:isMobile?'10px':'16px'}}>
           {CATS.map((cat) => (
-            <Link key={cat.name} href={`/products?department=shoes&category=${cat.name.toLowerCase()}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
+            <Link key={cat.name} href={`/shoes/${cat.name.toLowerCase().replace(/ /g, '-')}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
               <div style={{height:isMobile?'140px':'200px',overflow:'hidden'}}>
                 <img src={cat.photo} alt={cat.name} style={{width:'100%',height:'100%',objectFit:'cover'}} />
               </div>
