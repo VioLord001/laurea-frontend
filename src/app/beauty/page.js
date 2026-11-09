@@ -31,7 +31,7 @@ export default function BeautyPage() {
         </div>
       </div>
       <div style={{maxWidth:'1200px',margin:'0 auto',padding:isMobile?'1.5rem 1rem':'3rem 2rem'}}>
-        <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(2,1fr)':'repeat(3,1fr)',gap:isMobile?'10px':'16px'}}>
+        <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(1,1fr)':'repeat(3,1fr)',gap:isMobile?'10px':'16px'}}>
           {CATS.map((cat) => (
             <Link key={cat.name} href={`/products?department=beauty&category=${cat.name.toLowerCase()}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
               <div style={{height:isMobile?'140px':'220px',overflow:'hidden'}}>

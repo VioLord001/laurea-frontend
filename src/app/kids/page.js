@@ -34,7 +34,7 @@ export default function KidsPage() {
         <div style={{display:'grid',gridTemplateColumns:isMobile?'repeat(1,1fr)':'repeat(5,1fr)',gap:isMobile?'10px':'16px'}}>
           {CATS.map((cat) => (
             <Link key={cat.name} href={`/products?department=kids&category=${cat.name.toLowerCase()}`} style={{textDecoration:'none',background:'#fff',border:'1px solid #e0d8cc',borderRadius:'12px',overflow:'hidden',display:'block'}}>
-              <div style={{height:isMobile?'130px':'160px',overflow:'hidden'}}>
+              <div style={{height:isMobile?'220px':'200px',overflow:'hidden'}}>
                 <img src={cat.photo} alt={cat.name} style={{width:'100%',height:'100%',objectFit:'cover'}} />
               </div>
               <div style={{padding:isMobile?'8px':'12px'}}>
