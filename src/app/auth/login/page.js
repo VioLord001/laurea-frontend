@@ -21,7 +21,7 @@ export default function LoginPage() {
         setPendingEmail(result.email);
         setStep('2fa');
       } else {
-        router.push('/account');
+        router.push(data.user?.role === 'admin' ? '/admin' : '/account');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed.');
@@ -32,7 +32,7 @@ export default function LoginPage() {
     e.preventDefault(); setError('');
     try {
       await verifyLogin(pendingEmail, code);
-      router.push('/account');
+      router.push(data.user?.role === 'admin' ? '/admin' : '/account');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid or expired code.');
     }
