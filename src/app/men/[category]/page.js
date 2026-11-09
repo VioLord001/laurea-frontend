@@ -4,22 +4,15 @@ import { useParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 
 const CATEGORY_MAP = {
-  'activewear': 'Activewear',
-  'denim': 'Denim',
-  'knitwear': 'Knitwear',
-  'outerwear': 'Outerwear',
-  'sleepwear': 'Sleepwear',
-  'suits': 'Suits',
-  'swimwear': 'Swimwear',
-  't-shirts': 'T-Shirts',
-  'trousers': 'Trousers',
+  'activewear': 'Activewear', 'denim': 'Denim', 'knitwear': 'Knitwear',
+  'outerwear': 'Outerwear', 'sleepwear': 'Sleepwear', 'suits': 'Suits',
+  'swimwear': 'Swimwear', 't-shirts': 'T-Shirts', 'trousers': 'Trousers',
 };
 
 export default function MenCategoryPage() {
   const { category } = useParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const categoryName = CATEGORY_MAP[category] || category?.replace(/-/g, ' ');
   const api = process.env.NEXT_PUBLIC_API_URL;
 
@@ -28,10 +21,7 @@ export default function MenCategoryPage() {
     setLoading(true);
     fetch(`${api}/products?department=men&category=${encodeURIComponent(categoryName)}&limit=100`)
       .then((r) => r.json())
-      .then((data) => {
-        setProducts(data.products || data || []);
-        setLoading(false);
-      })
+      .then((data) => { setProducts(data.products || data || []); setLoading(false); })
       .catch(() => setLoading(false));
   }, [category]);
 
@@ -41,7 +31,6 @@ export default function MenCategoryPage() {
         <p className="text-xs text-gray-500 uppercase tracking-widest mb-1">Men</p>
         <h1 className="text-3xl font-light tracking-wide">{categoryName}</h1>
       </div>
-
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
           {Array.from({ length: 8 }).map((_, i) => (
@@ -54,14 +43,10 @@ export default function MenCategoryPage() {
           ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-24 text-gray-400">
-          <p className="text-lg">No products found in {categoryName}</p>
-        </div>
+        <div className="text-center py-24 text-gray-400"><p className="text-lg">No products found in {categoryName}</p></div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
+          {products.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       )}
     </div>

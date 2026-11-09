@@ -4,11 +4,8 @@ import { useParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 
 const CATEGORY_MAP = {
-  'boys-bottoms': 'Boys Bottoms',
-  'boys-tops': 'Boys Tops',
-  'girls-dresses': 'Girls Dresses',
-  'girls-tops': 'Girls Tops',
-  'outerwear': 'Outerwear',
+  'boys-bottoms': 'Boys Bottoms', 'boys-tops': 'Boys Tops',
+  'girls-dresses': 'Girls Dresses', 'girls-tops': 'Girls Tops', 'outerwear': 'Outerwear',
 };
 
 export default function KidsCategoryPage() {
@@ -35,13 +32,20 @@ export default function KidsCategoryPage() {
       </div>
       {loading ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {Array.from({ length: 8 }).map((_, i) => <div key={i} className="animate-pulse"><div className="bg-gray-200 aspect-[3/4] mb-3" /><div className="h-3 bg-gray-200 rounded w-1/2 mb-2" /><div className="h-4 bg-gray-200 rounded w-3/4 mb-2" /><div className="h-3 bg-gray-200 rounded w-1/3" /></div>)}
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-200 aspect-[3/4] mb-3" />
+              <div className="h-3 bg-gray-200 rounded w-1/2 mb-2" />
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2" />
+              <div className="h-3 bg-gray-200 rounded w-1/3" />
+            </div>
+          ))}
         </div>
       ) : products.length === 0 ? (
-        <div className="text-center py-24 text-gray-400"><p>No products found in {categoryName}</p></div>
+        <div className="text-center py-24 text-gray-400"><p className="text-lg">No products found in {categoryName}</p></div>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-          {products.map((p) => <ProductCard key={p.id} product={p} />)}
+          {products.map((product) => <ProductCard key={product.id} product={product} />)}
         </div>
       )}
     </div>
