@@ -104,7 +104,7 @@ export default async function HomePage() {
           <p className="text-[9px] tracking-[0.5em] uppercase text-gold mb-2">Follow us</p>
           <h2 className="text-2xl font-serif font-light text-cream mb-2">Join the Laurea community</h2>
           <p className="text-xs text-stone-400 mb-8">Style inspiration, new drops & exclusive offers — every day</p>
-          <div className="grid grid-cols-3 md:grid-cols-5 gap-3 max-w-2xl mx-auto mb-6">
+          <div className="flex justify-center gap-3 max-w-2xl mx-auto mb-6">
             {[
               { n: 'Instagram', h: '@ifh.official', f: '', c: 'from-[#3a1a2e] to-[#4a1a38]', i: '📸' },
               { n: 'Facebook', h: 'Laurea Official', f: '', c: 'from-[#0a1428] to-[#0e1c3a]', i: '📘' },
