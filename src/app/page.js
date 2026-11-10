@@ -107,7 +107,6 @@ export default async function HomePage() {
           <div className="grid grid-cols-3 md:grid-cols-5 gap-3 max-w-2xl mx-auto mb-6">
             {[
               { n: 'Instagram', h: '@ifh.official', f: '', c: 'from-[#3a1a2e] to-[#4a1a38]', i: '📸' },
-              { n: 'Facebook', h: 'Laurea Fashion House', f: '56K', c: 'from-[#0a1a38] to-[#0e2248]', i: '📘' },
               { n: 'Facebook', h: 'Laurea Official', f: '', c: 'from-[#0a1428] to-[#0e1c3a]', i: '📘' },
             ].map((s) => (
               <div key={s.n} className={`bg-gradient-to-br ${s.c} rounded-xl p-4 flex flex-col items-center gap-2 border border-white/10 hover:-translate-y-1 transition-transform cursor-pointer`}>
