@@ -106,11 +106,9 @@ export default async function HomePage() {
           <p className="text-xs text-stone-400 mb-8">Style inspiration, new drops & exclusive offers — every day</p>
           <div className="grid grid-cols-3 md:grid-cols-5 gap-3 max-w-2xl mx-auto mb-6">
             {[
-              { n: 'Instagram', h: '@laureafashion', f: '142K', c: 'from-[#3a1a2e] to-[#4a1a38]', i: '📸' },
-              { n: 'TikTok', h: '@laureafashion', f: '89K', c: 'from-[#0a0a18] to-[#141428]', i: '🎵' },
+              { n: 'Instagram', h: '@ifh.official', f: '', c: 'from-[#3a1a2e] to-[#4a1a38]', i: '📸' },
               { n: 'Facebook', h: 'Laurea Fashion House', f: '56K', c: 'from-[#0a1a38] to-[#0e2248]', i: '📘' },
-              { n: 'Twitter/X', h: '@laureafashion', f: '31K', c: 'from-[#0a1c28] to-[#0e2438]', i: '🐦' },
-              { n: 'YouTube', h: 'Laurea Fashion House', f: '24K', c: 'from-[#2a0a0a] to-[#3a0e0e]', i: '▶️' },
+              { n: 'Facebook', h: 'Laurea Official', f: '', c: 'from-[#0a1428] to-[#0e1c3a]', i: '📘' },
             ].map((s) => (
               <div key={s.n} className={`bg-gradient-to-br ${s.c} rounded-xl p-4 flex flex-col items-center gap-2 border border-white/10 hover:-translate-y-1 transition-transform cursor-pointer`}>
                 <span className="text-2xl">{s.i}</span>
@@ -120,7 +118,7 @@ export default async function HomePage() {
               </div>
             ))}
           </div>
-          <a href="https://instagram.com/laureafashion" target="_blank" rel="noopener noreferrer"
+          <a href="https://instagram.com/ifh.official" target="_blank" rel="noopener noreferrer"
             className="inline-block border border-white/20 text-white/80 px-8 py-3 text-[10px] tracking-widest uppercase hover:bg-gold hover:border-gold hover:text-dark transition-all">
             Follow us on Instagram
           </a>
