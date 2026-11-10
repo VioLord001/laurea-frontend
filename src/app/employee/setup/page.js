@@ -33,10 +33,13 @@ export default function EmployeeSetupPage() {
   const [idFrontPreview, setIdFrontPreview] = useState('');
   const [idBack, setIdBack] = useState(null);
   const [idBackPreview, setIdBackPreview] = useState('');
+  const [idSelfie, setIdSelfie] = useState(null);
+  const [idSelfiePreview, setIdSelfiePreview] = useState('');
 
   const passportRef = useRef();
   const idFrontRef = useRef();
   const idBackRef = useRef();
+  const idSelfieRef = useRef();
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -98,6 +101,7 @@ export default function EmployeeSetupPage() {
       if (passportPhoto) formData.append('passportPhoto', passportPhoto);
       if (idFront) formData.append('idFront', idFront);
       if (idBack) formData.append('idBack', idBack);
+      if (idSelfie) formData.append('idSelfie', idSelfie);
       const res = await fetch(`${api}/employees/setup`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
@@ -269,6 +273,24 @@ export default function EmployeeSetupPage() {
               <input ref={idFrontRef} type="file" accept="image/*" onChange={handleFile(setIdFront,setIdFrontPreview)} style={{display:'none'}} />
               <FileUpload label="Back of ID" preview={idBackPreview} ref_={idBackRef} icon="🪪" onChange={handleFile(setIdBack,setIdBackPreview)} />
               <input ref={idBackRef} type="file" accept="image/*" onChange={handleFile(setIdBack,setIdBackPreview)} style={{display:'none'}} />
+              <div style={{background:'rgba(184,150,106,0.06)',border:'1px solid rgba(184,150,106,0.15)',borderRadius:'10px',padding:'12px 14px',marginBottom:'14px',fontSize:'12px',color:'rgba(245,237,224,0.5)',lineHeight:'1.7'}}>
+                📌 For the photo below, please hold your ID card next to your face so both are clearly visible in the same picture.
+              </div>
+              <label style={lbl}>Photo Holding Your ID Card *</label>
+              <div onClick={()=>idSelfieRef.current.click()} style={{border:'1px dashed rgba(184,150,106,0.3)',borderRadius:'12px',padding:'1.25rem',textAlign:'center',cursor:'pointer',background:'rgba(184,150,106,0.03)',minHeight:'90px',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:'12px'}}
+                onMouseEnter={e=>e.currentTarget.style.borderColor='rgba(184,150,106,0.6)'}
+                onMouseLeave={e=>e.currentTarget.style.borderColor='rgba(184,150,106,0.3)'}>
+                {idSelfiePreview ? (
+                  <img src={idSelfiePreview} alt="" style={{maxHeight:'160px',maxWidth:'100%',objectFit:'cover',borderRadius:'8px'}} />
+                ) : (
+                  <div>
+                    <div style={{fontSize:'32px',marginBottom:'6px',opacity:0.5}}>🤳</div>
+                    <div style={{fontSize:'12px',color:'rgba(245,237,224,0.4)'}}>Upload photo of you holding your ID</div>
+                    <div style={{fontSize:'10px',color:'rgba(245,237,224,0.25)',marginTop:'4px'}}>Your face + ID card must both be visible</div>
+                  </div>
+                )}
+              </div>
+              <input ref={idSelfieRef} type="file" accept="image/*" onChange={handleFile(setIdSelfie,setIdSelfiePreview)} style={{display:'none'}} />
             </>
           )}
 
