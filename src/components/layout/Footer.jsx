@@ -19,11 +19,8 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { name: 'Instagram', href: 'https://instagram.com/laureafashion', icon: '📸' },
-  { name: 'TikTok', href: 'https://tiktok.com/@laureafashion', icon: '🎵' },
-  { name: 'Facebook', href: 'https://facebook.com/laureafashionhouse', icon: '📘' },
-  { name: 'Twitter', href: 'https://twitter.com/laureafashion', icon: '🐦' },
-  { name: 'YouTube', href: 'https://youtube.com/laureafashionhouse', icon: '▶️' },
+  { name: 'Laurea Fashion House on Instagram', href: 'https://instagram.com/ifh.official', icon: '📸' },
+  { name: 'Laurea Fashion House on Facebook', href: 'https://facebook.com/LaureaOfficial', icon: '📘' },
 ];
 
 export default function Footer() {
