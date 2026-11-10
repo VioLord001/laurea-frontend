@@ -51,380 +51,247 @@ export default function EmployeeDashboardPage() {
         body: JSON.stringify(bankForm)
       });
       const data = await res.json();
-      if (data.success) {
-        setMessage('success');
-      } else {
-        setMessage('error');
-        alert(data.message || 'Please fill in all required fields.');
-      }
+      if (data.success) { setMessage('success'); } else { setMessage('error'); alert(data.message || 'Please fill in all required fields.'); }
     } catch { setMessage('error'); }
     setSaving(false);
     setTimeout(() => setMessage(''), 6000);
   };
 
   if (!employee) return (
-    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#0f0a04'}}>
-      <div style={{width:'40px',height:'40px',border:'2px solid #b8966a',borderTopColor:'transparent',borderRadius:'50%'}}></div>
+    <div style={{minHeight:'100vh',display:'flex',alignItems:'center',justifyContent:'center',background:'#f0f4ff'}}>
+      <div style={{width:'36px',height:'36px',border:'3px solid #2563eb',borderTopColor:'transparent',borderRadius:'50%'}}></div>
     </div>
   );
 
   if (employee.is_approved === false) {
     return (
-      <div style={{minHeight:'100vh',background:'linear-gradient(135deg,#0f0a04 0%,#1c1208 50%,#2d1f0a 100%)',display:'flex',alignItems:'center',justifyContent:'center',padding:'2rem'}}>
-        <div style={{background:'rgba(255,255,255,0.03)',backdropFilter:'blur(20px)',border:'1px solid rgba(184,150,106,0.2)',borderRadius:'24px',padding:'3rem',maxWidth:'480px',width:'100%',textAlign:'center'}}>
-          <div style={{width:'80px',height:'80px',background:'rgba(184,150,106,0.1)',border:'2px solid rgba(184,150,106,0.3)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'36px',margin:'0 auto 1.5rem'}}>⏳</div>
-          <h1 style={{fontSize:'24px',fontWeight:'600',color:'#f5ede0',marginBottom:'8px'}}>Em análise.</h1>
-          <p style={{fontSize:'14px',color:'rgba(245,237,224,0.5)',lineHeight:'1.8',marginBottom:'2rem'}}>
-            Sua candidatura está sendo analisada pela equipe da Laurea Fashion House. Você receberá um e-mail assim que for aprovada.
-          </p>
-          <div style={{background:'rgba(184,150,106,0.08)',border:'1px solid rgba(184,150,106,0.2)',borderRadius:'12px',padding:'1rem',marginBottom:'2rem',fontSize:'13px',color:'rgba(245,237,224,0.6)'}}>
-            ⏱️ As avaliações levam <strong style={{color:'#b8966a'}}>de 24 a 48 horas.</strong>
-          </div>
-          <div style={{fontSize:'13px',color:'rgba(245,237,224,0.4)',marginBottom:'1.5rem'}}>
-            {employee.first_name} {employee.last_name} · {employee.email}
-          </div>
-          <button onClick={handleLogout} style={{background:'transparent',border:'1px solid rgba(184,150,106,0.4)',color:'#b8966a',padding:'12px 28px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',letterSpacing:'1px',textTransform:'uppercase'}}>
-            Sair
-          </button>
+      <div style={{minHeight:'100vh',background:'#f0f4ff',display:'flex',alignItems:'center',justifyContent:'center',padding:'1.5rem'}}>
+        <div style={{background:'#fff',border:'1px solid #dbeafe',borderRadius:'20px',padding:'2.5rem 1.5rem',maxWidth:'420px',width:'100%',textAlign:'center',boxShadow:'0 4px 20px rgba(37,99,235,0.08)'}}>
+          <div style={{width:'72px',height:'72px',background:'#eff6ff',border:'2px solid #bfdbfe',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'32px',margin:'0 auto 1.5rem'}}>⏳</div>
+          <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'8px'}}>Application Under Review</h1>
+          <p style={{fontSize:'13px',color:'#64748b',lineHeight:'1.8',marginBottom:'1.5rem'}}>Your application is being reviewed. You will receive an email once approved.</p>
+          <div style={{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:'10px',padding:'1rem',marginBottom:'1.5rem',fontSize:'13px',color:'#3b82f6'}}>⏱️ Reviews typically take <strong>24-48 hours.</strong></div>
+          <div style={{fontSize:'12px',color:'#94a3b8',marginBottom:'1.5rem'}}>{employee.first_name} {employee.last_name} · {employee.email}</div>
+          <button onClick={handleLogout} style={{background:'#eff6ff',border:'1px solid #bfdbfe',color:'#2563eb',padding:'11px 24px',fontSize:'13px',cursor:'pointer',borderRadius:'10px',fontFamily:'inherit',fontWeight:'500'}}>Sign Out</button>
         </div>
       </div>
     );
   }
 
   const tabs = [
-    {id:'dashboard',icon:'⊞',label:'Overview'},
-    {id:'profile',icon:'◎',label:'My Profile'},
-    {id:'bank',icon:'◈',label:'Bank Details'},
-    {id:'tasks',icon:'◫',label:'Tasks'},
-    {id:'earnings',icon:'◉',label:'Earnings'},
+    {id:'dashboard',icon:'🏠',label:'Overview'},
+    {id:'profile',icon:'👤',label:'My Profile'},
+    {id:'bank',icon:'🏦',label:'Bank Details'},
+    {id:'tasks',icon:'📋',label:'Tasks'},
+    {id:'earnings',icon:'💰',label:'Earnings'},
   ];
 
-  const inp = {width:'100%',border:'1px solid rgba(184,150,106,0.2)',padding:'12px 14px',fontSize:'13px',color:'#f5ede0',outline:'none',borderRadius:'10px',background:'rgba(255,255,255,0.04)',boxSizing:'border-box',marginBottom:'12px',fontFamily:'Inter,sans-serif',transition:'border-color 0.2s'};
-  const lbl = {fontSize:'10px',fontWeight:'600',color:'rgba(184,150,106,0.8)',textTransform:'uppercase',letterSpacing:'1px',display:'block',marginBottom:'6px'};
-  const getInitials = () => `${employee.first_name?.[0]||''}${employee.last_name?.[0]||''}`.toUpperCase();
-
-  const Sidebar = () => (
-    <div style={{width:'260px',background:'linear-gradient(180deg,#0f0a04 0%,#1a1005 100%)',minHeight:'100vh',display:'flex',flexDirection:'column',borderRight:'1px solid rgba(184,150,106,0.1)',flexShrink:0,position:isMobile?'fixed':'relative',left:isMobile?(sidebarOpen?'0':'-260px'):'auto',top:0,bottom:0,zIndex:100,transition:'left 0.3s ease'}}>
-      <div style={{padding:'2rem 1.5rem 1.5rem',borderBottom:'1px solid rgba(184,150,106,0.08)'}}>
-        <div style={{color:'#f5ede0',fontSize:'15px',fontWeight:'600',letterSpacing:'5px',textTransform:'uppercase'}}>Laurea</div>
-        <div style={{color:'rgba(184,150,106,0.6)',fontSize:'8px',letterSpacing:'4px',textTransform:'uppercase',marginTop:'3px'}}>Fashion House</div>
-        <div style={{marginTop:'10px',display:'inline-block',background:'rgba(184,150,106,0.1)',border:'1px solid rgba(184,150,106,0.2)',borderRadius:'4px',padding:'3px 10px',fontSize:'9px',color:'#b8966a',letterSpacing:'2px',textTransform:'uppercase'}}>Employee Portal</div>
-      </div>
-
-      <div style={{padding:'1.5rem',borderBottom:'1px solid rgba(184,150,106,0.08)'}}>
-        <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
-          <div style={{width:'44px',height:'44px',borderRadius:'12px',background:'linear-gradient(135deg,#b8966a,#8a6a3e)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'16px',fontWeight:'700',color:'#1c1208',flexShrink:0}}>
-            {getInitials()}
-          </div>
-          <div style={{overflow:'hidden'}}>
-            <div style={{fontSize:'13px',color:'#f5ede0',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>{employee.first_name} {employee.last_name}</div>
-            <div style={{fontSize:'10px',color:'rgba(184,150,106,0.7)',marginTop:'2px',textTransform:'capitalize'}}>{employee.job_position||'Employee'}</div>
-          </div>
-        </div>
-        <div style={{marginTop:'12px',background:'rgba(59,109,17,0.1)',border:'1px solid rgba(59,109,17,0.3)',borderRadius:'6px',padding:'5px 10px',display:'inline-flex',alignItems:'center',gap:'6px',fontSize:'10px',color:'#7bc44e',letterSpacing:'1px',textTransform:'uppercase'}}>
-          <span style={{width:'6px',height:'6px',background:'#7bc44e',borderRadius:'50%',display:'inline-block'}}></span>
-          Active
-        </div>
-      </div>
-
-      <nav style={{padding:'1rem 0',flex:1}}>
-        {tabs.map(tab => (
-          <button key={tab.id} onClick={()=>{ setActiveTab(tab.id); if(isMobile) setSidebarOpen(false); }}
-            style={{width:'100%',display:'flex',alignItems:'center',gap:'12px',padding:'12px 1.5rem',background:activeTab===tab.id?'rgba(184,150,106,0.08)':'transparent',border:'none',borderLeft:activeTab===tab.id?'2px solid #b8966a':'2px solid transparent',cursor:'pointer',fontSize:'13px',color:activeTab===tab.id?'#b8966a':'rgba(245,237,224,0.4)',textAlign:'left',transition:'all 0.15s',fontFamily:'inherit'}}>
-            <span style={{fontSize:'16px',opacity:0.8}}>{tab.icon}</span>
-            <span>{tab.label}</span>
-          </button>
-        ))}
-      </nav>
-
-      <div style={{padding:'1.5rem',borderTop:'1px solid rgba(184,150,106,0.08)'}}>
-        <Link href="/" style={{display:'flex',alignItems:'center',gap:'8px',fontSize:'12px',color:'rgba(245,237,224,0.3)',textDecoration:'none',marginBottom:'10px'}}>← Main Website</Link>
-        <button onClick={handleLogout} style={{width:'100%',background:'rgba(255,255,255,0.03)',border:'1px solid rgba(255,255,255,0.06)',color:'rgba(245,237,224,0.4)',padding:'10px',fontSize:'12px',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit'}}>
-          Sign out
-        </button>
-      </div>
-    </div>
-  );
+  const inp = {width:'100%',border:'1px solid #e2e8f0',padding:'12px 14px',fontSize:'14px',color:'#1e293b',outline:'none',borderRadius:'10px',background:'#f8fafc',boxSizing:'border-box',marginBottom:'12px',fontFamily:'Inter,sans-serif',transition:'border-color 0.2s'};
+  const lbl = {fontSize:'11px',fontWeight:'600',color:'#64748b',textTransform:'uppercase',letterSpacing:'0.8px',display:'block',marginBottom:'5px'};
+  const getInitials = () => `${employee.first_name?.[0]||""}${employee.last_name?.[0]||""}`.toUpperCase();
 
   return (
-    <div style={{minHeight:'100vh',background:'#0d0905',display:'flex',fontFamily:"'Inter',sans-serif"}}>
+    <div style={{minHeight:'100vh',background:'#f0f4ff',fontFamily:"'Inter',sans-serif"}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         * { box-sizing: border-box; }
         input,select,textarea { font-family: 'Inter',sans-serif; }
-        input:focus,select:focus { border-color: rgba(184,150,106,0.5) !important; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: rgba(184,150,106,0.2); border-radius: 2px; }
-        @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+        input:focus,select:focus { border-color: #3b82f6 !important; box-shadow: 0 0 0 3px rgba(59,130,246,0.1) !important; outline: none; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
         .tab-content { animation: fadeIn 0.2s ease; }
-        .stat-card:hover { border-color: rgba(184,150,106,0.3) !important; transform: translateY(-2px); transition: all 0.2s; }
       `}</style>
 
-      {isMobile && sidebarOpen && (
-        <div onClick={()=>setSidebarOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',zIndex:99}} />
-      )}
-
-      <Sidebar />
-
-      <div style={{flex:1,display:'flex',flexDirection:'column',minWidth:0,overflowX:'hidden'}}>
-
-        <div style={{background:'rgba(15,10,4,0.8)',backdropFilter:'blur(10px)',borderBottom:'1px solid rgba(184,150,106,0.08)',padding:isMobile?'1rem':'1rem 2rem',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:50}}>
-          <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
-            {isMobile && (
-              <button onClick={()=>setSidebarOpen(true)} style={{background:'none',border:'none',color:'rgba(245,237,224,0.6)',fontSize:'20px',cursor:'pointer',padding:'4px'}}>☰</button>
-            )}
-            <div>
-              <div style={{fontSize:isMobile?'13px':'15px',fontWeight:'600',color:'#f5ede0',textTransform:'capitalize'}}>
-                {tabs.find(t=>t.id===activeTab)?.label}
-              </div>
-              <div style={{fontSize:'11px',color:'rgba(184,150,106,0.6)'}}>
-                {new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}
-              </div>
-            </div>
+      <div style={{background:'#1e3a8a',padding:'0.875rem 1rem',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:50,boxShadow:'0 2px 8px rgba(30,58,138,0.3)'}}>
+        <div style={{display:'flex',alignItems:'center',gap:'10px'}}>
+          <button onClick={()=>setSidebarOpen(!sidebarOpen)} style={{background:'rgba(255,255,255,0.1)',border:'none',color:'#fff',fontSize:'16px',cursor:'pointer',padding:'6px 8px',borderRadius:'8px',lineHeight:1}}>☰</button>
+          <div>
+            <div style={{fontSize:'13px',fontWeight:'700',color:'#fff',letterSpacing:'3px',textTransform:'uppercase'}}>Laurea</div>
+            <div style={{fontSize:'9px',color:'rgba(255,255,255,0.6)',letterSpacing:'2px',textTransform:'uppercase'}}>Employee Portal</div>
           </div>
-          <div style={{width:'32px',height:'32px',borderRadius:'8px',background:'linear-gradient(135deg,#b8966a,#8a6a3e)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'12px',fontWeight:'700',color:'#1c1208'}}>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:'8px'}}>
+          <div style={{textAlign:'right'}}>
+            <div style={{fontSize:'12px',fontWeight:'600',color:'#fff'}}>{employee.first_name}</div>
+            <div style={{fontSize:'10px',color:'rgba(255,255,255,0.6)',textTransform:'capitalize'}}>{employee.job_position||'Employee'}</div>
+          </div>
+          <div style={{width:'34px',height:'34px',borderRadius:'50%',background:'linear-gradient(135deg,#60a5fa,#2563eb)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',fontWeight:'700',color:'#fff',border:'2px solid rgba(255,255,255,0.3)'}}>
             {getInitials()}
           </div>
         </div>
+      </div>
 
-        <div style={{flex:1,padding:isMobile?'1.25rem':'2rem',overflowY:'auto'}}>
+      {sidebarOpen && <div onClick={()=>setSidebarOpen(false)} style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:98}} />}
 
-          {activeTab === 'dashboard' && (
-            <div className="tab-content">
-              <div style={{marginBottom:'2rem'}}>
-                <h1 style={{fontSize:isMobile?'20px':'26px',fontWeight:'700',color:'#f5ede0',marginBottom:'4px'}}>
-                  Good {new Date().getHours()<12?'morning':new Date().getHours()<17?'afternoon':'evening'}, {employee.first_name} 👋
-                </h1>
-                <p style={{fontSize:'13px',color:'rgba(245,237,224,0.4)'}}>Welcome to your Laurea Fashion House employee portal.</p>
+      <div style={{position:'fixed',top:0,left:sidebarOpen?'0':'-260px',width:'260px',height:'100%',background:'#fff',zIndex:99,transition:'left 0.3s ease',display:'flex',flexDirection:'column',boxShadow:'4px 0 24px rgba(0,0,0,0.12)'}}>
+        <div style={{background:'#1e3a8a',padding:'1.5rem',display:'flex',alignItems:'center',gap:'10px'}}>
+          <div style={{width:'40px',height:'40px',borderRadius:'50%',background:'linear-gradient(135deg,#60a5fa,#2563eb)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'15px',fontWeight:'700',color:'#fff'}}>{getInitials()}</div>
+          <div>
+            <div style={{fontSize:'14px',fontWeight:'700',color:'#fff'}}>{employee.first_name} {employee.last_name}</div>
+            <div style={{fontSize:'11px',color:'rgba(255,255,255,0.6)',textTransform:'capitalize'}}>{employee.job_position||'Employee'}</div>
+          </div>
+        </div>
+        <nav style={{flex:1,padding:'0.75rem 0',overflowY:'auto'}}>
+          {tabs.map(tab => (
+            <button key={tab.id} onClick={()=>{ setActiveTab(tab.id); setSidebarOpen(false); }}
+              style={{width:'100%',display:'flex',alignItems:'center',gap:'12px',padding:'13px 1.25rem',background:activeTab===tab.id?'#eff6ff':'transparent',border:'none',borderLeft:activeTab===tab.id?'3px solid #2563eb':'3px solid transparent',cursor:'pointer',fontSize:'14px',color:activeTab===tab.id?'#2563eb':'#475569',textAlign:'left',fontFamily:'inherit',fontWeight:activeTab===tab.id?'600':'400',transition:'all 0.15s'}}>
+              <span style={{fontSize:'18px'}}>{tab.icon}</span><span>{tab.label}</span>
+            </button>
+          ))}
+        </nav>
+        <div style={{padding:'1rem 1.25rem',borderTop:'1px solid #f1f5f9'}}>
+          <Link href="/" style={{display:'flex',alignItems:'center',gap:'6px',fontSize:'12px',color:'#94a3b8',textDecoration:'none',marginBottom:'8px'}}>← Main Website</Link>
+          <button onClick={handleLogout} style={{width:'100%',background:'#fef2f2',border:'1px solid #fecaca',color:'#dc2626',padding:'11px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit',fontWeight:'500'}}>Sign Out</button>
+        </div>
+      </div>
+
+      <div style={{padding:'1rem',maxWidth:'520px',margin:'0 auto'}}>
+
+        {activeTab === 'dashboard' && (
+          <div className="tab-content">
+            <div style={{marginBottom:'1.5rem',paddingTop:'0.25rem'}}>
+              <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'2px'}}>Good {new Date().getHours()<12?'morning':new Date().getHours()<17?'afternoon':'evening'}, {employee.first_name} 👋</h1>
+              <p style={{fontSize:'13px',color:'#64748b'}}>Welcome to your employee portal.</p>
+            </div>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'0.75rem',marginBottom:'1.25rem'}}>
+              {[
+                {label:'Tasks',value:'0',icon:'📋',color:'#2563eb'},
+                {label:'Earnings',value:'$0',icon:'💰',color:'#16a34a'},
+                {label:'Days Active',value:'1',icon:'📅',color:'#0284c7'},
+                {label:'Status',value:'Active',icon:'✅',color:'#16a34a'},
+              ].map((stat,i) => (
+                <div key={i} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',padding:'1rem',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+                  <div style={{fontSize:'24px',marginBottom:'8px'}}>{stat.icon}</div>
+                  <div style={{fontSize:'22px',fontWeight:'700',color:stat.color,marginBottom:'2px'}}>{stat.value}</div>
+                  <div style={{fontSize:'11px',color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.6px'}}>{stat.label}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',padding:'1.25rem',marginBottom:'1rem',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+              <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'1rem'}}>
+                <span style={{fontSize:'14px',fontWeight:'600',color:'#1e293b'}}>Employment Details</span>
+                <button onClick={()=>setActiveTab('profile')} style={{background:'none',border:'none',color:'#2563eb',fontSize:'12px',cursor:'pointer',fontFamily:'inherit',fontWeight:'500'}}>View all →</button>
               </div>
-
-              <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr 1fr':'repeat(4,1fr)',gap:'1rem',marginBottom:'2rem'}}>
-                {[
-                  {label:'Tasks',value:'0',icon:'◫',color:'#b8966a'},
-                  {label:'Earnings',value:'$0',icon:'◉',color:'#7bc44e'},
-                  {label:'Days Active',value:'1',icon:'◎',color:'#6ab3ff'},
-                  {label:'Status',value:'Active',icon:'⊕',color:'#b8966a'},
-                ].map((stat,i) => (
-                  <div key={i} className="stat-card" style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'16px',padding:'1.25rem',cursor:'default'}}>
-                    <div style={{fontSize:'20px',color:stat.color,marginBottom:'12px'}}>{stat.icon}</div>
-                    <div style={{fontSize:isMobile?'20px':'24px',fontWeight:'700',color:'#f5ede0',marginBottom:'4px'}}>{stat.value}</div>
-                    <div style={{fontSize:'11px',color:'rgba(245,237,224,0.3)',textTransform:'uppercase',letterSpacing:'1px'}}>{stat.label}</div>
-                  </div>
+              {[
+                {label:'Position',value:employee.job_position||'—'},
+                {label:'Department',value:employee.department||'—'},
+                {label:'Type',value:employee.employment_type?.replace(/_/g,' ')||'—'},
+              ].map((item,i) => (
+                <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0',borderBottom:i<2?'1px solid #f1f5f9':'none'}}>
+                  <span style={{fontSize:'12px',color:'#64748b',textTransform:'uppercase',letterSpacing:'0.6px',fontWeight:'600'}}>{item.label}</span>
+                  <span style={{fontSize:'13px',color:'#1e293b',fontWeight:'500',textTransform:'capitalize'}}>{item.value}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',padding:'1.25rem',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+              <div style={{fontSize:'14px',fontWeight:'600',color:'#1e293b',marginBottom:'1rem'}}>Quick Actions</div>
+              <div style={{display:'flex',flexDirection:'column',gap:'8px'}}>
+                {[{label:'Add Bank Details',tab:'bank',icon:'🏦'},{label:'View Profile',tab:'profile',icon:'👤'},{label:'My Tasks',tab:'tasks',icon:'📋'}].map((action,i) => (
+                  <button key={i} onClick={()=>setActiveTab(action.tab)} style={{background:'#f8fafc',border:'1px solid #e2e8f0',color:'#1e293b',padding:'12px 16px',fontSize:'13px',fontWeight:'500',cursor:'pointer',borderRadius:'10px',display:'flex',alignItems:'center',gap:'10px',fontFamily:'inherit',textAlign:'left'}}>
+                    <span style={{fontSize:'18px'}}>{action.icon}</span><span>{action.label}</span><span style={{marginLeft:'auto',color:'#94a3b8'}}>→</span>
+                  </button>
                 ))}
               </div>
+            </div>
+          </div>
+        )}
 
-              <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'20px',padding:'1.5rem',marginBottom:'1rem'}}>
-                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'1.25rem'}}>
-                  <h2 style={{fontSize:'14px',fontWeight:'600',color:'#f5ede0',letterSpacing:'0.5px'}}>Employment Details</h2>
-                  <button onClick={()=>setActiveTab('profile')} style={{background:'none',border:'none',color:'rgba(184,150,106,0.7)',fontSize:'12px',cursor:'pointer',fontFamily:'inherit'}}>View all →</button>
-                </div>
-                <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr 1fr',gap:'1rem'}}>
-                  {[
-                    {label:'Position',value:employee.job_position||'—'},
-                    {label:'Department',value:employee.department||'—'},
-                    {label:'Employment',value:employee.employment_type?.replace(/_/g,' ')||'—'},
-                  ].map((item,i) => (
-                    <div key={i} style={{background:'rgba(184,150,106,0.04)',borderRadius:'12px',padding:'1rem'}}>
-                      <div style={{fontSize:'10px',color:'rgba(184,150,106,0.6)',textTransform:'uppercase',letterSpacing:'1px',marginBottom:'6px'}}>{item.label}</div>
-                      <div style={{fontSize:'14px',color:'#f5ede0',fontWeight:'500',textTransform:'capitalize'}}>{item.value}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'20px',padding:'1.5rem'}}>
-                <h2 style={{fontSize:'14px',fontWeight:'600',color:'#f5ede0',marginBottom:'1rem',letterSpacing:'0.5px'}}>Quick Actions</h2>
-                <div style={{display:'flex',gap:'10px',flexWrap:'wrap'}}>
-                  {[
-                    {label:'Add Bank Details',tab:'bank',icon:'◈'},
-                    {label:'View Profile',tab:'profile',icon:'◎'},
-                    {label:'My Tasks',tab:'tasks',icon:'◫'},
-                  ].map((action,i) => (
-                    <button key={i} onClick={()=>setActiveTab(action.tab)}
-                      style={{background:'rgba(184,150,106,0.08)',border:'1px solid rgba(184,150,106,0.2)',color:'#b8966a',padding:'10px 18px',fontSize:'12px',fontWeight:'500',cursor:'pointer',borderRadius:'10px',display:'flex',alignItems:'center',gap:'8px',fontFamily:'inherit',letterSpacing:'0.5px'}}>
-                      {action.icon} {action.label}
-                    </button>
-                  ))}
+        {activeTab === 'profile' && (
+          <div className="tab-content">
+            <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'1.25rem',paddingTop:'0.25rem'}}>My Profile</h1>
+            <div style={{background:'#1e3a8a',borderRadius:'14px',padding:'1.25rem',display:'flex',alignItems:'center',gap:'12px',marginBottom:'1rem'}}>
+              <div style={{width:'52px',height:'52px',borderRadius:'50%',background:'linear-gradient(135deg,#60a5fa,#2563eb)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'20px',fontWeight:'700',color:'#fff',flexShrink:0}}>{getInitials()}</div>
+              <div>
+                <div style={{fontSize:'16px',fontWeight:'700',color:'#fff'}}>{employee.first_name} {employee.last_name}</div>
+                <div style={{fontSize:'12px',color:'rgba(255,255,255,0.7)',marginBottom:'6px'}}>{employee.email}</div>
+                <div style={{display:'inline-flex',alignItems:'center',gap:'5px',background:'rgba(74,222,128,0.2)',border:'1px solid rgba(74,222,128,0.4)',borderRadius:'6px',padding:'3px 10px',fontSize:'10px',color:'#4ade80'}}>
+                  <span style={{width:'5px',height:'5px',background:'#4ade80',borderRadius:'50%'}}></span>Active
                 </div>
               </div>
             </div>
-          )}
-
-          {activeTab === 'profile' && (
-            <div className="tab-content">
-              <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'20px',overflow:'hidden',marginBottom:'1.5rem'}}>
-                <div style={{background:'linear-gradient(135deg,rgba(184,150,106,0.15),rgba(184,150,106,0.05))',padding:'2rem',display:'flex',alignItems:'center',gap:'1.5rem',flexWrap:'wrap'}}>
-                  <div style={{width:'72px',height:'72px',borderRadius:'16px',background:'linear-gradient(135deg,#b8966a,#8a6a3e)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'28px',fontWeight:'700',color:'#1c1208',flexShrink:0}}>
-                    {getInitials()}
-                  </div>
-                  <div>
-                    <h2 style={{fontSize:'20px',fontWeight:'700',color:'#f5ede0',marginBottom:'4px'}}>{employee.first_name} {employee.last_name}</h2>
-                    <div style={{fontSize:'13px',color:'rgba(184,150,106,0.8)',marginBottom:'8px'}}>{employee.email}</div>
-                    <div style={{display:'inline-flex',alignItems:'center',gap:'6px',background:'rgba(59,109,17,0.15)',border:'1px solid rgba(59,109,17,0.3)',borderRadius:'6px',padding:'4px 12px',fontSize:'10px',color:'#7bc44e',textTransform:'uppercase',letterSpacing:'1px'}}>
-                      <span style={{width:'6px',height:'6px',background:'#7bc44e',borderRadius:'50%'}}></span>
-                      Active Employee
-                    </div>
-                  </div>
+            <div style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+              {[
+                {label:'First Name',value:employee.first_name},{label:'Last Name',value:employee.last_name},
+                {label:'Email',value:employee.email},{label:'Phone',value:employee.phone},
+                {label:'Role',value:employee.role},{label:'Nationality',value:employee.nationality},
+                {label:'Country',value:employee.country_of_residence},{label:'City',value:employee.city},
+              ].map((field,i,arr) => (
+                <div key={i} style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 1.25rem',borderBottom:i<arr.length-1?'1px solid #f1f5f9':'none'}}>
+                  <span style={{fontSize:'12px',color:'#64748b',textTransform:'uppercase',letterSpacing:'0.6px',fontWeight:'600'}}>{field.label}</span>
+                  <span style={{fontSize:'13px',color:field.value?'#1e293b':'#cbd5e1',fontWeight:'500',maxWidth:'55%',textAlign:'right'}}>{field.value||'—'}</span>
                 </div>
-                <div style={{padding:'1.5rem'}}>
-                  <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1px',background:'rgba(184,150,106,0.08)',borderRadius:'12px',overflow:'hidden'}}>
-                    {[
-                      {label:'First Name',value:employee.first_name},
-                      {label:'Last Name',value:employee.last_name},
-                      {label:'Email',value:employee.email},
-                      {label:'Phone',value:employee.phone},
-                      {label:'Role',value:employee.role},
-                      {label:'Nationality',value:employee.nationality},
-                      {label:'Country',value:employee.country_of_residence},
-                      {label:'City',value:employee.city},
-                    ].map((field,i) => (
-                      <div key={i} style={{background:'rgba(15,10,4,0.8)',padding:'1rem 1.25rem'}}>
-                        <div style={{fontSize:'10px',color:'rgba(184,150,106,0.6)',textTransform:'uppercase',letterSpacing:'1px',marginBottom:'4px'}}>{field.label}</div>
-                        <div style={{fontSize:'13px',color:field.value?'#f5ede0':'rgba(245,237,224,0.2)',fontWeight:'500'}}>{field.value||'—'}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
-          )}
+          </div>
+        )}
 
-          {activeTab === 'bank' && (
-            <div className="tab-content">
-              <h1 style={{fontSize:'22px',fontWeight:'700',color:'#f5ede0',marginBottom:'4px'}}>🏦 Dados Bancários / Bank Details</h1>
-              <p style={{fontSize:'13px',color:'rgba(245,237,224,0.4)',marginBottom:'2rem'}}>
-                Adicione duas contas bancárias. Um cartão em Português será enviado ao seu e-mail e outro em Inglês ao admin.
-              </p>
-
-              {message === 'success' && (
-                <div style={{background:'rgba(59,109,17,0.1)',border:'1px solid rgba(59,109,17,0.3)',borderRadius:'10px',padding:'16px',marginBottom:'1.5rem',fontSize:'13px',color:'#7bc44e',lineHeight:'1.8'}}>
-                  ✅ Dados bancários salvos com sucesso!<br/>
-                  <span style={{fontSize:'12px',color:'rgba(245,237,224,0.4)'}}>
-                    📧 Cartão em Português enviado para o seu e-mail.<br/>
-                    📧 Cartão em Inglês enviado para o admin.
-                  </span>
-                </div>
-              )}
-              {message === 'error' && (
-                <div style={{background:'rgba(204,0,0,0.1)',border:'1px solid rgba(204,0,0,0.3)',borderRadius:'10px',padding:'16px',marginBottom:'1.5rem',fontSize:'13px',color:'#ff6b6b'}}>
-                  ❌ Falha ao salvar. Por favor preencha todos os campos obrigatórios.
-                </div>
-              )}
-
-              <form onSubmit={handleSaveBank}>
-
-                {/* Bank Account 1 */}
-                <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1rem'}}>
-                  <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'1.25rem',paddingBottom:'1rem',borderBottom:'1px solid rgba(184,150,106,0.08)'}}>
-                    <div style={{width:'36px',height:'36px',borderRadius:'10px',background:'rgba(184,150,106,0.15)',border:'1px solid rgba(184,150,106,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'15px',fontWeight:'700',color:'#b8966a',flexShrink:0}}>1</div>
-                    <div>
-                      <div style={{fontSize:'15px',fontWeight:'600',color:'#f5ede0'}}>Conta Bancária 1 / Bank Account 1</div>
-                      <div style={{fontSize:'11px',color:'rgba(184,150,106,0.5)'}}>Todos os campos marcados com * são obrigatórios</div>
-                    </div>
+        {activeTab === 'bank' && (
+          <div className="tab-content">
+            <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'4px',paddingTop:'0.25rem'}}>🏦 Bank Details</h1>
+            <p style={{fontSize:'13px',color:'#64748b',marginBottom:'1.5rem'}}>Add up to two bank accounts for receiving payments.</p>
+            {message === 'success' && <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:'10px',padding:'14px',marginBottom:'1.25rem',fontSize:'13px',color:'#15803d'}}>✅ Bank details saved! Cards have been sent by email.</div>}
+            {message === 'error' && <div style={{background:'#fef2f2',border:'1px solid #fecaca',borderRadius:'10px',padding:'14px',marginBottom:'1.25rem',fontSize:'13px',color:'#dc2626'}}>❌ Failed to save. Please fill in all required fields.</div>}
+            <form onSubmit={handleSaveBank}>
+              {[1,2].map(n => (
+                <div key={n} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',padding:'1.25rem',marginBottom:'1rem',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+                  <div style={{display:'flex',alignItems:'center',gap:'10px',marginBottom:'1.25rem',paddingBottom:'0.875rem',borderBottom:'1px solid #f1f5f9'}}>
+                    <div style={{width:'30px',height:'30px',borderRadius:'8px',background:'#eff6ff',border:'1px solid #bfdbfe',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'13px',fontWeight:'700',color:'#2563eb'}}>{n}</div>
+                    <div><div style={{fontSize:'14px',fontWeight:'600',color:'#1e293b'}}>Bank Account {n}</div><div style={{fontSize:'11px',color:'#94a3b8'}}>Fields marked * are required</div></div>
                   </div>
-                  <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem'}}>
-                    <div>
-                      <label style={lbl}>Titular / Account Holder *</label>
-                      <input style={inp} value={bankForm.bank1_holder} onChange={e=>setBankForm({...bankForm,bank1_holder:e.target.value})} placeholder="Nome completo do titular" required />
-                      <label style={lbl}>Banco / Bank Name *</label>
-                      <input style={inp} value={bankForm.bank1_name} onChange={e=>setBankForm({...bankForm,bank1_name:e.target.value})} placeholder="ex: Itaú, Bradesco, Nubank" required />
-                      <label style={lbl}>Agência / Agency</label>
-                      <input style={inp} value={bankForm.bank1_agency} onChange={e=>setBankForm({...bankForm,bank1_agency:e.target.value})} placeholder="ex: 0001" />
-                    </div>
-                    <div>
-                      <label style={lbl}>Conta / Account Number *</label>
-                      <input style={inp} value={bankForm.bank1_account} onChange={e=>setBankForm({...bankForm,bank1_account:e.target.value})} placeholder="ex: 12345-6" required />
-                      <label style={lbl}>Chave PIX / PIX Key *</label>
-                      <input style={inp} value={bankForm.bank1_pix} onChange={e=>setBankForm({...bankForm,bank1_pix:e.target.value})} placeholder="CPF, e-mail, telefone ou chave aleatória" required />
-                      <label style={lbl}>CPF *</label>
-                      <input style={inp} value={bankForm.bank1_cpf} onChange={e=>setBankForm({...bankForm,bank1_cpf:e.target.value})} placeholder="000.000.000-00" required />
-                    </div>
-                  </div>
+                  <label style={lbl}>Account Holder *</label>
+                  <input style={inp} value={bankForm[`bank${n}_holder`]} onChange={e=>setBankForm({...bankForm,[`bank${n}_holder`]:e.target.value})} placeholder="Full name" required />
+                  <label style={lbl}>Bank Name *</label>
+                  <input style={inp} value={bankForm[`bank${n}_name`]} onChange={e=>setBankForm({...bankForm,[`bank${n}_name`]:e.target.value})} placeholder="e.g. Itau, Nubank" required />
+                  <label style={lbl}>Agency</label>
+                  <input style={inp} value={bankForm[`bank${n}_agency`]} onChange={e=>setBankForm({...bankForm,[`bank${n}_agency`]:e.target.value})} placeholder="e.g. 0001" />
+                  <label style={lbl}>Account Number *</label>
+                  <input style={inp} value={bankForm[`bank${n}_account`]} onChange={e=>setBankForm({...bankForm,[`bank${n}_account`]:e.target.value})} placeholder="e.g. 12345-6" required />
+                  <label style={lbl}>PIX Key *</label>
+                  <input style={inp} value={bankForm[`bank${n}_pix`]} onChange={e=>setBankForm({...bankForm,[`bank${n}_pix`]:e.target.value})} placeholder="CPF, email, phone or random key" required />
+                  <label style={lbl}>CPF *</label>
+                  <input style={inp} value={bankForm[`bank${n}_cpf`]} onChange={e=>setBankForm({...bankForm,[`bank${n}_cpf`]:e.target.value})} placeholder="000.000.000-00" required />
                 </div>
-
-                {/* Bank Account 2 */}
-                <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.15)',borderRadius:'16px',padding:'1.5rem',marginBottom:'1.5rem'}}>
-                  <div style={{display:'flex',alignItems:'center',gap:'12px',marginBottom:'1.25rem',paddingBottom:'1rem',borderBottom:'1px solid rgba(184,150,106,0.08)'}}>
-                    <div style={{width:'36px',height:'36px',borderRadius:'10px',background:'rgba(184,150,106,0.15)',border:'1px solid rgba(184,150,106,0.3)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'15px',fontWeight:'700',color:'#b8966a',flexShrink:0}}>2</div>
-                    <div>
-                      <div style={{fontSize:'15px',fontWeight:'600',color:'#f5ede0'}}>Conta Bancária 2 / Bank Account 2</div>
-                      <div style={{fontSize:'11px',color:'rgba(184,150,106,0.5)'}}>Todos os campos marcados com * são obrigatórios</div>
-                    </div>
-                  </div>
-                  <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr',gap:'1rem'}}>
-                    <div>
-                      <label style={lbl}>Titular / Account Holder *</label>
-                      <input style={inp} value={bankForm.bank2_holder} onChange={e=>setBankForm({...bankForm,bank2_holder:e.target.value})} placeholder="Nome completo do titular" required />
-                      <label style={lbl}>Banco / Bank Name *</label>
-                      <input style={inp} value={bankForm.bank2_name} onChange={e=>setBankForm({...bankForm,bank2_name:e.target.value})} placeholder="ex: Itaú, Bradesco, Nubank" required />
-                      <label style={lbl}>Agência / Agency</label>
-                      <input style={inp} value={bankForm.bank2_agency} onChange={e=>setBankForm({...bankForm,bank2_agency:e.target.value})} placeholder="ex: 0001" />
-                    </div>
-                    <div>
-                      <label style={lbl}>Conta / Account Number *</label>
-                      <input style={inp} value={bankForm.bank2_account} onChange={e=>setBankForm({...bankForm,bank2_account:e.target.value})} placeholder="ex: 12345-6" required />
-                      <label style={lbl}>Chave PIX / PIX Key *</label>
-                      <input style={inp} value={bankForm.bank2_pix} onChange={e=>setBankForm({...bankForm,bank2_pix:e.target.value})} placeholder="CPF, e-mail, telefone ou chave aleatória" required />
-                      <label style={lbl}>CPF *</label>
-                      <input style={inp} value={bankForm.bank2_cpf} onChange={e=>setBankForm({...bankForm,bank2_cpf:e.target.value})} placeholder="000.000.000-00" required />
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{background:'rgba(184,150,106,0.06)',border:'1px solid rgba(184,150,106,0.15)',borderRadius:'10px',padding:'14px 16px',fontSize:'12px',color:'rgba(245,237,224,0.4)',marginBottom:'1.5rem',lineHeight:'1.8'}}>
-                  🔒 Seus dados bancários estão seguros e criptografados.<br/>
-                  📧 Cartão em Português → <strong style={{color:'rgba(184,150,106,0.6)'}}>{employee.email}</strong><br/>
-                  📧 Cartão em Inglês → admin@laureafashionhouse.com
-                </div>
-
-                <button type="submit" disabled={saving}
-                  style={{background:'linear-gradient(135deg,#b8966a,#8a6a3e)',color:'#1c1208',border:'none',padding:'15px 32px',fontSize:'13px',fontWeight:'700',cursor:'pointer',borderRadius:'12px',letterSpacing:'1px',textTransform:'uppercase',fontFamily:'inherit',opacity:saving?0.7:1,width:isMobile?'100%':'auto'}}>
-                  {saving ? '📤 Salvando e Enviando...' : '💾 Salvar e Enviar Cartão por Email'}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {activeTab === 'tasks' && (
-            <div className="tab-content">
-              <h1 style={{fontSize:'22px',fontWeight:'700',color:'#f5ede0',marginBottom:'2rem'}}>My Tasks</h1>
-              <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'20px',padding:'3rem',textAlign:'center'}}>
-                <div style={{fontSize:'48px',marginBottom:'1rem',opacity:0.5}}>◫</div>
-                <h3 style={{fontSize:'16px',color:'rgba(245,237,224,0.6)',marginBottom:'8px',fontWeight:'500'}}>No tasks yet</h3>
-                <p style={{fontSize:'13px',color:'rgba(245,237,224,0.3)'}}>Tasks assigned to you will appear here.</p>
+              ))}
+              <div style={{background:'#eff6ff',border:'1px solid #bfdbfe',borderRadius:'10px',padding:'12px 14px',fontSize:'12px',color:'#3b82f6',marginBottom:'1.25rem',lineHeight:'1.8'}}>
+                🔒 Your bank details are secure and encrypted.<br/>📧 Card will be sent to <strong>{employee.email}</strong>
               </div>
-            </div>
-          )}
+              <button type="submit" disabled={saving} style={{width:'100%',background:'linear-gradient(135deg,#2563eb,#1d4ed8)',color:'#fff',border:'none',padding:'14px',fontSize:'14px',fontWeight:'600',cursor:'pointer',borderRadius:'12px',fontFamily:'inherit',opacity:saving?0.7:1,boxShadow:'0 2px 10px rgba(37,99,235,0.3)'}}>
+                {saving ? '📤 Saving...' : '💾 Save & Send Card by Email'}
+              </button>
+            </form>
+          </div>
+        )}
 
-          {activeTab === 'earnings' && (
-            <div className="tab-content">
-              <h1 style={{fontSize:'22px',fontWeight:'700',color:'#f5ede0',marginBottom:'2rem'}}>Earnings</h1>
-              <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'20px',padding:'1.5rem',marginBottom:'1rem'}}>
-                <div style={{display:'grid',gridTemplateColumns:isMobile?'1fr':'1fr 1fr 1fr',gap:'1rem'}}>
-                  {[
-                    {label:'Total Earnings',value:'$0.00',color:'#b8966a'},
-                    {label:'This Month',value:'$0.00',color:'#7bc44e'},
-                    {label:'Pending',value:'$0.00',color:'#6ab3ff'},
-                  ].map((stat,i) => (
-                    <div key={i} style={{background:'rgba(184,150,106,0.04)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'12px',padding:'1.25rem',textAlign:'center'}}>
-                      <div style={{fontSize:'24px',fontWeight:'700',color:stat.color,marginBottom:'6px'}}>{stat.value}</div>
-                      <div style={{fontSize:'11px',color:'rgba(245,237,224,0.4)',textTransform:'uppercase',letterSpacing:'1px'}}>{stat.label}</div>
-                    </div>
-                  ))}
+        {activeTab === 'tasks' && (
+          <div className="tab-content">
+            <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'1.25rem',paddingTop:'0.25rem'}}>My Tasks</h1>
+            <div style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',padding:'2.5rem 1.5rem',textAlign:'center',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+              <div style={{fontSize:'44px',marginBottom:'1rem'}}>📋</div>
+              <h3 style={{fontSize:'15px',color:'#475569',marginBottom:'6px',fontWeight:'600'}}>No tasks yet</h3>
+              <p style={{fontSize:'13px',color:'#94a3b8'}}>Tasks assigned to you will appear here.</p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'earnings' && (
+          <div className="tab-content">
+            <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'1.25rem',paddingTop:'0.25rem'}}>Earnings</h1>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'0.75rem',marginBottom:'1rem'}}>
+              {[{label:'Total',value:'$0.00',color:'#2563eb'},{label:'Month',value:'$0.00',color:'#16a34a'},{label:'Pending',value:'$0.00',color:'#0284c7'}].map((stat,i) => (
+                <div key={i} style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'12px',padding:'1rem 0.75rem',textAlign:'center',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+                  <div style={{fontSize:'18px',fontWeight:'700',color:stat.color,marginBottom:'4px'}}>{stat.value}</div>
+                  <div style={{fontSize:'10px',color:'#94a3b8',textTransform:'uppercase',letterSpacing:'0.5px'}}>{stat.label}</div>
                 </div>
-              </div>
-              <div style={{background:'rgba(255,255,255,0.02)',border:'1px solid rgba(184,150,106,0.1)',borderRadius:'20px',padding:'3rem',textAlign:'center'}}>
-                <div style={{fontSize:'48px',marginBottom:'1rem',opacity:0.5}}>◉</div>
-                <h3 style={{fontSize:'16px',color:'rgba(245,237,224,0.6)',marginBottom:'8px',fontWeight:'500'}}>No earnings yet</h3>
-                <p style={{fontSize:'13px',color:'rgba(245,237,224,0.3)'}}>Add your bank details to start receiving payments.</p>
-                <button onClick={()=>setActiveTab('bank')} style={{marginTop:'1rem',background:'rgba(184,150,106,0.1)',border:'1px solid rgba(184,150,106,0.2)',color:'#b8966a',padding:'10px 20px',fontSize:'12px',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit'}}>
-                  Add Bank Details →
-                </button>
-              </div>
+              ))}
             </div>
-          )}
+            <div style={{background:'#fff',border:'1px solid #e2e8f0',borderRadius:'14px',padding:'2.5rem 1.5rem',textAlign:'center',boxShadow:'0 1px 4px rgba(0,0,0,0.04)'}}>
+              <div style={{fontSize:'44px',marginBottom:'1rem'}}>💰</div>
+              <h3 style={{fontSize:'15px',color:'#475569',marginBottom:'6px',fontWeight:'600'}}>No earnings yet</h3>
+              <p style={{fontSize:'13px',color:'#94a3b8',marginBottom:'1rem'}}>Add your bank details to start receiving payments.</p>
+              <button onClick={()=>setActiveTab('bank')} style={{background:'#eff6ff',border:'1px solid #bfdbfe',color:'#2563eb',padding:'10px 20px',fontSize:'13px',cursor:'pointer',borderRadius:'8px',fontFamily:'inherit',fontWeight:'500'}}>Add Bank Details →</button>
+            </div>
+          </div>
+        )}
 
-        </div>
       </div>
     </div>
   );
