@@ -9,6 +9,7 @@ import { orderAPI, paymentAPI, promoAPI } from '@/lib/api';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 const CARD_STYLE = { style: { base: { fontSize: '14px', color: '#1c1208', fontFamily: 'inherit', '::placeholder': { color: '#a89880' } }, invalid: { color: '#cc0000' } } };
+const AGENT_WHATSAPP = '5513955466720';
 
 const COUNTRIES = [
   { code: 'US', name: 'United States' }, { code: 'GB', name: 'United Kingdom' },
@@ -27,6 +28,7 @@ const COUNTRIES = [
 const PAYMENT_METHODS = [
   { id: 'card', label: 'Debit / Credit Card', icon: '💳', desc: 'Visa, Mastercard, Amex' },
   { id: 'bank', label: 'Bank Transfer', icon: '🏦', desc: 'Direct bank payment' },
+  { id: 'third_party', label: 'Pay via WhatsApp Agent', icon: '💬', desc: 'Pay through our agent — no card needed' },
   { id: 'gift', label: 'Redeem Gift Card', icon: '🎁', desc: 'Enter your gift card code' },
 ];
 
@@ -80,6 +82,14 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
     setError(''); setStep(2);
   };
 
+  const buildWhatsAppUrl = (orderId) => {
+    const lines = items.map(i => `  • ${i.product.name} x${i.quantity} — $${(parseFloat(i.product.price) * i.quantity).toFixed(2)}`).join('\n');
+    const msg = encodeURIComponent(
+      `Hello Laurea Fashion House Agent 👋\n\nI would like to pay for my order via Third Party Payment.\n\n📦 *Order Reference:* ${orderId}\n👤 *Name:* ${form.firstName} ${form.lastName}\n\n*Items:*\n${lines}\n\n💰 *Total Amount:* $${finalTotal.toFixed(2)}\n\nPlease confirm payment details. Thank you!`
+    );
+    return `https://wa.me/${AGENT_WHATSAPP}?text=${msg}`;
+  };
+
   const handlePayment = async (e) => {
     e.preventDefault();
     setLoading(true); setError('');
@@ -88,6 +98,17 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
         items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity, price: i.product.price, variant: i.variant })),
         shipping: { ...form }, promoCode: promoCode || undefined, total: finalTotal, paymentMethod,
       };
+
+      if (paymentMethod === 'third_party') {
+        const r = await orderAPI.create({ ...orderData, status: 'pending_third_party' });
+        const id = r.data?.order?.id || r.data?.id || `ORD-${Date.now()}`;
+        const itemsParam = encodeURIComponent(items.map(i => `${i.product.name} x${i.quantity}`).join(', '));
+        window.open(buildWhatsAppUrl(id), '_blank');
+        clearCart();
+        router.push(`/upload-receipt?orderId=${id}&total=${finalTotal.toFixed(2)}&items=${itemsParam}`);
+        return;
+      }
+
       if (paymentMethod === 'gift') {
         if (!giftCardCode.trim()) { setError('Please enter your gift card code'); setLoading(false); return; }
         const r = await orderAPI.create({ ...orderData, giftCard: giftCardCode.trim() });
@@ -201,8 +222,8 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '1.5rem' }}>
               {PAYMENT_METHODS.map((m) => (
-                <label key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', border: '2px solid ' + (paymentMethod === m.id ? '#b8966a' : '#e0d8cc'), borderRadius: '8px', padding: '12px 14px', cursor: 'pointer', background: paymentMethod === m.id ? '#fdf8f2' : '#fff' }}>
-                  <input type="radio" name="paymentMethod" value={m.id} checked={paymentMethod === m.id} onChange={() => setPaymentMethod(m.id)} style={{ accentColor: '#b8966a', width: '16px', height: '16px', flexShrink: 0 }} />
+                <label key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', border: '2px solid ' + (paymentMethod === m.id ? (m.id === 'third_party' ? '#25D366' : '#b8966a') : '#e0d8cc'), borderRadius: '8px', padding: '12px 14px', cursor: 'pointer', background: paymentMethod === m.id ? (m.id === 'third_party' ? '#f0fdf4' : '#fdf8f2') : '#fff' }}>
+                  <input type="radio" name="paymentMethod" value={m.id} checked={paymentMethod === m.id} onChange={() => setPaymentMethod(m.id)} style={{ accentColor: m.id === 'third_party' ? '#25D366' : '#b8966a', width: '16px', height: '16px', flexShrink: 0 }} />
                   <span style={{ fontSize: '20px' }}>{m.icon}</span>
                   <div>
                     <p style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', margin: 0 }}>{m.label}</p>
@@ -231,6 +252,23 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
               </div>
             )}
 
+            {paymentMethod === 'third_party' && (
+              <div style={{ background: '#f0fdf4', border: '2px solid #86efac', borderRadius: '10px', padding: '1rem', marginBottom: '1.25rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.127.558 4.126 1.533 5.864L.054 23.447a.75.75 0 0 0 .917.973l5.698-1.49A11.953 11.953 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.869 0-3.618-.49-5.129-1.345l-.369-.214-3.829 1.001 1.019-3.72-.228-.376A9.959 9.959 0 0 1 2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/></svg>
+                  <p style={{ fontSize: '13px', fontWeight: '700', color: '#15803d', margin: 0 }}>WhatsApp Agent Payment</p>
+                </div>
+                <p style={{ fontSize: '12px', color: '#166534', lineHeight: '1.7', margin: 0 }}>
+                  When you click <strong>"Place Order"</strong> below:<br/>
+                  1. WhatsApp will open with your order details pre-written<br/>
+                  2. Send the message to our agent<br/>
+                  3. Make payment & receive your receipt<br/>
+                  4. Upload the receipt on the next page<br/>
+                  5. Your order is confirmed within <strong>10 minutes</strong> ✓
+                </p>
+              </div>
+            )}
+
             {paymentMethod === 'gift' && (
               <div style={{ marginBottom: '1.25rem' }}>
                 <label style={lbl}>Gift card code {req}</label>
@@ -250,9 +288,21 @@ function CheckoutForm({ items, subtotal, shipping, total, clearCart }) {
               {promoMsg && <p style={{ fontSize: '11px', marginTop: '6px', color: promoDiscount > 0 ? '#3b6d11' : '#cc0000' }}>{promoMsg}</p>}
             </div>
 
-            <button type="submit" disabled={!stripe || loading || (paymentMethod === 'bank' && !bankConfirmed)}
-              style={{ width: '100%', background: loading ? '#8a7a6a' : '#b8966a', color: '#fff', border: 'none', padding: '14px', fontSize: '12px', fontWeight: '600', letterSpacing: '1px', textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer', borderRadius: '6px', opacity: (paymentMethod === 'bank' && !bankConfirmed) ? 0.6 : 1 }}>
-              {loading ? 'Processing...' : paymentMethod === 'bank' ? 'Place Order — Pay by Bank Transfer' : paymentMethod === 'gift' ? 'Redeem & Place Order' : 'Pay $' + finalTotal.toFixed(2)}
+            <button type="submit"
+              disabled={!stripe || loading || (paymentMethod === 'bank' && !bankConfirmed)}
+              style={{
+                width: '100%',
+                background: loading ? '#8a7a6a' : paymentMethod === 'third_party' ? '#25D366' : '#b8966a',
+                color: '#fff', border: 'none', padding: '14px', fontSize: '12px', fontWeight: '600',
+                letterSpacing: '1px', textTransform: 'uppercase', cursor: loading ? 'not-allowed' : 'pointer',
+                borderRadius: '6px', opacity: (paymentMethod === 'bank' && !bankConfirmed) ? 0.6 : 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px'
+              }}>
+              {loading ? 'Processing...' :
+                paymentMethod === 'third_party' ? '💬 Place Order & Open WhatsApp' :
+                paymentMethod === 'bank' ? 'Place Order — Pay by Bank Transfer' :
+                paymentMethod === 'gift' ? 'Redeem & Place Order' :
+                'Pay $' + finalTotal.toFixed(2)}
             </button>
           </form>
         )}
