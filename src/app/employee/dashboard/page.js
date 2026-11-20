@@ -25,8 +25,9 @@ export default function EmployeeDashboardPage() {
     const check = () => setIsMobile(window.innerWidth < 768);
     check();
     window.addEventListener('resize', check);
-  
-  // Load pending receipts when receipts tab is active
+    return () => window.removeEventListener('resize', check);
+  }, []);
+
   useEffect(() => {
     const loadReceipts = async () => {
       if (activeTab !== 'receipts') return;
@@ -55,15 +56,11 @@ export default function EmployeeDashboardPage() {
     } catch { setReceiptToast('Failed. Please try again.'); setTimeout(() => setReceiptToast(''), 3000); }
   };
 
-  return () => window.removeEventListener('resize', check);
-  }, []);
-
   useEffect(() => {
     const stored = localStorage.getItem('laurea_user');
     if (!stored) { router.push('/employee/login'); return; }
     const emp = JSON.parse(stored);
     if (emp.role !== 'employee') { router.push('/'); return; }
-    if (!emp.employee_profile_completed) { router.push('/employee/setup'); return; }
     setEmployee(emp);
   }, []);
 
@@ -117,6 +114,7 @@ export default function EmployeeDashboardPage() {
     {id:'profile',icon:'👤',label:'My Profile'},
     {id:'bank',icon:'🏦',label:'Bank Details'},
     {id:'tasks',icon:'📋',label:'Tasks'},
+    {id:'receipts',icon:'🧾',label:'Receipts'},
     {id:'earnings',icon:'💰',label:'Earnings'},
   ];
 
@@ -306,88 +304,87 @@ export default function EmployeeDashboardPage() {
           </div>
         )}
 
-        
-          {activeTab === 'receipts' && (
-            <div>
-              {receiptToast && (
-                <div style={{ position: 'fixed', top: '20px', right: '20px', background: receiptToast.startsWith('✅') ? '#16a34a' : receiptToast.startsWith('❌') ? '#dc2626' : '#1c1208', color: '#fff', padding: '12px 20px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', zIndex: 9999, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>{receiptToast}</div>
-              )}
-              {selectedReceipt && (
-                <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSelectedReceipt(null)}>
-                  <div style={{ background: '#fff', borderRadius: '14px', padding: '1.5rem', maxWidth: '480px', width: '100%', maxHeight: '90vh', overflow: 'auto' }} onClick={e => e.stopPropagation()}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                      <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1208', margin: 0 }}>Receipt — Order #{selectedReceipt.orderId}</h3>
-                      <button onClick={() => setSelectedReceipt(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#8a7a6a' }}>✕</button>
-                    </div>
-                    <div style={{ background: '#faf8f5', borderRadius: '8px', padding: '12px', marginBottom: '1rem', fontSize: '13px', color: '#1c1208', lineHeight: '1.7' }}>
-                      <div><strong>Order:</strong> #{selectedReceipt.orderId}</div>
-                      <div><strong>Total:</strong> ${selectedReceipt.total}</div>
-                      {selectedReceipt.items && <div><strong>Items:</strong> {selectedReceipt.items}</div>}
-                      <div><strong>Submitted:</strong> {new Date(selectedReceipt.submittedAt).toLocaleString()}</div>
-                      <div><strong>Status:</strong> <span style={{ textTransform: 'capitalize', fontWeight: '600', color: selectedReceipt.status === 'approved' ? '#16a34a' : selectedReceipt.status === 'rejected' ? '#dc2626' : '#b8966a' }}>{selectedReceipt.status}</span></div>
-                    </div>
-                    {selectedReceipt.receiptUrl && (
-                      <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-                        {selectedReceipt.receiptUrl.endsWith('.pdf') ? (
-                          <a href={selectedReceipt.receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#b8966a', fontSize: '13px' }}>📄 View PDF Receipt</a>
-                        ) : (
-                          <img src={selectedReceipt.receiptUrl} alt="Receipt" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '8px', objectFit: 'contain', border: '1px solid #e0d8cc' }} />
-                        )}
-                      </div>
-                    )}
-                    {selectedReceipt.status === 'pending' && (
-                      <div style={{ display: 'flex', gap: '10px' }}>
-                        <button onClick={() => handleReceiptAction(selectedReceipt.orderId, 'approve')} style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>✓ Approve Order</button>
-                        <button onClick={() => handleReceiptAction(selectedReceipt.orderId, 'reject')} style={{ flex: 1, background: '#dc2626', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>✗ Reject</button>
-                      </div>
-                    )}
+        {activeTab === 'receipts' && (
+          <div className="tab-content">
+            {receiptToast && (
+              <div style={{ position: 'fixed', top: '20px', right: '20px', background: receiptToast.startsWith('✅') ? '#16a34a' : receiptToast.startsWith('❌') ? '#dc2626' : '#1c1208', color: '#fff', padding: '12px 20px', borderRadius: '8px', fontSize: '13px', fontWeight: '600', zIndex: 9999, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>{receiptToast}</div>
+            )}
+            {selectedReceipt && (
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }} onClick={() => setSelectedReceipt(null)}>
+                <div style={{ background: '#fff', borderRadius: '14px', padding: '1.5rem', maxWidth: '480px', width: '100%', maxHeight: '90vh', overflow: 'auto' }} onClick={e => e.stopPropagation()}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1c1208', margin: 0 }}>Receipt — Order #{selectedReceipt.orderId}</h3>
+                    <button onClick={() => setSelectedReceipt(null)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#8a7a6a' }}>✕</button>
                   </div>
-                </div>
-              )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <div>
-                  <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#1c1208', margin: '0 0 4px' }}>Receipt Confirmations</h2>
-                  <p style={{ fontSize: '12px', color: '#8a7a6a', margin: 0 }}>Auto-refreshes every 20 seconds</p>
-                </div>
-                <div style={{ background: receipts.filter(r => r.status === 'pending').length > 0 ? '#fef3c7' : '#f0fdf4', border: `1px solid ${receipts.filter(r => r.status === 'pending').length > 0 ? '#fbbf24' : '#86efac'}`, borderRadius: '20px', padding: '4px 12px', fontSize: '12px', fontWeight: '600', color: receipts.filter(r => r.status === 'pending').length > 0 ? '#92400e' : '#166534' }}>
-                  {receipts.filter(r => r.status === 'pending').length} pending
+                  <div style={{ background: '#faf8f5', borderRadius: '8px', padding: '12px', marginBottom: '1rem', fontSize: '13px', color: '#1c1208', lineHeight: '1.7' }}>
+                    <div><strong>Order:</strong> #{selectedReceipt.orderId}</div>
+                    <div><strong>Total:</strong> ${selectedReceipt.total}</div>
+                    {selectedReceipt.items && <div><strong>Items:</strong> {selectedReceipt.items}</div>}
+                    <div><strong>Submitted:</strong> {new Date(selectedReceipt.submittedAt).toLocaleString()}</div>
+                    <div><strong>Status:</strong> <span style={{ textTransform: 'capitalize', fontWeight: '600', color: selectedReceipt.status === 'approved' ? '#16a34a' : selectedReceipt.status === 'rejected' ? '#dc2626' : '#b8966a' }}>{selectedReceipt.status}</span></div>
+                  </div>
+                  {selectedReceipt.receiptUrl && (
+                    <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
+                      {selectedReceipt.receiptUrl.endsWith('.pdf') ? (
+                        <a href={selectedReceipt.receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: '#b8966a', fontSize: '13px' }}>📄 View PDF Receipt</a>
+                      ) : (
+                        <img src={selectedReceipt.receiptUrl} alt="Receipt" style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: '8px', objectFit: 'contain', border: '1px solid #e0d8cc' }} />
+                      )}
+                    </div>
+                  )}
+                  {selectedReceipt.status === 'pending' && (
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button onClick={() => handleReceiptAction(selectedReceipt.orderId, 'approve')} style={{ flex: 1, background: '#16a34a', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>✓ Approve Order</button>
+                      <button onClick={() => handleReceiptAction(selectedReceipt.orderId, 'reject')} style={{ flex: 1, background: '#dc2626', color: '#fff', border: 'none', borderRadius: '8px', padding: '12px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>✗ Reject</button>
+                    </div>
+                  )}
                 </div>
               </div>
-              {receiptsLoading && receipts.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem', color: '#8a7a6a', fontSize: '13px' }}>Loading receipts...</div>
-              ) : receipts.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '3rem', color: '#8a7a6a' }}>
-                  <p style={{ fontSize: '36px', margin: '0 0 12px' }}>🧾</p>
-                  <p style={{ fontSize: '14px', margin: 0 }}>No receipts yet. When a customer submits a WhatsApp payment receipt, it will appear here.</p>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  {[...receipts].reverse().map((r, i) => (
-                    <div key={i} style={{ background: '#fff', border: `1px solid ${r.status === 'pending' ? '#fbbf24' : r.status === 'approved' ? '#86efac' : '#fca5a5'}`, borderRadius: '10px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => setSelectedReceipt(r)}>
-                      <div style={{ width: '48px', height: '48px', background: '#faf8f5', borderRadius: '8px', overflow: 'hidden', flexShrink: 0, border: '1px solid #e0d8cc' }}>
-                        {r.receiptUrl && !r.receiptUrl.endsWith('.pdf') ? (
-                          <img src={r.receiptUrl} alt="Receipt" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : (
-                          <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>📄</div>
-                        )}
-                      </div>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', margin: '0 0 2px' }}>Order #{r.orderId}</p>
-                        <p style={{ fontSize: '11px', color: '#8a7a6a', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.items}</p>
-                        <p style={{ fontSize: '11px', color: '#8a7a6a', margin: 0 }}>{new Date(r.submittedAt).toLocaleString()}</p>
-                      </div>
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <p style={{ fontSize: '14px', fontWeight: '700', color: '#1c1208', margin: '0 0 4px' }}>${r.total}</p>
-                        <span style={{ fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '3px 8px', borderRadius: '20px', background: r.status === 'pending' ? '#fef3c7' : r.status === 'approved' ? '#dcfce7' : '#fee2e2', color: r.status === 'pending' ? '#92400e' : r.status === 'approved' ? '#166534' : '#991b1b' }}>{r.status}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+            )}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+              <div>
+                <h2 style={{ fontSize: '18px', fontWeight: '600', color: '#1c1208', margin: '0 0 4px' }}>Receipt Confirmations</h2>
+                <p style={{ fontSize: '12px', color: '#8a7a6a', margin: 0 }}>Auto-refreshes every 20 seconds</p>
+              </div>
+              <div style={{ background: receipts.filter(r => r.status === 'pending').length > 0 ? '#fef3c7' : '#f0fdf4', border: `1px solid ${receipts.filter(r => r.status === 'pending').length > 0 ? '#fbbf24' : '#86efac'}`, borderRadius: '20px', padding: '4px 12px', fontSize: '12px', fontWeight: '600', color: receipts.filter(r => r.status === 'pending').length > 0 ? '#92400e' : '#166534' }}>
+                {receipts.filter(r => r.status === 'pending').length} pending
+              </div>
             </div>
-          )}
+            {receiptsLoading && receipts.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#8a7a6a', fontSize: '13px' }}>Loading receipts...</div>
+            ) : receipts.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem', color: '#8a7a6a' }}>
+                <p style={{ fontSize: '36px', margin: '0 0 12px' }}>🧾</p>
+                <p style={{ fontSize: '14px', margin: 0 }}>No receipts yet.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {[...receipts].reverse().map((r, i) => (
+                  <div key={i} style={{ background: '#fff', border: `1px solid ${r.status === 'pending' ? '#fbbf24' : r.status === 'approved' ? '#86efac' : '#fca5a5'}`, borderRadius: '10px', padding: '1rem', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }} onClick={() => setSelectedReceipt(r)}>
+                    <div style={{ width: '48px', height: '48px', background: '#faf8f5', borderRadius: '8px', overflow: 'hidden', flexShrink: 0, border: '1px solid #e0d8cc' }}>
+                      {r.receiptUrl && !r.receiptUrl.endsWith('.pdf') ? (
+                        <img src={r.receiptUrl} alt="Receipt" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>📄</div>
+                      )}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontSize: '13px', fontWeight: '600', color: '#1c1208', margin: '0 0 2px' }}>Order #{r.orderId}</p>
+                      <p style={{ fontSize: '11px', color: '#8a7a6a', margin: '0 0 2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.items}</p>
+                      <p style={{ fontSize: '11px', color: '#8a7a6a', margin: 0 }}>{new Date(r.submittedAt).toLocaleString()}</p>
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <p style={{ fontSize: '14px', fontWeight: '700', color: '#1c1208', margin: '0 0 4px' }}>${r.total}</p>
+                      <span style={{ fontSize: '10px', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.5px', padding: '3px 8px', borderRadius: '20px', background: r.status === 'pending' ? '#fef3c7' : r.status === 'approved' ? '#dcfce7' : '#fee2e2', color: r.status === 'pending' ? '#92400e' : r.status === 'approved' ? '#166634' : '#991b1b' }}>{r.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
-          {activeTab === 'earnings' && (
+        {activeTab === 'earnings' && (
           <div className="tab-content">
             <h1 style={{fontSize:'20px',fontWeight:'700',color:'#1e3a8a',marginBottom:'1.25rem',paddingTop:'0.25rem'}}>Earnings</h1>
             <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'0.75rem',marginBottom:'1rem'}}>
